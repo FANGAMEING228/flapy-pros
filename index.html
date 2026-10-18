@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Flapy Pros</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family: 'Trebuchet MS', Arial, sans-serif; }
+  body {
+    display:flex; justify-content:center; align-items:center;
+    min-height:100vh; background: linear-gradient(135deg,#1e3c72,#2a5298);
+    overflow:hidden;
+  }
+  #gameContainer {
+    position:relative; width:400px; height:600px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.6);
+    border-radius:10px; overflow:hidden;
+    border: 4px solid #222;
+  }
+  canvas { display:block; background:#70c5ce; }
+
+  .overlay {
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    display:flex; flex-direction:column; justify-content:center; align-items:center;
+    background: rgba(0,0,0,0.55); color:#fff; text-align:center; z-index:10;
+  }
+  .hidden { display:none !important; }
+
+  h1 {
+    font-size:42px; color:#ffd93d; text-shadow: 3px 3px 0 #ff6b35, 0 0 20px rgba(0,0,0,0.5);
+    margin-bottom:10px; letter-spacing:2px;
+  }
+  .subtitle { color:#fff; margin-bottom:20px; font-size:14px; opacity:0.8;}
+
+  button {
+    cursor:pointer; border:none; border-radius:8px; padding:12px 25px;
+    font-size:16px; font-weight:bold; margin:6px; transition: transform 0.15s;
+  }
+  button:hover { transform: scale(1.05); }
+  button:active { transform: scale(0.95); }
+
+  .btn-primary { background: linear-gradient(135deg,#ffd93d,#ff6b35); color:#222; }
+  .btn-secondary { background:#4ecdc4; color:#fff; }
+  .btn-danger { background:#ff5e57; color:#fff; }
+  .btn-admin { background:#333; color:#aaa; font-size:11px; padding:5px 10px; }
+
+  .skins {
+    display:flex; gap:10px; margin:15px 0; flex-wrap:wrap; justify-content:center; max-width:320px;
+  }
+  .skin-option {
+    width:50px; height:50px; border-radius:50%; cursor:pointer;
+    border:3px solid transparent; display:flex; justify-content:center; align-items:center;
+    position:relative; transition: all 0.2s;
+  }
+  .skin-option.selected { border-color:#fff; transform:scale(1.1); box-shadow:0 0 15px #fff; }
+
+  #scoreDisplay {
+    position:absolute; top:15px; left:0; width:100%; text-align:center;
+    font-size:40px; color:#fff; font-weight:bold; text-shadow: 3px 3px 0 #000;
+    z-index:5; pointer-events:none;
+  }
+
+  #fpsDisplay {
+    position:absolute; top:5px; right:8px; color:#0f0; font-size:11px;
+    background:rgba(0,0,0,0.5); padding:2px 6px; border-radius:4px; z-index:6;
+  }
+
+  .adminCorner {
+    position:absolute; bottom:5px; right:5px; z-index:20;
+  }
+
+  /* Admin modal */
+  #adminModal, #pincodeModal {
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.85); z-index:50; display:flex;
+    flex-direction:column; justify-content:center; align-items:center; color:#fff;
+  }
+  #pincodeInput {
+    font-size:24px; padding:10px; width:150px; text-align:center;
+    border-radius:8px; border:none; margin:15px 0; letter-spacing:5px;
+  }
+  .admin-panel {
+    background:#1a1a2e; border:2px solid #16213e; border-radius:12px;
+    padding:20px; width:320px; max-height:500px; overflow-y:auto;
+  }
+  .admin-panel h2 { color:#e94560; margin-bottom:15px; text-align:center; }
+  .admin-row {
+    display:flex; justify-content:space-between; align-items:center;
+    margin:12px 0; padding:8px; background:#16213e; border-radius:8px;
+  }
+  .admin-row label { font-size:13px; }
+  .toggle {
+    width:46px; height:24px; background:#444; border-radius:12px;
+    position:relative; cursor:pointer; transition:0.2s;
+  }
+  .toggle.on { background:#4ecdc4; }
+  .toggle-dot {
+    width:18px; height:18px; background:#fff; border-radius:50%;
+    position:absolute; top:3px; left:3px; transition:0.2s;
+  }
+  .toggle.on .toggle-dot { left:25px; }
+  select, input[type=range] { width:100%; }
+  .error-msg { color:#ff5e57; font-size:13px; height:18px; }
+  .close-btn {
+    position:absolute; top:10px; right:15px; font-size:24px; cursor:pointer; color:#fff;
+  }
+</style>
+</head>
+<body>
+
+<div id="gameContainer">
+  <canvas id="gameCanvas" width="400" height="600"></canvas>
+  <div id="scoreDisplay">0</div>
+  <div id="fpsDisplay">FPS: 60</div>
+
+  <!-- Start Screen -->
+  <div id="startScreen" class="overlay">
+    <h1>FLAPY PROS</h1>
+    <div class="subtitle">pro edition • tap or press space to flap</div>
+    <div class="skins" id="skinSelector"></div>
+    <button class="btn-primary" id="playBtn">▶ PLAY</button>
+    <div class="adminCorner">
+      <button class="btn-admin" id="adminOpenBtn">⚙ admin</button>
+    </div>
+  </div>
+
+  <!-- Game Over Screen -->
+  <div id="gameOverScreen" class="overlay hidden">
+    <h1 style="font-size:30px;">GAME OVER</h1>
+    <p style="font-size:20px; margin:10px 0;">Score: <span id="finalScore">0</span></p>
+    <p style="font-size:14px; opacity:0.8;">Best: <span id="bestScore">0</span></p>
+    <button class="btn-primary" id="restartBtn">🔄 RESTART</button>
+    <button class="btn-secondary" id="menuBtn">🏠 MENU</button>
+  </div>
+
+  <!-- Pincode Modal -->
+  <div id="pincodeModal" class="hidden">
+    <span class="close-btn" id="closePincode">×</span>
+    <h2>🔒 Admin Access</h2>
+    <input type="password" id="pincodeInput" maxlength="4" placeholder="----">
+    <div class="error-msg" id="pinError"></div>
+    <button class="btn-primary" id="submitPin">Unlock</button>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="adminModal" class="hidden">
+    <span class="close-btn" id="closeAdmin">×</span>
+    <div class="admin-panel">
+      <h2>⚙ ADMIN PANEL</h2>
+
+      <div class="admin-row">
+        <label>🤖 Auto-Play (Bot)</label>
+        <div class="toggle" id="toggleBot"><div class="toggle-dot"></div></div>
+      </div>
+
+      <div class="admin-row">
+        <label>🛡 God Mode (No Collision)</label>
+        <div class="toggle" id="toggleGod"><div class="toggle-dot"></div></div>
+      </div>
+
+      <div class="admin-row" style="flex-direction:column; align-items:stretch;">
+        <label style="margin-bottom:6px;">🐢 FPS Lag Simulator</label>
+        <select id="lagSelect">
+          <option value="0">None (60 FPS)</option>
+          <option value="1">Low (~40 FPS)</option>
+          <option value="2">Medium (~24 FPS)</option>
+          <option value="3">High (~12 FPS)</option>
+          <option value="4">Extreme (~5 FPS)</option>
+        </select>
+      </div>
+
+      <div class="admin-row" style="flex-direction:column; align-items:stretch;">
+        <label style="margin-bottom:6px;">⚡ Game Speed: <span id="speedVal">1.0x</span></label>
+        <input type="range" id="speedSlider" min="0.2" max="3" step="0.1" value="1">
+      </div>
+
+      <div class="admin-row" style="flex-direction:column; align-items:stretch;">
+        <label style="margin-bottom:6px;">↔ Pipe Gap: <span id="gapVal">150</span>px</label>
+        <input type="range" id="gapSlider" min="80" max="300" step="10" value="150">
+      </div>
+
+      <div class="admin-row">
+        <label>➕ Add 10 Score</label>
+        <button class="btn-secondary" style="padding:6px 12px; font-size:12px;" id="addScoreBtn">Add</button>
+      </div>
+
+      <div class="admin-row">
+        <label>🗑 Reset Best Score</label>
+        <button class="btn-danger" style="padding:6px 12px; font-size:12px;" id="resetBestBtn">Reset</button>
+      </div>
+
+      <button class="btn-primary" style="width:100%; margin-top:10px;" id="closeAdminBtn">Done</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(() => {
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+
+// ===== STATE =====
+let state = 'menu'; // menu, playing, gameover
+let bird = { x:70, y:H/2, r:14, vy:0, rotation:0 };
+let gravity = 0.5;
+let jumpPower = -8.5;
+let pipes = [];
+let pipeWidth = 52;
+let pipeGap = 150;
+let pipeSpeed = 2.4;
+let gameSpeedMult = 1;
+let score = 0;
+let bestScore = parseInt(localStorage.getItem('flapyBest') || '0');
+let frameCount = 0;
+let groundY = H - 60;
+
+// Admin flags
+let botEnabled = false;
+let godMode = false;
+let lagLevel = 0; // 0-4
+let lagFrameSkip = 0;
+
+// Skins
+const skins = [
+  { name:'Classic', body:'#ffd93d', wing:'#ffb703', beak:'#ff6b35' },
+  { name:'Cardinal', body:'#e63946', wing:'#c1121f', beak:'#ffb703' },
+  { name:'Jay', body:'#457b9d', wing:'#1d3557', beak:'#ffb703' },
+  { name:'Parrot', body:'#2a9d8f', wing:'#264653', beak:'#e76f51' },
+  { name:'Rainbow', body:'rainbow', wing:'#fff', beak:'#ff6b35' },
+];
+let currentSkinIndex = parseInt(localStorage.getItem('flapySkin') || '0');
+
+// ===== DOM =====
+const startScreen = document.getElementById('startScreen');
+const gameOverScreen = document.getElementById('gameOverScreen');
+const scoreDisplay = document.getElementById('scoreDisplay');
+const fpsDisplay = document.getElementById('fpsDisplay');
+const skinSelector = document.getElementById('skinSelector');
+const pincodeModal = document.getElementById('pincodeModal');
+const adminModal = document.getElementById('adminModal');
+const pincodeInput = document.getElementById('pincodeInput');
+const pinError = document.getElementById('pinError');
+
+// Build skin selector
+function renderSkins(){
+  skinSelector.innerHTML = '';
+  skins.forEach((s,i) => {
+    const div = document.createElement('div');
+    div.className = 'skin-option' + (i===currentSkinIndex ? ' selected':'');
+    div.style.background = s.body === 'rainbow' 
+      ? 'conic-gradient(red,orange,yellow,green,blue,violet,red)' 
+      : s.body;
+    div.title = s.name;
+    div.onclick = () => {
+      currentSkinIndex = i;
+      localStorage.setItem('flapySkin', i);
+      renderSkins();
+    };
+    skinSelector.appendChild(div);
+  });
+}
+renderSkins();
+
+// ===== GAME LOGIC =====
+function resetGame(){
+  bird.y = H/2;
+  bird.vy = 0;
+  bird.rotation = 0;
+  pipes = [];
+  score = 0;
+  frameCount = 0;
+  scoreDisplay.textContent = '0';
+  spawnPipe();
+}
+
+function spawnPipe(){
+  const minTop = 50;
+  const maxTop = groundY - pipeGap - 50;
+  const topHeight = Math.random() * (maxTop - minTop) + minTop;
+  pipes.push({ x: W + 20, top: topHeight, passed:false });
+}
+
+function flap(){
+  if(state === 'playing' && !botEnabled){
+    bird.vy = jumpPower;
+  }
+}
+
+function startGame(){
+  state = 'playing';
+  startScreen.classList.add('hidden');
+  gameOverScreen.classList.add('hidden');
+  resetGame();
+}
+
+function endGame(){
+  if(godMode) return; // can't die in god mode
+  state = 'gameover';
+  if(score > bestScore){
+    bestScore = score;
+    localStorage.setItem('flapyBest', bestScore);
+  }
+  document.getElementById('finalScore').textContent = score;
+  document.getElementById('bestScore').textContent = bestScore;
+  gameOverScreen.classList.remove('hidden');
+}
+
+// Bot AI
+function runBot(){
+  if(!botEnabled || pipes.length === 0) return;
+  // find next pipe ahead of bird
+  let target = null;
+  for(const p of pipes){
+    if(p.x + pipeWidth > bird.x){ target = p; break; }
+  }
+  if(!target){
+    // no pipe, just hover mid
+    if(bird.y > H/2) bird.vy = jumpPower;
+    return;
+  }
+  const gapCenter = target.top + pipeGap/2;
+  // predict future position, flap if below desired threshold
+  if(bird.y > gapCenter - 5){
+    bird.vy = jumpPower;
+  }
+}
+
+function update(){
+  frameCount++;
+
+  if(state === 'playing'){
+    runBot();
+
+    bird.vy += gravity * gameSpeedMult;
+    bird.y += bird.vy * gameSpeedMult;
+    bird.rotation = Math.max(-25, Math.min(90, bird.vy * 4));
+
+    // Move pipes
+    for(const p of pipes){
+      p.x -= pipeSpeed * gameSpeedMult;
+      if(!p.passed && p.x + pipeWidth < bird.x){
+        p.passed = true;
+        score++;
+        scoreDisplay.textContent = score;
+      }
+    }
+    // remove offscreen
+    pipes = pipes.filter(p => p.x > -pipeWidth);
+    // spawn new
+    if(pipes.length === 0 || pipes[pipes.length-1].x < W - 200){
+      spawnPipe();
+    }
+
+    // Collisions
+    if(!godMode){
+      if(bird.y + bird.r > groundY || bird.y - bird.r < 0){
+        endGame();
+      }
+      for(const p of pipes){
+        if(bird.x + bird.r > p.x && bird.x - bird.r < p.x + pipeWidth){
+          if(bird.y - bird.r < p.top || bird.y + bird.r > p.top + pipeGap){
+            endGame();
+          }
+        }
+      }
+    } else {
+      // keep bird in bounds visually even in god mode
+      if(bird.y - bird.r < 0) bird.y = bird.r;
+      if(bird.y + bird.r > groundY) bird.y = groundY - bird.r;
+    }
+  }
+}
+
+// ===== RENDERING =====
+function drawBackground(){
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'#70c5ce');
+  grad.addColorStop(1,'#a8e6e6');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,H);
+
+  // clouds
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  for(let i=0;i<3;i++){
+    const cx = ((frameCount*0.2 + i*150) % (W+100)) - 50;
+    const cy = 80 + i*60;
+    ctx.beginPath();
+    ctx.arc(cx,cy,20,0,Math.PI*2);
+    ctx.arc(cx+20,cy+5,25,0,Math.PI*2);
+    ctx.arc(cx-20,cy+5,18,0,Math.PI*2);
+    ctx.fill();
+  }
+}
+
+function drawPipes(){
+  for(const p of pipes){
+    const grad = ctx.createLinearGradient(p.x,0,p.x+pipeWidth,0);
+    grad.addColorStop(0,'#2ecc71');
+    grad.addColorStop(0.5,'#27ae60');
+    grad.addColorStop(1,'#2ecc71');
+    ctx.fillStyle = grad;
+    // top pipe
+    ctx.fillRect(p.x, 0, pipeWidth, p.top);
+    ctx.fillRect(p.x-4, p.top-20, pipeWidth+8, 20);
+    // bottom pipe
+    const bottomY = p.top + pipeGap;
+    ctx.fillRect(p.x, bottomY, pipeWidth, groundY - bottomY);
+    ctx.fillRect(p.x-4, bottomY, pipeWidth+8, 20);
+
+    ctx.strokeStyle = '#1e8449';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(p.x, 0, pipeWidth, p.top);
+    ctx.strokeRect(p.x, bottomY, pipeWidth, groundY - bottomY);
+  }
+}
+
+function drawGround(){
+  ctx.fillStyle = '#ded895';
+  ctx.fillRect(0, groundY, W, H-groundY);
+  ctx.fillStyle = '#8b5a2b';
+  ctx.fillRect(0, groundY, W, 8);
+  // texture lines
+  ctx.strokeStyle = '#c9bb6a';
+  ctx.lineWidth = 2;
+  const offset = (frameCount * pipeSpeed * gameSpeedMult) % 20;
+  for(let x = -offset; x < W; x += 20){
+    ctx.beginPath();
+    ctx.moveTo(x, groundY+8);
+    ctx.lineTo(x+10, H);
+    ctx.stroke();
+  }
+}
+
+function drawBird(){
+  const skin = skins[currentSkinIndex];
+  ctx.save();
+  ctx.translate(bird.x, bird.y);
+  ctx.rotate(bird.rotation * Math.PI/180);
+
+  let bodyColor = skin.body;
+  if(bodyColor === 'rainbow'){
+    const hue = (frameCount*4) % 360;
+    bodyColor = `hsl(${hue},80%,60%)`;
+  }
+
+  // wing
+  ctx.fillStyle = skin.wing;
+  ctx.beginPath();
+  ctx.ellipse(-4, 4, 9, 6, Math.sin(frameCount*0.3)*0.3, 0, Math.PI*2);
+  ctx.fill();
+
+  // body
+  ctx.fillStyle = bodyColor;
+  ctx.beginPath();
+  ctx.arc(0,0,bird.r,0,Math.PI*2);
+  ctx.fill();
+
+  // eye
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.arc(6,-4,4,0,Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.arc(7,-4,2,0,Math.PI*2);
+  ctx.fill();
+
+  // beak
+  ctx.fillStyle = skin.beak;
+  ctx.beginPath();
+  ctx.moveTo(10,0);
+  ctx.lineTo(20,-2);
+  ctx.lineTo(10,5);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function render(){
+  drawBackground();
+  drawPipes();
+  drawGround();
+  if(state !== 'menu') drawBird();
+  else {
+    // idle bird bob on menu
+    bird.y = H/2 + Math.sin(frameCount*0.05)*10;
+    drawBird();
+  }
+}
+
+// ===== GAME LOOP with LAG SIMULATION =====
+let lastTime = performance.now();
+let fpsCounter = 0, fpsTimer = 0, displayFps = 60;
+
+function gameLoop(now){
+  const dt = now - lastTime;
+  lastTime = now;
+  fpsCounter++;
+  fpsTimer += dt;
+  if(fpsTimer >= 500){
+    displayFps = Math.round(fpsCounter * 1000 / fpsTimer);
+    fpsDisplay.textContent = 'FPS: ' + displayFps;
+    fpsCounter = 0; fpsTimer = 0;
+  }
+
+  // lag simulation: skip updates/renders based on lagLevel
+  lagFrameSkip++;
+  const skipThreshold = [1,2,4,8,16][lagLevel] || 1;
+  if(lagFrameSkip % skipThreshold === 0){
+    update();
+    render();
+  }
+
+  requestAnimationFrame(gameLoop);
+}
+requestAnimationFrame(gameLoop);
+
+// ===== INPUT =====
+document.addEventListener('keydown', e => {
+  if(e.code === 'Space'){
+    e.preventDefault();
+    flap();
+  }
+});
+canvas.addEventListener('mousedown', flap);
+canvas.addEventListener('touchstart', e => { e.preventDefault(); flap(); });
+
+document.getElementById('playBtn').onclick = startGame;
+document.getElementById('restartBtn').onclick = startGame;
+document.getElementById('menuBtn').onclick = () => {
+  state = 'menu';
+  gameOverScreen.classList.add('hidden');
+  startScreen.classList.remove('hidden');
+};
+
+// ===== ADMIN PANEL LOGIC =====
+const ADMIN_PIN = '1677';
+
+document.getElementById('adminOpenBtn').onclick = () => {
+  pincodeModal.classList.remove('hidden');
+  pincodeInput.value = '';
+  pinError.textContent = '';
+  pincodeInput.focus();
+};
+document.getElementById('closePincode').onclick = () => pincodeModal.classList.add('hidden');
+
+document.getElementById('submitPin').onclick = checkPin;
+pincodeInput.addEventListener('keydown', e => { if(e.key === 'Enter') checkPin(); });
+
+function checkPin(){
+  if(pincodeInput.value === ADMIN_PIN){
+    pincodeModal.classList.add('hidden');
+    adminModal.classList.remove('hidden');
+    pinError.textContent = '';
+  } else {
+    pinError.textContent = '❌ Wrong pincode!';
+  }
+}
+
+document.getElementById('closeAdmin').onclick = () => adminModal.classList.add('hidden');
+document.getElementById('closeAdminBtn').onclick = () => adminModal.classList.add('hidden');
+
+// Toggles
+function setupToggle(id, getVal, setVal){
+  const el = document.getElementById(id);
+  const update = () => el.classList.toggle('on', getVal());
+  el.onclick = () => { setVal(!getVal()); update(); };
+  update();
+}
+setupToggle('toggleBot', () => botEnabled, v => botEnabled = v);
+setupToggle('toggleGod', () => godMode, v => godMode = v);
+
+// Lag select
+document.getElementById('lagSelect').onchange = (e) => {
+  lagLevel = parseInt(e.target.value);
+};
+
+// Speed slider
+const speedSlider = document.getElementById('speedSlider');
+const speedVal = document.getElementById('speedVal');
+speedSlider.oninput = () => {
+  gameSpeedMult = parseFloat(speedSlider.value);
+  speedVal.textContent = gameSpeedMult.toFixed(1) + 'x';
+};
+
+// Gap slider
+const gapSlider = document.getElementById('gapSlider');
+const gapVal = document.getElementById('gapVal');
+gapSlider.oninput = () => {
+  pipeGap = parseInt(gapSlider.value);
+  gapVal.textContent = pipeGap;
+};
+
+// Add score button
+document.getElementById('addScoreBtn').onclick = () => {
+  score += 10;
+  scoreDisplay.textContent = score;
+};
+
+// Reset best score
+document.getElementById('resetBestBtn').onclick = () => {
+  bestScore = 0;
+  localStorage.setItem('flapyBest', 0);
+};
+
+// Initial render for menu background
+render();
+
+})();
+</script>
+</body>
+</html>
