@@ -3,612 +3,1906 @@
 <head>
 <meta charset="UTF-8">
 <title>Flapy Pros</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; font-family: 'Trebuchet MS', Arial, sans-serif; }
-  body {
-    display:flex; justify-content:center; align-items:center;
-    min-height:100vh; background: linear-gradient(135deg,#1e3c72,#2a5298);
-    overflow:hidden;
-  }
-  #gameContainer {
-    position:relative; width:400px; height:600px;
-    box-shadow: 0 0 40px rgba(0,0,0,0.6);
-    border-radius:10px; overflow:hidden;
-    border: 4px solid #222;
-  }
-  canvas { display:block; background:#70c5ce; }
-
-  .overlay {
-    position:absolute; top:0; left:0; width:100%; height:100%;
-    display:flex; flex-direction:column; justify-content:center; align-items:center;
-    background: rgba(0,0,0,0.55); color:#fff; text-align:center; z-index:10;
-  }
-  .hidden { display:none !important; }
-
-  h1 {
-    font-size:42px; color:#ffd93d; text-shadow: 3px 3px 0 #ff6b35, 0 0 20px rgba(0,0,0,0.5);
-    margin-bottom:10px; letter-spacing:2px;
-  }
-  .subtitle { color:#fff; margin-bottom:20px; font-size:14px; opacity:0.8;}
-
-  button {
-    cursor:pointer; border:none; border-radius:8px; padding:12px 25px;
-    font-size:16px; font-weight:bold; margin:6px; transition: transform 0.15s;
-  }
-  button:hover { transform: scale(1.05); }
-  button:active { transform: scale(0.95); }
-
-  .btn-primary { background: linear-gradient(135deg,#ffd93d,#ff6b35); color:#222; }
-  .btn-secondary { background:#4ecdc4; color:#fff; }
-  .btn-danger { background:#ff5e57; color:#fff; }
-  .btn-admin { background:#333; color:#aaa; font-size:11px; padding:5px 10px; }
-
-  .skins {
-    display:flex; gap:10px; margin:15px 0; flex-wrap:wrap; justify-content:center; max-width:320px;
-  }
-  .skin-option {
-    width:50px; height:50px; border-radius:50%; cursor:pointer;
-    border:3px solid transparent; display:flex; justify-content:center; align-items:center;
-    position:relative; transition: all 0.2s;
-  }
-  .skin-option.selected { border-color:#fff; transform:scale(1.1); box-shadow:0 0 15px #fff; }
-
-  #scoreDisplay {
-    position:absolute; top:15px; left:0; width:100%; text-align:center;
-    font-size:40px; color:#fff; font-weight:bold; text-shadow: 3px 3px 0 #000;
-    z-index:5; pointer-events:none;
-  }
-
-  #fpsDisplay {
-    position:absolute; top:5px; right:8px; color:#0f0; font-size:11px;
-    background:rgba(0,0,0,0.5); padding:2px 6px; border-radius:4px; z-index:6;
-  }
-
-  .adminCorner {
-    position:absolute; bottom:5px; right:5px; z-index:20;
-  }
-
-  /* Admin modal */
-  #adminModal, #pincodeModal {
-    position:absolute; top:0; left:0; width:100%; height:100%;
-    background:rgba(0,0,0,0.85); z-index:50; display:flex;
-    flex-direction:column; justify-content:center; align-items:center; color:#fff;
-  }
-  #pincodeInput {
-    font-size:24px; padding:10px; width:150px; text-align:center;
-    border-radius:8px; border:none; margin:15px 0; letter-spacing:5px;
-  }
-  .admin-panel {
-    background:#1a1a2e; border:2px solid #16213e; border-radius:12px;
-    padding:20px; width:320px; max-height:500px; overflow-y:auto;
-  }
-  .admin-panel h2 { color:#e94560; margin-bottom:15px; text-align:center; }
-  .admin-row {
-    display:flex; justify-content:space-between; align-items:center;
-    margin:12px 0; padding:8px; background:#16213e; border-radius:8px;
-  }
-  .admin-row label { font-size:13px; }
-  .toggle {
-    width:46px; height:24px; background:#444; border-radius:12px;
-    position:relative; cursor:pointer; transition:0.2s;
-  }
-  .toggle.on { background:#4ecdc4; }
-  .toggle-dot {
-    width:18px; height:18px; background:#fff; border-radius:50%;
-    position:absolute; top:3px; left:3px; transition:0.2s;
-  }
-  .toggle.on .toggle-dot { left:25px; }
-  select, input[type=range] { width:100%; }
-  .error-msg { color:#ff5e57; font-size:13px; height:18px; }
-  .close-btn {
-    position:absolute; top:10px; right:15px; font-size:24px; cursor:pointer; color:#fff;
-  }
+  html,body{margin:0;padding:0;overflow:hidden;background:#000;height:100%;width:100%;font-family:sans-serif;}
+  #gameCanvas{display:block;position:fixed;top:0;left:0;touch-action:none;}
+  #err{display:none;position:fixed;top:0;left:0;right:0;background:#b00020;color:#fff;font:12px monospace;padding:6px 10px;z-index:99999;white-space:pre-wrap;}
+  .overlay{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,0.55);color:#fff;z-index:500;text-align:center;}
+  .hidden{display:none !important;}
+  h1{font-size:42px;margin:0 0 10px;text-shadow:2px 2px 0 #000;}
+  .bigBtn{font-size:22px;padding:14px 30px;margin:8px;border:none;border-radius:10px;background:#ffcc00;color:#222;font-weight:bold;cursor:pointer;}
+  .bigBtn:active{transform:scale(0.96);}
+  #gearBtn{position:fixed;bottom:14px;right:14px;z-index:600;font-size:26px;background:rgba(0,0,0,0.4);border:none;border-radius:50%;width:48px;height:48px;color:#fff;cursor:pointer;}
+  #fsBtn{position:fixed;bottom:14px;left:14px;z-index:600;font-size:22px;background:rgba(0,0,0,0.4);border:none;border-radius:50%;width:48px;height:48px;color:#fff;cursor:pointer;}
+  #pinModal{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:900;display:flex;align-items:center;justify-content:center;}
+  #pinBox{background:#222;padding:24px;border-radius:12px;text-align:center;color:#fff;}
+  #pinBox input{font-size:24px;text-align:center;width:140px;padding:8px;border-radius:8px;border:none;margin:10px 0;}
+  #pinErr{color:#ff5555;font-size:13px;height:16px;}
+  #adminPanel{position:fixed;top:0;right:-360px;width:340px;height:100%;background:#1b1b1f;color:#fff;z-index:800;transition:right 0.25s;overflow-y:auto;box-shadow:-4px 0 20px rgba(0,0,0,0.5);}
+  #adminPanel.open{right:0;}
+  #adminHeader{padding:12px;background:#111;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2;}
+  #adminTabs{display:flex;flex-wrap:wrap;gap:4px;padding:8px;background:#111;position:sticky;top:42px;z-index:2;max-height:160px;overflow-y:auto;}
+  .tabBtn{background:#333;border:none;color:#ccc;padding:6px 8px;border-radius:6px;font-size:10px;cursor:pointer;}
+  .tabBtn.active{background:#ffcc00;color:#222;font-weight:bold;}
+  .ctrlRow{padding:8px 12px;border-bottom:1px solid #2c2c33;}
+  .ctrlRow label{display:block;font-size:12px;margin-bottom:4px;color:#ccc;}
+  .ctrlRow input[type=range]{width:100%;}
+  .ctrlRow input[type=color]{width:50px;height:28px;border:none;}
+  .ctrlRow select, .ctrlRow input[type=text]{width:100%;padding:4px;border-radius:4px;border:none;}
+  .valSpan{float:right;color:#ffcc00;font-size:11px;}
+  .actionBtn{background:#444;color:#fff;border:none;padding:8px;border-radius:6px;margin:4px;cursor:pointer;font-size:12px;}
+  .closeBtn{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;}
+  #skinsScreen, #onlineScreen{position:fixed;inset:0;background:rgba(10,10,15,0.95);z-index:700;display:flex;flex-direction:column;align-items:center;color:#fff;overflow-y:auto;padding:20px 10px 40px;}
+  #skinGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:12px;width:100%;max-width:700px;margin-top:16px;}
+  .skinCard{background:#222;border-radius:10px;padding:8px;cursor:pointer;border:2px solid transparent;text-align:center;}
+  .skinCard.selected{border-color:#ffcc00;}
+  .skinCard.locked{opacity:0.4;}
+  .skinCard canvas{display:block;margin:0 auto;}
+  .skinCard div{font-size:11px;margin-top:4px;}
+  #fpsHud{position:fixed;top:6px;left:6px;color:#0f0;font:12px monospace;z-index:550;background:rgba(0,0,0,0.4);padding:3px 6px;border-radius:4px;}
+  #debugHud{position:fixed;top:28px;left:6px;color:#0ff;font:11px monospace;white-space:pre;z-index:550;background:rgba(0,0,0,0.5);padding:5px 7px;border-radius:4px;}
+  #statsHud{position:fixed;top:6px;right:6px;color:#fff;font:11px monospace;white-space:pre;z-index:550;background:rgba(0,0,0,0.4);padding:5px 7px;border-radius:4px;text-align:right;}
+  #onlineArea textarea{width:100%;height:60px;font-size:10px;}
+  #onlineArea{background:#1b1b1f;border-radius:10px;padding:10px;}
 </style>
 </head>
 <body>
+<div id="err"></div>
+<canvas id="gameCanvas"></canvas>
+<div id="fpsHud" class="hidden">FPS: 0</div>
+<div id="debugHud" class="hidden"></div>
+<div id="statsHud" class="hidden"></div>
 
-<div id="gameContainer">
-  <canvas id="gameCanvas" width="400" height="600"></canvas>
-  <div id="scoreDisplay">0</div>
-  <div id="fpsDisplay">FPS: 60</div>
+<div class="overlay" id="menu">
+  <h1>FLAPY PROS</h1>
+  <div>Best: <span id="bestDisplay">0</span></div>
+  <button class="bigBtn" id="playBtn">▶ PLAY</button>
+  <button class="bigBtn" id="skinsBtn" style="background:#555;color:#fff;">🎨 Skins</button>
+  <button class="bigBtn" id="onlineBtn" style="background:#2979ff;color:#fff;">🌐 Online</button>
+</div>
 
-  <!-- Start Screen -->
-  <div id="startScreen" class="overlay">
-    <h1>FLAPY PROS</h1>
-    <div class="subtitle">pro edition • tap or press space to flap</div>
-    <div class="skins" id="skinSelector"></div>
-    <button class="btn-primary" id="playBtn">▶ PLAY</button>
-    <div class="adminCorner">
-      <button class="btn-admin" id="adminOpenBtn">⚙ admin</button>
+<div class="overlay hidden" id="over">
+  <h1>GAME OVER</h1>
+  <div id="finalScore"></div>
+  <button class="bigBtn" id="restartBtn">↻ Restart</button>
+  <button class="bigBtn" id="menuBtn" style="background:#555;color:#fff;">☰ Menu</button>
+</div>
+
+<div class="overlay hidden" id="skinsScreen">
+  <h1 style="font-size:28px;">Skins</h1>
+  <div>
+    <button class="actionBtn" id="skinUploadBtn">⬆ Upload Custom</button>
+    <input type="file" id="skinFileInput" accept="image/*" class="hidden">
+  </div>
+  <div id="skinGrid"></div>
+  <button class="bigBtn" id="skinsBackBtn" style="margin-top:20px;background:#555;">← Back</button>
+</div>
+
+<div class="overlay hidden" id="onlineScreen">
+  <h1 style="font-size:28px;">Online Multiplayer</h1>
+  <div id="onlineArea" style="width:90%;max-width:400px;"></div>
+  <button class="bigBtn" id="onlineBackBtn" style="margin-top:20px;background:#555;">← Back</button>
+</div>
+
+<button id="gearBtn">⚙️</button>
+<button id="fsBtn">⛶</button>
+
+<div id="pinModal" class="hidden">
+  <div id="pinBox">
+    <div>Enter Admin PIN</div>
+    <input type="password" id="pinInput" maxlength="6">
+    <div id="pinErr"></div>
+    <div>
+      <button class="actionBtn" id="pinSubmit">Unlock</button>
+      <button class="actionBtn" id="pinCancel">Cancel</button>
     </div>
   </div>
+</div>
 
-  <!-- Game Over Screen -->
-  <div id="gameOverScreen" class="overlay hidden">
-    <h1 style="font-size:30px;">GAME OVER</h1>
-    <p style="font-size:20px; margin:10px 0;">Score: <span id="finalScore">0</span></p>
-    <p style="font-size:14px; opacity:0.8;">Best: <span id="bestScore">0</span></p>
-    <button class="btn-primary" id="restartBtn">🔄 RESTART</button>
-    <button class="btn-secondary" id="menuBtn">🏠 MENU</button>
+<div id="adminPanel">
+  <div id="adminHeader">
+    <b>ADMIN</b>
+    <button class="closeBtn" id="adminCloseBtn">✕</button>
   </div>
-
-  <!-- Pincode Modal -->
-  <div id="pincodeModal" class="hidden">
-    <span class="close-btn" id="closePincode">×</span>
-    <h2>🔒 Admin Access</h2>
-    <input type="password" id="pincodeInput" maxlength="4" placeholder="----">
-    <div class="error-msg" id="pinError"></div>
-    <button class="btn-primary" id="submitPin">Unlock</button>
-  </div>
-
-  <!-- Admin Panel -->
-  <div id="adminModal" class="hidden">
-    <span class="close-btn" id="closeAdmin">×</span>
-    <div class="admin-panel">
-      <h2>⚙ ADMIN PANEL</h2>
-
-      <div class="admin-row">
-        <label>🤖 Auto-Play (Bot)</label>
-        <div class="toggle" id="toggleBot"><div class="toggle-dot"></div></div>
-      </div>
-
-      <div class="admin-row">
-        <label>🛡 God Mode (No Collision)</label>
-        <div class="toggle" id="toggleGod"><div class="toggle-dot"></div></div>
-      </div>
-
-      <div class="admin-row" style="flex-direction:column; align-items:stretch;">
-        <label style="margin-bottom:6px;">🐢 FPS Lag Simulator</label>
-        <select id="lagSelect">
-          <option value="0">None (60 FPS)</option>
-          <option value="1">Low (~40 FPS)</option>
-          <option value="2">Medium (~24 FPS)</option>
-          <option value="3">High (~12 FPS)</option>
-          <option value="4">Extreme (~5 FPS)</option>
-        </select>
-      </div>
-
-      <div class="admin-row" style="flex-direction:column; align-items:stretch;">
-        <label style="margin-bottom:6px;">⚡ Game Speed: <span id="speedVal">1.0x</span></label>
-        <input type="range" id="speedSlider" min="0.2" max="3" step="0.1" value="1">
-      </div>
-
-      <div class="admin-row" style="flex-direction:column; align-items:stretch;">
-        <label style="margin-bottom:6px;">↔ Pipe Gap: <span id="gapVal">150</span>px</label>
-        <input type="range" id="gapSlider" min="80" max="300" step="10" value="150">
-      </div>
-
-      <div class="admin-row">
-        <label>➕ Add 10 Score</label>
-        <button class="btn-secondary" style="padding:6px 12px; font-size:12px;" id="addScoreBtn">Add</button>
-      </div>
-
-      <div class="admin-row">
-        <label>🗑 Reset Best Score</label>
-        <button class="btn-danger" style="padding:6px 12px; font-size:12px;" id="resetBestBtn">Reset</button>
-      </div>
-
-      <button class="btn-primary" style="width:100%; margin-top:10px;" id="closeAdminBtn">Done</button>
-    </div>
-  </div>
-
+  <div id="adminTabs"></div>
+  <div id="adminBody"></div>
 </div>
 
 <script>
-(() => {
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-const W = canvas.width, H = canvas.height;
+window.onerror = function(msg, src, line, col){
+  var e = document.getElementById('err');
+  e.style.display = 'block';
+  e.textContent = 'ERROR: ' + msg + ' (line ' + line + ')';
+  return false;
+};
 
-// ===== STATE =====
-let state = 'menu'; // menu, playing, gameover
-let bird = { x:70, y:H/2, r:14, vy:0, rotation:0 };
-let gravity = 0.5;
-let jumpPower = -8.5;
-let pipes = [];
-let pipeWidth = 52;
-let pipeGap = 150;
-let pipeSpeed = 2.4;
-let gameSpeedMult = 1;
-let score = 0;
-let bestScore = parseInt(localStorage.getItem('flapyBest') || '0');
-let frameCount = 0;
-let groundY = H - 60;
+/* ---------- SAFE STORAGE ---------- */
+var memStorage = {};
+var safeStorage = {
+  getItem: function(k){ try{ return localStorage.getItem(k); }catch(e){ return memStorage[k] !== undefined ? memStorage[k] : null; } },
+  setItem: function(k,v){ try{ localStorage.setItem(k,v); }catch(e){ memStorage[k]=v; } }
+};
 
-// Admin flags
-let botEnabled = false;
-let godMode = false;
-let lagLevel = 0; // 0-4
-let lagFrameSkip = 0;
+/* ---------- DEFAULTS ---------- */
+var DEFAULTS = {
+  // graphics
+  skyTheme:'day', weather:'none', groundTheme:'grass', pipeTheme:'classic',
+  glowEnabled:false, trailEnabled:false, trailColor:'#ffffff', particlesEnabled:true,
+  backgroundParallax:true, renderQuality:1, dayNightCycle:false, dayNightSpeed:0.05,
+  starCount:80, moonVisible:true, sunGlow:true, cloudCount:6, cloudSpeed:20, cloudOpacity:0.8,
+  groundBumpiness:4, skyTopColor:'#4ec0ca', skyBottomColor:'#bff0f5', groundTopColor:'#ded895', groundBottomColor:'#c8b94f',
+  // effects
+  vignetteEnabled:false, vignetteStrength:0.5, scanlinesEnabled:false, scanlineOpacity:0.15,
+  chromaticAberration:0, bloomEnabled:false, bloomStrength:10, pixelation:1,
+  screenShakeEnabled:true, screenShakeIntensity:8, flashOnScore:true, gridOverlay:false, gridColor:'#00ff00',
+  pipeRainbow:false, invertColors:false, mirrorScreen:false, cameraZoom:1, cameraRotation:0, motionBlur:false,
+  // bird
+  birdShapeOverride:'auto', birdSize:16, birdTilt:true, useCustomColors:false,
+  customBody:'#ffcc00', customWing:'#e6b800', customBeak:'#ff6600', customEye:'#000000',
+  eyeVisible:true, outlineVisible:true, outlineColor:'#000000', afterimageCount:0,
+  rotationSpeedMult:1, oscillationEnabled:false, oscillationAmount:5, randomSkinPerLife:false,
+  doubleJumpEnabled:false, wallJumpEnabled:false,
+  // pipes
+  pipeSpeed:180, pipeGap:190, pipeWidth:70, pipeSpacing:1.6, randomGap:false, movingPipes:false,
+  pipeMovePattern:'sine', pipeMoveSpeed:40, pipeMoveAmplitude:60, pipeCapStyle:'classic',
+  pipeWidthVariance:0, pipeColorBody:'#4caf50', pipeColorCap:'#2e7d32', pipeColorHighlight:'#81c784',
+  pipeColorShadow:'#1b5e20', pipeGlowColor:'#00ff00',
+  // gameplay
+  gravity:1000, jumpPower:360, gameSpeed:1, autoFlap:false, reverseGravity:false,
+  groundCollision:true, ceilingCollision:true, scoreMultiplier:1, comboDisplay:false,
+  shieldPowerupEnabled:false, magnetPipesAway:false, slowMoNearMiss:false, adaptiveDifficulty:false,
+  difficultyRampRate:0,
+  // cheats
+  godMode:false, infiniteLives:false, autoRestart:false, timeRewindEnabled:false,
+  botPanicTroll:false, confirmBeforeRestart:false, allSkinsUnlocked:false,
+  // bot + bot2
+  botEnabled:false, botAccuracy:70, botThinkInterval:0.12, botJitter:0,
+  botLookaheadPipes:1, botPathVisualization:false, botDifficultyCurve:false,
+  spectatorMode:false, multiBotRace:false, botCount:1,
+  botHumanMimic:true, botReactionTimeMs:120, botOvershootChance:0.15, botHesitation:true,
+  botFlapStyle:'tap', botVisionRange:1, botPanicUnderPressure:true, botConfidence:0.8,
+  botCelebrateOnScore:true, botAlignPipes:true, botShowThoughtBubble:true, botBlinkEyes:true,
+  botIdleSway:true, botNameLabel:'Bot',
+  // performance
+  lagLevel:0, inputLagMs:0, targetFPSCap:144, packetLoss:0, simulateStutter:false,
+  lowPowerMode:false, vsyncSim:false,
+  // audio + audio2
+  masterVolume:0.7, musicVolume:0.5, sfxVolume:0.8, sfxEnabled:true, musicEnabled:false,
+  eightBitMode:false, muted:false, pitchMult:1, reverbEnabled:false, lowPassFilter:false,
+  ambientVolume:0.3, uiClickSound:false, hoverSound:false, deathSoundVariant:'classic',
+  flapSoundVariant:'classic', scoreSoundVariant:'classic', musicTrackSelector:'calm',
+  bassBoost:1, trebleBoost:1, audioVisualizer:false, surroundSound:false, duckMusicOnSfx:false,
+  fadeInMusic:false, fadeOutOnDeath:false, muteOnTabSwitch:false,
+  // ui + ui2
+  uiThemeColor:'#ffcc00', scoreFont:'sans-serif', scoreSize:40, toastNotifications:false,
+  achievementsEnabled:false, leaderboardEnabled:false, customCursor:false, crosshairOverlay:false,
+  minimapEnabled:false, buttonAnimation:false, menuBackgroundAnimated:false, menuParticleEffect:false,
+  darkModeUI:false, roundedCorners:true, uiOpacity:1, tooltipsEnabled:false, animatedTransitions:false,
+  uiFontWeight:'normal', uiBorderGlow:false, notificationPosition:'top', compactAdminPanel:false,
+  // multiplayer
+  mpShowGhost:true, mpNetworkLatency:0, mpNetworkJitter:0,
+  // debug
+  debugOverlay:false, fpsCounterVisible:false, hitboxEnabled:false, showCoords:false,
+  showVelocityVectors:false, consoleLogEnabled:false, replayRecording:false, ghostRecordingPlayback:false,
+  // skins
+  currentSkin:0,
+  // graphics2
+  textureDetail:'med', shadowQuality:'low', antiAliasing:true, birdShadow:false, pipeShadow:false,
+  backgroundBlur:0, lightingAngle:45, ambientBrightness:1, contrast:1, saturation:1, hueRotate:0,
+  sharpness:1, cloudShapeVariety:2, starTwinkleSpeed:1, moonPhase:1, sunSize:26, horizonGlow:false,
+  fogEnabled:false, fogDensity:0.3, fogColor:'#ffffff',
+  // particles
+  particleCount:100, particleSize:3, particleSpeed:60, particleGravity:0, particleColor:'#ffffff',
+  particleShape:'circle', confettiOnScore:false, explosionOnDeath:false, trailParticleSize:4,
+  trailLength:20, snowflakeSizeVariance:2, rainAngle:10, rainSpeed:400, puddleReflections:false,
+  leafParticles:false, fireflyParticles:false, bubbleParticles:false, sparkleOnFlap:false,
+  dustOnGround:false, smokeTrail:false,
+  // physics
+  airResistance:0, terminalVelocity:900, bounceOnGround:false, bounceDamping:0.3, windForce:0,
+  windVariability:0, momentumCarry:1, flapCooldown:0, doubleFlapWindow:150, dragCoefficient:0,
+  massMultiplier:1, elasticCollision:false, pipeBounce:false, groundFriction:0.2, gravityRamp:0,
+  flapImpulseCurve:'linear', maxFallSpeed:900, maxRiseSpeed:900, inertiaEnabled:false, flapBufferMs:0,
+  // camera
+  cameraShakeOnFlap:false, cameraFollowSmoothness:0, cameraOffsetX:0, cameraOffsetY:0,
+  cameraTiltWithBird:false, parallaxDepthLayers:2, zoomOnDeath:false, slowMotionOnDeath:false,
+  letterboxBars:false, cinematicMode:false, screenEdgeGlow:false, cameraShakeOnDeath:true,
+  cameraFOV:1, cameraLeadAmount:0, cameraSnapback:false, dynamicZoomSpeed:0, freeLookDebug:false,
+  cameraInertia:0,
+  // accessibility
+  colorblindMode:'off', highContrastMode:false, reduceMotion:false, largeText:false,
+  simplifiedGraphics:false, oneTapMode:true, autoPauseOnBlur:false, hapticFeedback:false,
+  screenReaderHints:false, subtitleHints:false, uiScale:1, textToSpeechScore:false,
+  // world
+  timeOfDay:12, seasonSelector:'summer', biomeSelector:'plains', cityDensity:3, mountainsVisible:false,
+  waterReflections:false, birdShadowOnGround:false, dynamicShadows:false, windParticles:false,
+  ambientSoundEnabled:false, birdsInBackground:false, insectsAmbient:false, weatherTransitionSpeed:1,
+  lightningEnabled:false, rainbowAfterRain:false, auroraEnabled:false,
+  // pipes2
+  pipeTexturePattern:'plain', pipeRoundedCorners:false, pipeTransparency:1, pipeOutlineEnabled:false,
+  pipeOutlineColor:'#000000', pipeBreakAnimation:false, pipeWarningFlash:false, pipeCountLimit:30,
+  doublePipesMode:false, tripleGapMode:false, pipeSwayAmount:0, pipeMaterialShine:false,
+  pipeDamageDecals:false, pipeNumberLabels:false, pipeDistanceMarkers:false,
+  // stats
+  showSessionStats:false, showTotalFlaps:false, showTotalDeaths:false, showPlayTime:false,
+  showAverageScore:false, showAccuracyPercent:false, dailyStreakTracker:false, achievementsPopup:false,
+  shareScoreButton:false, qrCodeShare:false, statsOverlayPosition:'topright',
+  // misc2
+  languageSelector:'en', unitSystem:'metric', screenshotButton:false, recordGifButton:false,
+  cloudSaveEnabled:false, importReplayButton:false, exportReplayButton:false, customMusicUpload:false,
+  backgroundMusicVolumeFade:false, loadingScreenTips:false, secretKonamiCode:false, easterEggsEnabled:false,
+  // challenges
+  dailyChallengeEnabled:false, weeklyChallengeEnabled:false, challengeDifficulty:'normal',
+  bonusObjectives:false, scoreGoal:20, timeAttackMode:false, survivalMode:false, zenMode:false,
+  practiceMode:false, speedrunTimer:false, checkpointSystem:false, livesCount:1,
+  comboMultiplierCap:5, streakBonus:false, randomEventsEnabled:false
+};
 
-// Skins
-const skins = [
-  { name:'Classic', body:'#ffd93d', wing:'#ffb703', beak:'#ff6b35' },
-  { name:'Cardinal', body:'#e63946', wing:'#c1121f', beak:'#ffb703' },
-  { name:'Jay', body:'#457b9d', wing:'#1d3557', beak:'#ffb703' },
-  { name:'Parrot', body:'#2a9d8f', wing:'#264653', beak:'#e76f51' },
-  { name:'Rainbow', body:'rainbow', wing:'#fff', beak:'#ff6b35' },
-];
-let currentSkinIndex = parseInt(localStorage.getItem('flapySkin') || '0');
-
-// ===== DOM =====
-const startScreen = document.getElementById('startScreen');
-const gameOverScreen = document.getElementById('gameOverScreen');
-const scoreDisplay = document.getElementById('scoreDisplay');
-const fpsDisplay = document.getElementById('fpsDisplay');
-const skinSelector = document.getElementById('skinSelector');
-const pincodeModal = document.getElementById('pincodeModal');
-const adminModal = document.getElementById('adminModal');
-const pincodeInput = document.getElementById('pincodeInput');
-const pinError = document.getElementById('pinError');
-
-// Build skin selector
-function renderSkins(){
-  skinSelector.innerHTML = '';
-  skins.forEach((s,i) => {
-    const div = document.createElement('div');
-    div.className = 'skin-option' + (i===currentSkinIndex ? ' selected':'');
-    div.style.background = s.body === 'rainbow' 
-      ? 'conic-gradient(red,orange,yellow,green,blue,violet,red)' 
-      : s.body;
-    div.title = s.name;
-    div.onclick = () => {
-      currentSkinIndex = i;
-      localStorage.setItem('flapySkin', i);
-      renderSkins();
-    };
-    skinSelector.appendChild(div);
-  });
+function loadSettings(){
+  var out = {};
+  for(var k in DEFAULTS) out[k]=DEFAULTS[k];
+  try{
+    var raw = safeStorage.getItem('flapyProsSettings');
+    if(raw){
+      var parsed = JSON.parse(raw);
+      for(var k2 in parsed) out[k2]=parsed[k2];
+    }
+  }catch(e){}
+  return out;
 }
-renderSkins();
+var S = loadSettings();
+var customSkinImg = new Image();
+try{
+  var csd = safeStorage.getItem('flapyProsCustomSkin');
+  if(csd){ customSkinImg.src = csd; }
+}catch(e){}
 
-// ===== GAME LOGIC =====
+function persistSettings(){
+  try{
+    var copy = {};
+    for(var k in S) copy[k]=S[k];
+    safeStorage.setItem('flapyProsSettings', JSON.stringify(copy));
+  }catch(e){}
+}
+function saveCustomSkin(dataUrl){
+  try{ safeStorage.setItem('flapyProsCustomSkin', dataUrl); }catch(e){}
+}
+
+var best = 0;
+try{ best = parseInt(safeStorage.getItem('flapyBest')) || 0; }catch(e){ best=0; }
+
+/* ---------- SKINS ---------- */
+var SKINS = [
+  {name:'Classic', body:'#ffcc00', wing:'#e6b800', beak:'#ff6600', shape:'circle'},
+  {name:'Cardinal', body:'#d32f2f', wing:'#8e0000', beak:'#ffa000', shape:'circle'},
+  {name:'Jay', body:'#2979ff', wing:'#0d47a1', beak:'#ff9800', shape:'circle'},
+  {name:'Parrot', body:'#4caf50', wing:'#1b5e20', beak:'#ff5722', shape:'circle'},
+  {name:'Ghost', body:'#eeeeee', wing:'#bdbdbd', beak:'#9e9e9e', shape:'circle'},
+  {name:'Robot', body:'#607d8b', wing:'#37474f', beak:'#ffeb3b', shape:'square'},
+  {name:'Dragon', body:'#8e24aa', wing:'#4a148c', beak:'#ff1744', shape:'diamond'},
+  {name:'Phoenix', body:'#ff5722', wing:'#bf360c', beak:'#ffc107', shape:'star'},
+  {name:'Ice', body:'#80deea', wing:'#26c6da', beak:'#ffffff', shape:'circle'},
+  {name:'Lava', body:'#ff3d00', wing:'#bf360c', beak:'#ffab00', shape:'circle'},
+  {name:'Gold', body:'#ffd700', wing:'#b8860b', beak:'#ff8c00', shape:'circle'},
+  {name:'Zombie', body:'#689f38', wing:'#33691e', beak:'#827717', shape:'square'},
+  {name:'Alien', body:'#00e676', wing:'#00c853', beak:'#1de9b6', shape:'diamond'},
+  {name:'Pirate', body:'#5d4037', wing:'#3e2723', beak:'#ffca28', shape:'circle'},
+  {name:'Ninja', body:'#212121', wing:'#000000', beak:'#616161', shape:'square'},
+  {name:'Royal', body:'#7b1fa2', wing:'#4a148c', beak:'#ffd700', shape:'star'},
+  {name:'Neon', body:'#39ff14', wing:'#00ffff', beak:'#ff00ff', shape:'diamond'},
+  {name:'Custom', body:'#ffffff', wing:'#cccccc', beak:'#999999', shape:'custom'}
+];
+function skinRequiredScore(i){ return i*2; }
+function skinUnlocked(i){ return S.allSkinsUnlocked || best >= skinRequiredScore(i); }
+
+/* ---------- CANVAS ---------- */
+var canvas = document.getElementById('gameCanvas');
+var ctx = canvas.getContext('2d');
+var pixelCanvas = document.createElement('canvas');
+var pixelCtx = pixelCanvas.getContext('2d');
+var DPR = window.devicePixelRatio || 1;
+
+function resizeCanvas(){
+  var q = parseFloat(S.renderQuality) || 1;
+  canvas.width = Math.floor(window.innerWidth * DPR * q);
+  canvas.height = Math.floor(window.innerHeight * DPR * q);
+  canvas.style.width = window.innerWidth + 'px';
+  canvas.style.height = window.innerHeight + 'px';
+}
+window.addEventListener('resize', resizeCanvas);
+window.addEventListener('orientationchange', resizeCanvas);
+document.addEventListener('fullscreenchange', resizeCanvas);
+resizeCanvas();
+
+function updateCanvasFilter(){
+  var f = '';
+  if(S.colorblindMode === 'protanopia') f += 'sepia(0.3) saturate(0.6) ';
+  else if(S.colorblindMode === 'deuteranopia') f += 'saturate(0.5) hue-rotate(-20deg) ';
+  else if(S.colorblindMode === 'tritanopia') f += 'hue-rotate(60deg) saturate(0.7) ';
+  if(S.highContrastMode) f += 'contrast(1.5) ';
+  f += 'contrast('+S.contrast+') saturate('+S.saturation+') hue-rotate('+S.hueRotate+'deg) brightness('+S.ambientBrightness+') ';
+  canvas.style.filter = f.trim();
+}
+updateCanvasFilter();
+
+document.getElementById('fsBtn').onclick = function(){
+  if(!document.fullscreenElement){ document.documentElement.requestFullscreen().catch(function(){}); }
+  else{ document.exitFullscreen().catch(function(){}); }
+};
+
+/* ---------- STATE ---------- */
+var state = 'menu';
+var bird = {x:0,y:0,vy:0,r:16,rot:0};
+var pipes = [];
+var score = 0;
+var pipeSpawnAccum = 0;
+var lastTime = 0;
+var lagCounter = 0;
+var screenShakeTimer = 0;
+var flashAlpha = 0;
+var afterimages = [];
+var weatherParticles = [];
+var fpsFrames = 0, fpsLast = 0, fpsValue = 0;
+var lastFlapTime = -99999;
+var lastBotGapY = null;
+var sessionStart = Date.now();
+var totalFlaps = 0, totalDeaths = 0, scoresHistory = [];
+
 function resetGame(){
-  bird.y = H/2;
+  bird.x = Math.max(80, (canvas.width/DPR)*0.25);
+  bird.y = (canvas.height/DPR)/2;
   bird.vy = 0;
-  bird.rotation = 0;
+  bird.r = S.birdSize;
   pipes = [];
   score = 0;
-  frameCount = 0;
-  scoreDisplay.textContent = '0';
-  spawnPipe();
+  pipeSpawnAccum = 0;
+  afterimages = [];
+  lastBotGapY = null;
+  botMem.lastPipeRef = null;
+  botMem.deciding = false;
+}
+
+function jumpDir(){ return S.reverseGravity ? -1 : 1; }
+
+function flap(){
+  if(state !== 'playing') return;
+  var now = performance.now();
+  if(now - lastFlapTime < S.flapCooldown) return;
+  lastFlapTime = now;
+  bird.vy = (S.reverseGravity ? S.jumpPower : -S.jumpPower);
+  totalFlaps++;
+  if(S.cameraShakeOnFlap) screenShakeTimer = Math.max(screenShakeTimer, 0.08);
+  playTone('flap');
 }
 
 function spawnPipe(){
-  const minTop = 50;
-  const maxTop = groundY - pipeGap - 50;
-  const topHeight = Math.random() * (maxTop - minTop) + minTop;
-  pipes.push({ x: W + 20, top: topHeight, passed:false });
+  var w = (canvas.width/DPR);
+  var h = (canvas.height/DPR);
+  var botAlign = S.botEnabled && S.botAlignPipes;
+  var gap = S.pipeGap + (S.randomGap && !botAlign ? (Math.random()*60-30) : 0);
+  gap = Math.max(70, gap);
+  var margin = 60;
+  var gapY;
+  if(botAlign){
+    if(lastBotGapY === null) lastBotGapY = h/2 - gap/2;
+    gapY = lastBotGapY + (Math.random()*60-30);
+    gapY = Math.max(margin, Math.min(h - margin - gap, gapY));
+    lastBotGapY = gapY;
+  } else {
+    gapY = margin + Math.random() * Math.max(10, (h - margin*2 - gap));
+  }
+  var pw = S.pipeWidth + (S.pipeWidthVariance ? (Math.random()*S.pipeWidthVariance*2 - S.pipeWidthVariance) : 0);
+  pipes.push({x:w+50, gapY:gapY, gap:gap, w:Math.max(20,pw), passed:false, baseGapY:gapY, phase:Math.random()*Math.PI*2});
 }
 
-function flap(){
-  if(state === 'playing' && !botEnabled){
-    bird.vy = jumpPower;
+function nextPipe(){
+  for(var i=0;i<pipes.length;i++){
+    if(pipes[i].x + pipes[i].w > bird.x) return pipes[i];
+  }
+  return null;
+}
+
+/* ---------- AUDIO ---------- */
+var actx = null;
+function ensureAudio(){ if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } }
+function playTone(kind){
+  if(S.muted || !S.sfxEnabled) return;
+  ensureAudio();
+  if(!actx) return;
+  var o = actx.createOscillator();
+  var g = actx.createGain();
+  var freq = 440;
+  if(kind==='flap') freq = 500;
+  if(kind==='score') freq = 800;
+  if(kind==='death') freq = 150;
+  o.type = S.eightBitMode ? 'square' : 'sine';
+  o.frequency.value = freq * S.pitchMult;
+  g.gain.value = 0.15 * S.masterVolume * S.sfxVolume;
+  o.connect(g); g.connect(actx.destination);
+  o.start();
+  g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.2);
+  o.stop(actx.currentTime + 0.21);
+}
+var musicTimer = null;
+function startMusic(){
+  if(musicTimer || !S.musicEnabled || S.muted) return;
+  ensureAudio();
+  if(!actx) return;
+  var notes = [262,330,392,523];
+  var idx = 0;
+  musicTimer = setInterval(function(){
+    if(!actx) return;
+    var o = actx.createOscillator();
+    var g = actx.createGain();
+    o.type = 'triangle';
+    o.frequency.value = notes[idx % notes.length] * S.pitchMult;
+    g.gain.value = 0.08 * S.masterVolume * S.musicVolume;
+    o.connect(g); g.connect(actx.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.4);
+    o.stop(actx.currentTime + 0.42);
+    idx++;
+  }, 450);
+}
+function stopMusic(){ if(musicTimer){ clearInterval(musicTimer); musicTimer=null; } }
+
+/* ---------- COLLISION / SCORE ---------- */
+function checkCollisions(){
+  var h = canvas.height/DPR;
+  if(S.godMode) return;
+  if(S.ceilingCollision && bird.y - bird.r < 0){ triggerDeath(); return; }
+  if(S.groundCollision && bird.y + bird.r > h - 50){ triggerDeath(); return; }
+  for(var i=0;i<pipes.length;i++){
+    var p = pipes[i];
+    if(bird.x + bird.r > p.x && bird.x - bird.r < p.x + p.w){
+      if(bird.y - bird.r < p.gapY || bird.y + bird.r > p.gapY + p.gap){
+        triggerDeath(); return;
+      }
+    }
   }
 }
-
-function startGame(){
-  state = 'playing';
-  startScreen.classList.add('hidden');
-  gameOverScreen.classList.add('hidden');
-  resetGame();
+function addScore(n){
+  score += n * S.scoreMultiplier;
+  playTone('score');
+  mpSend({t:'score', v:score});
+  flashAlpha = S.flashOnScore ? 0.3 : 0;
+  if(S.botEnabled && S.botCelebrateOnScore) botMem.celebrateTimer = 0.5;
+}
+function triggerDeath(){
+  if(state !== 'playing') return;
+  if(S.infiniteLives){ resetGame(); return; }
+  state = 'dead';
+  totalDeaths++;
+  scoresHistory.push(score);
+  playTone('death');
+  mpSend({t:'dead'});
+  if(score > best){ best = Math.floor(score); try{ safeStorage.setItem('flapyBest', best); }catch(e){} }
+  document.getElementById('finalScore').textContent = 'Score: ' + Math.floor(score) + '  Best: ' + best;
+  document.getElementById('over').classList.remove('hidden');
+  if(S.screenShakeEnabled && S.cameraShakeOnDeath) screenShakeTimer = 0.4;
+  if(S.autoRestart){ setTimeout(function(){ if(state==='dead'){ startGame(); } }, 900); }
 }
 
-function endGame(){
-  if(godMode) return; // can't die in god mode
-  state = 'gameover';
-  if(score > bestScore){
-    bestScore = score;
-    localStorage.setItem('flapyBest', bestScore);
-  }
-  document.getElementById('finalScore').textContent = score;
-  document.getElementById('bestScore').textContent = bestScore;
-  gameOverScreen.classList.remove('hidden');
-}
+/* ---------- BOT (human-mimic + safety net) ---------- */
+var botMem = { lastPipeRef:null, perTargetOffset:0, deciding:false, decisionStartTime:0, celebrateTimer:0, blinkTimer:0 };
 
-// Bot AI
-function runBot(){
-  if(!botEnabled || pipes.length === 0) return;
-  // find next pipe ahead of bird
-  let target = null;
-  for(const p of pipes){
-    if(p.x + pipeWidth > bird.x){ target = p; break; }
+function botThink(dt){
+  if(!S.botEnabled || state !== 'playing') return;
+  var pipe = nextPipe();
+  if(!pipe) return;
+
+  if(pipe !== botMem.lastPipeRef){
+    botMem.lastPipeRef = pipe;
+    var accuracyErr = (100 - S.botAccuracy) / 100;
+    botMem.perTargetOffset = (Math.random()*2 - 1) * (8 + accuracyErr * 55);
+    botMem.deciding = false;
   }
-  if(!target){
-    // no pipe, just hover mid
-    if(bird.y > H/2) bird.vy = jumpPower;
+
+  var gapTop = pipe.gapY, gapBottom = pipe.gapY + pipe.gap;
+  var center = (gapTop + gapBottom) / 2 + botMem.perTargetOffset;
+  var tolerance = 14 + (100 - S.botAccuracy) * 0.35;
+
+  // --- SAFETY NET (always on, strength scales with accuracy) ---
+  var g = (S.reverseGravity ? -S.gravity : S.gravity);
+  var lookaheadT = 0.22;
+  var predY = bird.y + bird.vy*lookaheadT + 0.5*g*lookaheadT*lookaheadT;
+  var h = canvas.height/DPR;
+  var inPipeZone = (pipe.x - bird.x) < 170;
+  var safetyStrength = S.botAccuracy / 100;
+  var danger = false;
+  if(inPipeZone && predY + bird.r > gapBottom - 8) danger = true;
+  if(inPipeZone && predY - bird.r < gapTop + 8 && bird.vy < 0 && S.reverseGravity) danger = true;
+  if(bird.y + bird.r > h - 70) danger = true;
+  if(bird.y - bird.r < 10 && S.reverseGravity) danger = true;
+
+  if(danger && Math.random() < safetyStrength){
+    flap();
+    botMem.deciding = false;
     return;
   }
-  const gapCenter = target.top + pipeGap/2;
-  // predict future position, flap if below desired threshold
-  if(bird.y > gapCenter - 5){
-    bird.vy = jumpPower;
+
+  // --- HUMAN-LIKE DECISION LAYER ---
+  var wantsFlap = S.reverseGravity ? (bird.y < center - tolerance*0.3) : (bird.y > center + tolerance*0.3);
+
+  if(!wantsFlap && S.botOvershootChance > 0 && Math.random() < S.botOvershootChance * (1 - S.botConfidence) * dt * 4){
+    wantsFlap = true;
   }
-}
 
-function update(){
-  frameCount++;
-
-  if(state === 'playing'){
-    runBot();
-
-    bird.vy += gravity * gameSpeedMult;
-    bird.y += bird.vy * gameSpeedMult;
-    bird.rotation = Math.max(-25, Math.min(90, bird.vy * 4));
-
-    // Move pipes
-    for(const p of pipes){
-      p.x -= pipeSpeed * gameSpeedMult;
-      if(!p.passed && p.x + pipeWidth < bird.x){
-        p.passed = true;
-        score++;
-        scoreDisplay.textContent = score;
-      }
-    }
-    // remove offscreen
-    pipes = pipes.filter(p => p.x > -pipeWidth);
-    // spawn new
-    if(pipes.length === 0 || pipes[pipes.length-1].x < W - 200){
-      spawnPipe();
-    }
-
-    // Collisions
-    if(!godMode){
-      if(bird.y + bird.r > groundY || bird.y - bird.r < 0){
-        endGame();
-      }
-      for(const p of pipes){
-        if(bird.x + bird.r > p.x && bird.x - bird.r < p.x + pipeWidth){
-          if(bird.y - bird.r < p.top || bird.y + bird.r > p.top + pipeGap){
-            endGame();
-          }
-        }
-      }
-    } else {
-      // keep bird in bounds visually even in god mode
-      if(bird.y - bird.r < 0) bird.y = bird.r;
-      if(bird.y + bird.r > groundY) bird.y = groundY - bird.r;
+  if(wantsFlap && !botMem.deciding){
+    botMem.deciding = true;
+    botMem.decisionStartTime = performance.now();
+    if(S.botHesitation && Math.random() < 0.12){
+      botMem.deciding = false;
+      return;
     }
   }
-}
-
-// ===== RENDERING =====
-function drawBackground(){
-  const grad = ctx.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0,'#70c5ce');
-  grad.addColorStop(1,'#a8e6e6');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0,0,W,H);
-
-  // clouds
-  ctx.fillStyle = 'rgba(255,255,255,0.6)';
-  for(let i=0;i<3;i++){
-    const cx = ((frameCount*0.2 + i*150) % (W+100)) - 50;
-    const cy = 80 + i*60;
-    ctx.beginPath();
-    ctx.arc(cx,cy,20,0,Math.PI*2);
-    ctx.arc(cx+20,cy+5,25,0,Math.PI*2);
-    ctx.arc(cx-20,cy+5,18,0,Math.PI*2);
-    ctx.fill();
+  if(botMem.deciding){
+    var elapsed = performance.now() - botMem.decisionStartTime;
+    var reaction = S.botHumanMimic ? S.botReactionTimeMs : 0;
+    if(elapsed >= reaction){
+      flap();
+      botMem.deciding = false;
+    }
   }
+  if(!wantsFlap) botMem.deciding = false;
 }
 
-function drawPipes(){
-  for(const p of pipes){
-    const grad = ctx.createLinearGradient(p.x,0,p.x+pipeWidth,0);
-    grad.addColorStop(0,'#2ecc71');
-    grad.addColorStop(0.5,'#27ae60');
-    grad.addColorStop(1,'#2ecc71');
-    ctx.fillStyle = grad;
-    // top pipe
-    ctx.fillRect(p.x, 0, pipeWidth, p.top);
-    ctx.fillRect(p.x-4, p.top-20, pipeWidth+8, 20);
-    // bottom pipe
-    const bottomY = p.top + pipeGap;
-    ctx.fillRect(p.x, bottomY, pipeWidth, groundY - bottomY);
-    ctx.fillRect(p.x-4, bottomY, pipeWidth+8, 20);
-
-    ctx.strokeStyle = '#1e8449';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(p.x, 0, pipeWidth, p.top);
-    ctx.strokeRect(p.x, bottomY, pipeWidth, groundY - bottomY);
+/* ---------- WEATHER ---------- */
+function updateWeather(dt){
+  if(!S.particlesEnabled || S.reduceMotion || S.weather === 'none') return;
+  var w = canvas.width/DPR, h = canvas.height/DPR;
+  if(Math.random() < (S.weather==='rain'?0.6:0.3)){
+    weatherParticles.push({
+      x: Math.random()*w, y:-10,
+      vy: S.weather==='rain' ? S.rainSpeed+Math.random()*200 : 40+Math.random()*40,
+      vx: S.weather==='snow' ? (Math.random()*40-20) : Math.tan(S.rainAngle*Math.PI/180)*-200,
+      size: S.weather==='snow' ? 2+Math.random()*(2+S.snowflakeSizeVariance) : 1
+    });
   }
-}
-
-function drawGround(){
-  ctx.fillStyle = '#ded895';
-  ctx.fillRect(0, groundY, W, H-groundY);
-  ctx.fillStyle = '#8b5a2b';
-  ctx.fillRect(0, groundY, W, 8);
-  // texture lines
-  ctx.strokeStyle = '#c9bb6a';
-  ctx.lineWidth = 2;
-  const offset = (frameCount * pipeSpeed * gameSpeedMult) % 20;
-  for(let x = -offset; x < W; x += 20){
-    ctx.beginPath();
-    ctx.moveTo(x, groundY+8);
-    ctx.lineTo(x+10, H);
-    ctx.stroke();
+  for(var i=weatherParticles.length-1;i>=0;i--){
+    var p = weatherParticles[i];
+    p.y += p.vy*dt; p.x += p.vx*dt;
+    if(p.y > h) weatherParticles.splice(i,1);
   }
+  if(weatherParticles.length > 400) weatherParticles.splice(0, weatherParticles.length-400);
 }
-
-function drawBird(){
-  const skin = skins[currentSkinIndex];
+function drawWeatherParticles(){
+  if(!S.particlesEnabled || S.weather==='none') return;
   ctx.save();
-  ctx.translate(bird.x, bird.y);
-  ctx.rotate(bird.rotation * Math.PI/180);
-
-  let bodyColor = skin.body;
-  if(bodyColor === 'rainbow'){
-    const hue = (frameCount*4) % 360;
-    bodyColor = `hsl(${hue},80%,60%)`;
+  ctx.scale(DPR,DPR);
+  if(S.weather === 'rain'){
+    ctx.strokeStyle = 'rgba(200,220,255,0.6)';
+    ctx.lineWidth = 1;
+    weatherParticles.forEach(function(p){
+      ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x-4,p.y+14); ctx.stroke();
+    });
+  } else if(S.weather === 'snow'){
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    weatherParticles.forEach(function(p){
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,7); ctx.fill();
+    });
   }
-
-  // wing
-  ctx.fillStyle = skin.wing;
-  ctx.beginPath();
-  ctx.ellipse(-4, 4, 9, 6, Math.sin(frameCount*0.3)*0.3, 0, Math.PI*2);
-  ctx.fill();
-
-  // body
-  ctx.fillStyle = bodyColor;
-  ctx.beginPath();
-  ctx.arc(0,0,bird.r,0,Math.PI*2);
-  ctx.fill();
-
-  // eye
-  ctx.fillStyle = '#fff';
-  ctx.beginPath();
-  ctx.arc(6,-4,4,0,Math.PI*2);
-  ctx.fill();
-  ctx.fillStyle = '#000';
-  ctx.beginPath();
-  ctx.arc(7,-4,2,0,Math.PI*2);
-  ctx.fill();
-
-  // beak
-  ctx.fillStyle = skin.beak;
-  ctx.beginPath();
-  ctx.moveTo(10,0);
-  ctx.lineTo(20,-2);
-  ctx.lineTo(10,5);
-  ctx.closePath();
-  ctx.fill();
-
   ctx.restore();
 }
 
-function render(){
-  drawBackground();
-  drawPipes();
-  drawGround();
-  if(state !== 'menu') drawBird();
-  else {
-    // idle bird bob on menu
-    bird.y = H/2 + Math.sin(frameCount*0.05)*10;
-    drawBird();
+/* ---------- UPDATE ---------- */
+function update(dt){
+  if(S.slowMoNearMiss){
+    var np = nextPipe();
+    if(np && Math.abs((np.x)-bird.x) < 40) dt *= 0.5;
   }
+  var g = (S.reverseGravity ? -S.gravity : S.gravity);
+  if(!S.autoFlap) bird.vy += g*dt;
+  else bird.vy = Math.sin(performance.now()/200) * S.jumpPower * 0.5;
+
+  if(S.windForce) bird.vy += Math.sin(performance.now()/500) * S.windForce * dt;
+
+  var maxFall = S.maxFallSpeed, maxRise = -S.maxRiseSpeed;
+  if(bird.vy > maxFall) bird.vy = maxFall;
+  if(bird.vy < maxRise) bird.vy = maxRise;
+
+  bird.y += bird.vy*dt;
+  bird.rot = Math.max(-30,Math.min(90, bird.vy*0.08)) * S.rotationSpeedMult;
+  if(S.oscillationEnabled) bird.y += Math.sin(performance.now()/150) * S.oscillationAmount * dt;
+
+  botThink(dt);
+
+  var speed = S.pipeSpeed * S.gameSpeed;
+  pipeSpawnAccum += speed*dt;
+  var spawnDist = Math.max(180, 380 * S.pipeSpacing);
+  if((pipes.length === 0 || pipeSpawnAccum >= spawnDist) && pipes.length < S.pipeCountLimit){
+    spawnPipe();
+    pipeSpawnAccum = 0;
+  }
+
+  var w = canvas.width/DPR;
+  var h = canvas.height/DPR;
+  var botAlign = S.botEnabled && S.botAlignPipes;
+  for(var i=pipes.length-1;i>=0;i--){
+    var p = pipes[i];
+    p.x -= speed*dt;
+    if(S.movingPipes && !botAlign){
+      p.phase += dt*(S.pipeMoveSpeed/40);
+      if(S.pipeMovePattern === 'sine'){
+        p.gapY = p.baseGapY + Math.sin(p.phase)*S.pipeMoveAmplitude;
+      } else if(S.pipeMovePattern === 'linear'){
+        p.gapY += Math.sin(p.phase)>0 ? 10*dt*S.pipeMoveSpeed/40 : -10*dt*S.pipeMoveSpeed/40;
+      } else if(S.pipeMovePattern === 'random'){
+        p.gapY += (Math.random()*2-1)*S.pipeMoveAmplitude*dt;
+      }
+      p.gapY = Math.max(30, Math.min(h-130-p.gap, p.gapY));
+    }
+    if(S.magnetPipesAway && Math.abs(p.x-bird.x) < 100){
+      p.gapY += (bird.y - (p.gapY+p.gap/2)) * dt * 0.5;
+    }
+    if(!p.passed && p.x + p.w < bird.x){
+      p.passed = true;
+      addScore(1);
+    }
+    if(p.x + p.w < -60) pipes.splice(i,1);
+  }
+
+  if(S.trailEnabled && S.particlesEnabled && !S.reduceMotion){
+    afterimages.push({x:bird.x,y:bird.y,life:0.4});
+  }
+  for(var j=afterimages.length-1;j>=0;j--){
+    afterimages[j].life -= dt;
+    if(afterimages[j].life <= 0) afterimages.splice(j,1);
+  }
+  if(botMem.celebrateTimer > 0) botMem.celebrateTimer -= dt;
+
+  updateWeather(dt);
+  checkCollisions();
+  if(flashAlpha > 0) flashAlpha = Math.max(0, flashAlpha - dt*0.8);
+  if(screenShakeTimer > 0) screenShakeTimer = Math.max(0, screenShakeTimer - dt);
+
+  mpSend({t:'pos', y:bird.y});
 }
 
-// ===== GAME LOOP with LAG SIMULATION =====
-let lastTime = performance.now();
-let fpsCounter = 0, fpsTimer = 0, displayFps = 60;
-
-function gameLoop(now){
-  const dt = now - lastTime;
-  lastTime = now;
-  fpsCounter++;
-  fpsTimer += dt;
-  if(fpsTimer >= 500){
-    displayFps = Math.round(fpsCounter * 1000 / fpsTimer);
-    fpsDisplay.textContent = 'FPS: ' + displayFps;
-    fpsCounter = 0; fpsTimer = 0;
-  }
-
-  // lag simulation: skip updates/renders based on lagLevel
-  lagFrameSkip++;
-  const skipThreshold = [1,2,4,8,16][lagLevel] || 1;
-  if(lagFrameSkip % skipThreshold === 0){
-    update();
-    render();
-  }
-
-  requestAnimationFrame(gameLoop);
+function idleMenuUpdate(dt){
+  updateWeather(dt*0.3);
 }
-requestAnimationFrame(gameLoop);
 
-// ===== INPUT =====
-document.addEventListener('keydown', e => {
-  if(e.code === 'Space'){
-    e.preventDefault();
-    flap();
+/* ---------- DRAW ---------- */
+function drawSky(){
+  var w = canvas.width/DPR, h = canvas.height/DPR;
+  ctx.save(); ctx.scale(DPR,DPR);
+  var top = S.skyTopColor, bot = S.skyBottomColor;
+  if(S.skyTheme === 'sunset'){ top='#ff9966'; bot='#ffcc99'; }
+  else if(S.skyTheme === 'night'){ top='#0b1026'; bot='#1b2a4a'; }
+  else if(S.skyTheme === 'space'){ top='#000010'; bot='#0a0a2a'; }
+  var grad = ctx.createLinearGradient(0,0,0,h);
+  grad.addColorStop(0, top); grad.addColorStop(1, bot);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,w,h);
+
+  // time-of-day darkening overlay
+  var nightFactor = Math.max(0, Math.sin((S.timeOfDay/24)*Math.PI*2 - Math.PI/2)) * -1;
+  var darken = Math.max(0, (6 - Math.min(Math.abs(S.timeOfDay-0), Math.abs(S.timeOfDay-24)))/6);
+  if(S.timeOfDay < 6 || S.timeOfDay > 20){
+    ctx.fillStyle = 'rgba(0,0,30,0.35)';
+    ctx.fillRect(0,0,w,h);
+  } else if(S.timeOfDay < 8 || S.timeOfDay > 18){
+    ctx.fillStyle = 'rgba(255,140,60,0.12)';
+    ctx.fillRect(0,0,w,h);
   }
-});
-canvas.addEventListener('mousedown', flap);
-canvas.addEventListener('touchstart', e => { e.preventDefault(); flap(); });
 
-document.getElementById('playBtn').onclick = startGame;
-document.getElementById('restartBtn').onclick = startGame;
-document.getElementById('menuBtn').onclick = () => {
-  state = 'menu';
-  gameOverScreen.classList.add('hidden');
-  startScreen.classList.remove('hidden');
-};
-
-// ===== ADMIN PANEL LOGIC =====
-const ADMIN_PIN = '1677';
-
-document.getElementById('adminOpenBtn').onclick = () => {
-  pincodeModal.classList.remove('hidden');
-  pincodeInput.value = '';
-  pinError.textContent = '';
-  pincodeInput.focus();
-};
-document.getElementById('closePincode').onclick = () => pincodeModal.classList.add('hidden');
-
-document.getElementById('submitPin').onclick = checkPin;
-pincodeInput.addEventListener('keydown', e => { if(e.key === 'Enter') checkPin(); });
-
-function checkPin(){
-  if(pincodeInput.value === ADMIN_PIN){
-    pincodeModal.classList.add('hidden');
-    adminModal.classList.remove('hidden');
-    pinError.textContent = '';
+  if(S.skyTheme === 'night' || S.skyTheme === 'space'){
+    ctx.fillStyle = '#fff';
+    for(var i=0;i<S.starCount;i++){
+      var sx = (i*53.7)%w, sy=(i*91.3)%h;
+      ctx.globalAlpha = 0.3+Math.sin(performance.now()/500*S.starTwinkleSpeed+i)*0.3+0.3;
+      ctx.fillRect(sx,sy,2,2);
+    }
+    ctx.globalAlpha = 1;
+    if(S.moonVisible){
+      ctx.fillStyle = '#eee';
+      ctx.beginPath(); ctx.arc(w-60,60,24*S.moonPhase+6,0,7); ctx.fill();
+    }
+  }
+  if(S.skyTheme === 'day' && S.sunGlow){
+    ctx.save();
+    ctx.shadowColor = '#fff59d'; ctx.shadowBlur = 30;
+    ctx.fillStyle = '#fff59d';
+    ctx.beginPath(); ctx.arc(w-70,60,S.sunSize,0,7); ctx.fill();
+    ctx.restore();
+  }
+  if(S.fogEnabled){
+    var fgrad = ctx.createLinearGradient(0,h*0.5,0,h-50);
+    fgrad.addColorStop(0,'rgba(0,0,0,0)');
+    var c = S.fogColor;
+    fgrad.addColorStop(1, hexToRgba(c, S.fogDensity));
+    ctx.fillStyle = fgrad;
+    ctx.fillRect(0,h*0.5,w,h*0.5-50);
+  }
+  if(S.auroraEnabled && (S.skyTheme==='night'||S.skyTheme==='space')){
+    ctx.save();
+    ctx.globalAlpha = 0.25;
+    var ag = ctx.createLinearGradient(0,0,0,h*0.4);
+    ag.addColorStop(0,'#00ff99'); ag.addColorStop(1,'rgba(0,255,153,0)');
+    ctx.fillStyle = ag;
+    ctx.fillRect(0,0,w,h*0.4);
+    ctx.restore();
+  }
+  ctx.restore();
+}
+function hexToRgba(hex, a){
+  var r=0,g=0,b=0;
+  if(hex.length===7){ r=parseInt(hex.substr(1,2),16); g=parseInt(hex.substr(3,2),16); b=parseInt(hex.substr(5,2),16); }
+  return 'rgba('+r+','+g+','+b+','+a+')';
+}
+var cloudOffsets = [];
+function drawClouds(){
+  if(!S.backgroundParallax || S.reduceMotion) return;
+  var w = canvas.width/DPR, h = canvas.height/DPR;
+  ctx.save(); ctx.scale(DPR,DPR);
+  ctx.fillStyle = 'rgba(255,255,255,' + S.cloudOpacity + ')';
+  var n = S.cloudCount;
+  for(var i=0;i<n;i++){
+    if(cloudOffsets[i] === undefined) cloudOffsets[i] = Math.random()*w;
+    cloudOffsets[i] -= S.cloudSpeed*0.005;
+    if(cloudOffsets[i] < -80) cloudOffsets[i] = w+80;
+    var cx = cloudOffsets[i], cy = 40+ (i*47)%(h*0.4);
+    ctx.beginPath();
+    ctx.arc(cx,cy,20,0,7); ctx.arc(cx+20,cy+5,16,0,7); ctx.arc(cx-20,cy+5,16,0,7);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+function drawGround(){
+  var w = canvas.width/DPR, h = canvas.height/DPR;
+  ctx.save(); ctx.scale(DPR,DPR);
+  var top = S.groundTopColor, bot = S.groundBottomColor;
+  if(S.groundTheme === 'sand'){ top='#e6d2a8'; bot='#c9ab6a'; }
+  else if(S.groundTheme === 'snow'){ top='#ffffff'; bot='#dce6f0'; }
+  else if(S.groundTheme === 'city'){ top='#777'; bot='#444'; }
+  var grad = ctx.createLinearGradient(0,h-50,0,h);
+  grad.addColorStop(0, top); grad.addColorStop(1, bot);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,h-50,w,50);
+  ctx.fillStyle = 'rgba(0,0,0,0.15)';
+  for(var x=0;x<w;x+=16){
+    var by = h-50+Math.sin(x*0.3)*S.groundBumpiness*0.3;
+    ctx.fillRect(x,by,8,4);
+  }
+  if(S.cityDensity > 0 && S.groundTheme === 'city'){
+    ctx.fillStyle = 'rgba(40,40,50,0.5)';
+    for(var bx=0; bx<w; bx+=w/S.cityDensity){
+      var bh = 20 + ((bx*13)%40);
+      ctx.fillRect(bx, h-50-bh, w/S.cityDensity-4, bh);
+    }
+  }
+  ctx.restore();
+}
+function pipeColorFor(part){
+  if(S.pipeRainbow){
+    var hue = (performance.now()/10) % 360;
+    return 'hsl('+hue+',70%,50%)';
+  }
+  if(S.pipeTheme === 'metal') return part==='body'?'#90a4ae':(part==='cap'?'#546e7a':(part==='hl'?'#cfd8dc':'#37474f'));
+  if(S.pipeTheme === 'candy') return part==='body'?'#f06292':(part==='cap'?'#c2185b':(part==='hl'?'#f8bbd0':'#880e4f'));
+  if(S.pipeTheme === 'neon') return part==='body'?'#39ff14':(part==='cap'?'#00ffff':(part==='hl'?'#aaffaa':'#008800'));
+  return part==='body'?S.pipeColorBody:(part==='cap'?S.pipeColorCap:(part==='hl'?S.pipeColorHighlight:S.pipeColorShadow));
+}
+function drawPipeRect(x,y,w,h){
+  ctx.beginPath();
+  if(S.pipeRoundedCorners && w>0 && h>0){
+    var r = Math.min(10, w/3, h/3);
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+    ctx.fill();
   } else {
-    pinError.textContent = '❌ Wrong pincode!';
+    ctx.rect(x,y,w,h);
+    ctx.fill();
+  }
+  if(S.pipeOutlineEnabled){
+    ctx.strokeStyle = S.pipeOutlineColor;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+}
+function drawPipes(){
+  var h = canvas.height/DPR;
+  ctx.save(); ctx.scale(DPR,DPR);
+  ctx.globalAlpha = S.pipeTransparency;
+  pipes.forEach(function(p){
+    if(S.glowEnabled || S.bloomEnabled){ ctx.shadowColor = S.pipeGlowColor; ctx.shadowBlur = 16; } else { ctx.shadowBlur = 0; }
+    ctx.fillStyle = pipeColorFor('body');
+    drawPipeRect(p.x, 0, p.w, p.gapY);
+    drawPipeRect(p.x, p.gapY+p.gap, p.w, h-50-(p.gapY+p.gap));
+    ctx.fillStyle = pipeColorFor('cap');
+    var capH = S.pipeCapStyle === 'spike' ? 28 : 20;
+    if(S.pipeCapStyle !== 'flat'){
+      ctx.fillRect(p.x-4, p.gapY-capH, p.w+8, capH);
+      ctx.fillRect(p.x-4, p.gapY+p.gap, p.w+8, capH);
+    }
+    ctx.fillStyle = pipeColorFor('hl');
+    ctx.fillRect(p.x+4, 0, 6, p.gapY);
+    ctx.shadowBlur = 0;
+    if(S.hitboxEnabled){
+      ctx.strokeStyle = '#ff0000';
+      ctx.strokeRect(p.x,0,p.w,p.gapY);
+      ctx.strokeRect(p.x,p.gapY+p.gap,p.w,h-50-(p.gapY+p.gap));
+    }
+    if(S.doublePipesMode){
+      ctx.globalAlpha = S.pipeTransparency*0.3;
+      ctx.fillStyle = pipeColorFor('body');
+      ctx.fillRect(p.x+10, 0, p.w, Math.max(0,p.gapY-20));
+      ctx.fillRect(p.x+10, p.gapY+p.gap+20, p.w, Math.max(0,h-50-(p.gapY+p.gap+20)));
+      ctx.globalAlpha = S.pipeTransparency;
+    }
+  });
+  ctx.globalAlpha = 1;
+  ctx.restore();
+}
+function drawTrail(){
+  if(!S.trailEnabled || !S.particlesEnabled) return;
+  ctx.save(); ctx.scale(DPR,DPR);
+  afterimages.forEach(function(a){
+    ctx.globalAlpha = Math.max(0,a.life/0.4)*0.4;
+    ctx.fillStyle = S.trailColor;
+    ctx.beginPath(); ctx.arc(a.x,a.y,bird.r*0.8,0,7); ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+  ctx.restore();
+}
+function drawShapePath(shape, r){
+  ctx.beginPath();
+  if(shape === 'square'){ ctx.rect(-r,-r,r*2,r*2); }
+  else if(shape === 'diamond'){ ctx.moveTo(0,-r); ctx.lineTo(r,0); ctx.lineTo(0,r); ctx.lineTo(-r,0); ctx.closePath(); }
+  else if(shape === 'star'){
+    for(var i=0;i<10;i++){
+      var ang = (Math.PI/5)*i - Math.PI/2;
+      var rad = i%2===0 ? r : r*0.5;
+      var px = Math.cos(ang)*rad, py = Math.sin(ang)*rad;
+      if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.closePath();
+  } else { ctx.arc(0,0,r,0,7); }
+}
+function drawBird(){
+  var skin = SKINS[S.currentSkin] || SKINS[0];
+  var shape = S.birdShapeOverride !== 'auto' ? S.birdShapeOverride : skin.shape;
+  var body = S.useCustomColors ? S.customBody : skin.body;
+  var wing = S.useCustomColors ? S.customWing : skin.wing;
+  var beak = S.useCustomColors ? S.customBeak : skin.beak;
+  ctx.save(); ctx.scale(DPR,DPR);
+  var sway = (S.botEnabled && S.botIdleSway) ? Math.sin(performance.now()/300)*1.5 : 0;
+  ctx.translate(bird.x, bird.y+sway);
+  if(S.botEnabled && botMem.celebrateTimer > 0) ctx.rotate(Math.sin(performance.now()/40)*0.3);
+  else if(S.birdTilt) ctx.rotate((bird.rot||0)*Math.PI/180);
+
+  if(shape === 'custom' && customSkinImg.complete && customSkinImg.naturalWidth){
+    var r = bird.r;
+    ctx.drawImage(customSkinImg, -r, -r, r*2, r*2);
+  } else {
+    if(S.outlineVisible){ ctx.strokeStyle = S.outlineColor; ctx.lineWidth = 2; }
+    ctx.fillStyle = body;
+    drawShapePath(shape, bird.r);
+    ctx.fill();
+    if(S.outlineVisible) ctx.stroke();
+    ctx.fillStyle = wing;
+    ctx.beginPath(); ctx.ellipse(-2,4,bird.r*0.5,bird.r*0.3,0,0,7); ctx.fill();
+    ctx.fillStyle = beak;
+    ctx.beginPath(); ctx.moveTo(bird.r*0.7,-2); ctx.lineTo(bird.r*1.3,2); ctx.lineTo(bird.r*0.7,6); ctx.closePath(); ctx.fill();
+    if(S.eyeVisible){
+      var blink = (S.botEnabled && S.botBlinkEyes && Math.sin(performance.now()/800) > 0.95);
+      ctx.fillStyle = S.customEye || '#000';
+      if(!blink){ ctx.beginPath(); ctx.arc(bird.r*0.3,-bird.r*0.3,2.5,0,7); ctx.fill(); }
+      else { ctx.fillRect(bird.r*0.1,-bird.r*0.3,4,1); }
+    }
+  }
+  if(S.hitboxEnabled){
+    ctx.strokeStyle = '#f0f';
+    ctx.beginPath(); ctx.arc(0,0,bird.r,0,7); ctx.stroke();
+  }
+  ctx.restore();
+
+  if(S.botEnabled && S.botShowThoughtBubble && botMem.deciding){
+    ctx.save(); ctx.scale(DPR,DPR);
+    ctx.fillStyle = '#fff';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('…', bird.x+bird.r, bird.y-bird.r-10);
+    ctx.restore();
+  }
+  if(S.botEnabled && S.botNameLabel){
+    ctx.save(); ctx.scale(DPR,DPR);
+    ctx.fillStyle = '#fff';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(S.botNameLabel, bird.x, bird.y - bird.r - 14);
+    ctx.restore();
+  }
+}
+function drawPeerGhost(){
+  if(!mpConnected || !S.mpShowGhost || peerState.y === null) return;
+  ctx.save(); ctx.scale(DPR,DPR);
+  ctx.globalAlpha = 0.5;
+  ctx.fillStyle = '#00e5ff';
+  ctx.beginPath(); ctx.arc(bird.x+70, peerState.y, bird.r, 0, 7); ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.restore();
+}
+function drawBotPath(){
+  if(!S.botEnabled || !S.botPathVisualization) return;
+  var p = nextPipe(); if(!p) return;
+  ctx.save(); ctx.scale(DPR,DPR);
+  ctx.strokeStyle = 'rgba(0,255,0,0.5)';
+  ctx.beginPath(); ctx.moveTo(bird.x,bird.y); ctx.lineTo(p.x+p.w/2, p.gapY+p.gap/2); ctx.stroke();
+  ctx.restore();
+}
+
+/* post effects */
+function applyCameraTransform(){
+  if(S.cameraZoom === 1 && S.cameraRotation === 0 && S.cameraOffsetX===0 && S.cameraOffsetY===0) return;
+  var w = canvas.width, h = canvas.height;
+  ctx.save();
+  ctx.translate(w/2 + S.cameraOffsetX*DPR, h/2 + S.cameraOffsetY*DPR);
+  ctx.rotate(S.cameraRotation*Math.PI/180);
+  ctx.scale(S.cameraZoom,S.cameraZoom);
+  ctx.translate(-w/2,-h/2);
+  ctx.drawImage(canvas,0,0);
+  ctx.restore();
+}
+function applyMirror(){
+  if(!S.mirrorScreen) return;
+  ctx.save();
+  ctx.translate(canvas.width,0);
+  ctx.scale(-1,1);
+  ctx.drawImage(canvas,0,0);
+  ctx.restore();
+}
+function applyScreenShake(){
+  if(!S.screenShakeEnabled || screenShakeTimer <= 0) return;
+  var ox = (Math.random()-0.5)*S.screenShakeIntensity*DPR;
+  var oy = (Math.random()-0.5)*S.screenShakeIntensity*DPR;
+  ctx.save();
+  ctx.drawImage(canvas, ox, oy);
+  ctx.restore();
+}
+function applyPixelation(){
+  if(S.pixelation <= 1) return;
+  var w = Math.max(1, Math.floor(canvas.width / S.pixelation));
+  var h = Math.max(1, Math.floor(canvas.height / S.pixelation));
+  pixelCanvas.width = w; pixelCanvas.height = h;
+  pixelCtx.imageSmoothingEnabled = false;
+  pixelCtx.drawImage(canvas,0,0,w,h);
+  ctx.imageSmoothingEnabled = false;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(pixelCanvas,0,0,w,h,0,0,canvas.width,canvas.height);
+  ctx.imageSmoothingEnabled = true;
+}
+function applyChromaticAberration(){
+  if(S.chromaticAberration <= 0) return;
+  var off = S.chromaticAberration*DPR;
+  ctx.save();
+  ctx.globalAlpha = 0.5;
+  ctx.globalCompositeOperation = 'screen';
+  ctx.drawImage(canvas, -off, 0);
+  ctx.drawImage(canvas, off, 0);
+  ctx.restore();
+}
+function applyBloom(){
+  if(!S.bloomEnabled) return;
+  ctx.save();
+  ctx.filter = 'blur(' + (S.bloomStrength/5) + 'px)';
+  ctx.globalAlpha = 0.35;
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.drawImage(canvas,0,0);
+  ctx.restore();
+}
+function applyInvert(){
+  if(!S.invertColors) return;
+  ctx.save();
+  ctx.filter = 'invert(1)';
+  ctx.drawImage(canvas,0,0);
+  ctx.restore();
+}
+function drawGrid(){
+  ctx.save(); ctx.scale(DPR,DPR);
+  ctx.strokeStyle = S.gridColor; ctx.globalAlpha = 0.3;
+  var w = canvas.width/DPR, h = canvas.height/DPR;
+  for(var x=0;x<w;x+=40){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+  for(var y=0;y<h;y+=40){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+  ctx.globalAlpha = 1;
+  ctx.restore();
+}
+function drawVignette(){
+  var w = canvas.width, h = canvas.height;
+  var grad = ctx.createRadialGradient(w/2,h/2,h*0.3,w/2,h/2,h*0.75);
+  grad.addColorStop(0,'rgba(0,0,0,0)');
+  grad.addColorStop(1,'rgba(0,0,0,'+S.vignetteStrength+')');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,w,h);
+}
+function drawScanlines(){
+  ctx.save();
+  ctx.globalAlpha = S.scanlineOpacity;
+  ctx.fillStyle = '#000';
+  for(var y=0;y<canvas.height;y+=4*DPR){ ctx.fillRect(0,y,canvas.width,1*DPR); }
+  ctx.restore();
+}
+
+function drawHUD(){
+  ctx.save(); ctx.scale(DPR,DPR);
+  if(state === 'playing' || state === 'dead'){
+    ctx.font = (S.scoreSize) + 'px ' + S.scoreFont;
+    ctx.fillStyle = '#fff';
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 3;
+    ctx.textAlign = 'center';
+    var txt = Math.floor(score);
+    ctx.strokeText(txt, (canvas.width/DPR)/2, 70);
+    ctx.fillText(txt, (canvas.width/DPR)/2, 70);
+    if(S.comboDisplay){
+      ctx.font = '14px sans-serif';
+      ctx.fillText('x'+S.scoreMultiplier, (canvas.width/DPR)/2, 95);
+    }
+  }
+  ctx.restore();
+
+  var fpsHud = document.getElementById('fpsHud');
+  var debugHud = document.getElementById('debugHud');
+  var statsHud = document.getElementById('statsHud');
+  if(S.fpsCounterVisible){ fpsHud.classList.remove('hidden'); fpsHud.textContent = 'FPS: ' + fpsValue; }
+  else fpsHud.classList.add('hidden');
+
+  if(S.debugOverlay){
+    debugHud.classList.remove('hidden');
+    debugHud.textContent =
+      'FPS: '+fpsValue+'\n'+
+      'Pos: '+Math.round(bird.x)+','+Math.round(bird.y)+'\n'+
+      'VelY: '+Math.round(bird.vy)+'\n'+
+      'Score: '+Math.floor(score)+'  Best: '+best+'\n'+
+      'State: '+state+'\n'+
+      'Lag: '+S.lagLevel+'  InputLag: '+S.inputLagMs+'ms\n'+
+      'Gravity: '+S.gravity+' Jump: '+S.jumpPower+' PipeSpd: '+S.pipeSpeed+'\n'+
+      'Res: '+canvas.width+'x'+canvas.height+' DPR:'+DPR+'\n'+
+      'Bot: '+S.botEnabled+' ('+S.botAccuracy+'%)  God: '+S.godMode+'\n'+
+      'MP: '+(mpConnected?'Connected':'Offline');
+  } else debugHud.classList.add('hidden');
+
+  var showStats = S.showSessionStats||S.showTotalFlaps||S.showTotalDeaths||S.showPlayTime||S.showAverageScore||S.showAccuracyPercent;
+  if(showStats){
+    statsHud.classList.remove('hidden');
+    var lines = [];
+    if(S.showTotalFlaps) lines.push('Flaps: '+totalFlaps);
+    if(S.showTotalDeaths) lines.push('Deaths: '+totalDeaths);
+    if(S.showPlayTime) lines.push('Time: '+Math.floor((Date.now()-sessionStart)/1000)+'s');
+    if(S.showAverageScore){
+      var avg = scoresHistory.length ? (scoresHistory.reduce(function(a,b){return a+b;},0)/scoresHistory.length) : 0;
+      lines.push('Avg: '+avg.toFixed(1));
+    }
+    if(S.showAccuracyPercent) lines.push('BotAcc: '+S.botAccuracy+'%');
+    statsHud.textContent = lines.join('\n');
+  } else statsHud.classList.add('hidden');
+
+  if(S.showCoords){
+    ctx.save(); ctx.scale(DPR,DPR);
+    ctx.fillStyle = '#0ff'; ctx.font='10px monospace'; ctx.textAlign='left';
+    ctx.fillText(Math.round(bird.x)+','+Math.round(bird.y), bird.x+15, bird.y);
+    ctx.restore();
+  }
+  if(S.showVelocityVectors){
+    ctx.save(); ctx.scale(DPR,DPR);
+    ctx.strokeStyle='#ff0';
+    ctx.beginPath(); ctx.moveTo(bird.x,bird.y); ctx.lineTo(bird.x, bird.y+bird.vy*0.1); ctx.stroke();
+    ctx.restore();
   }
 }
 
-document.getElementById('closeAdmin').onclick = () => adminModal.classList.add('hidden');
-document.getElementById('closeAdminBtn').onclick = () => adminModal.classList.add('hidden');
+function render(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  drawSky();
+  drawClouds();
+  drawWeatherParticles();
+  drawGround();
+  drawPipes();
+  drawTrail();
+  drawBird();
+  drawPeerGhost();
+  drawBotPath();
 
-// Toggles
-function setupToggle(id, getVal, setVal){
-  const el = document.getElementById(id);
-  const update = () => el.classList.toggle('on', getVal());
-  el.onclick = () => { setVal(!getVal()); update(); };
-  update();
+  applyCameraTransform();
+  applyMirror();
+  applyScreenShake();
+  applyPixelation();
+  applyChromaticAberration();
+  applyBloom();
+  applyInvert();
+
+  if(S.gridOverlay) drawGrid();
+  if(S.vignetteEnabled) drawVignette();
+  if(S.scanlinesEnabled) drawScanlines();
+  if(flashAlpha > 0){
+    ctx.fillStyle = 'rgba(255,255,255,'+flashAlpha+')';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+  }
+  drawHUD();
 }
-setupToggle('toggleBot', () => botEnabled, v => botEnabled = v);
-setupToggle('toggleGod', () => godMode, v => godMode = v);
 
-// Lag select
-document.getElementById('lagSelect').onchange = (e) => {
-  lagLevel = parseInt(e.target.value);
+/* ---------- LOOP ---------- */
+var lagSkipTable = [1,2,4,8,16];
+function trackFPS(now){
+  fpsFrames++;
+  if(now - fpsLast >= 1000){
+    fpsValue = fpsFrames;
+    fpsFrames = 0;
+    fpsLast = now;
+  }
+}
+function loop(now){
+  requestAnimationFrame(loop);
+  if(!lastTime) lastTime = now;
+  var minInterval = 1000 / Math.max(1,S.targetFPSCap);
+  if(now - lastTime < minInterval) return;
+  var dt = Math.min(0.1, (now - lastTime)/1000);
+  lastTime = now;
+
+  var skip = lagSkipTable[S.lagLevel] || 1;
+  lagCounter++;
+  if(skip > 1 && (lagCounter % skip !== 0)) { trackFPS(now); render(); return; }
+  if(S.simulateStutter && Math.random() < 0.02) { trackFPS(now); render(); return; }
+
+  dt *= S.gameSpeed;
+  if(state === 'playing') update(dt);
+  else if(state === 'menu') idleMenuUpdate(dt);
+
+  render();
+  trackFPS(now);
+}
+requestAnimationFrame(loop);
+
+/* ---------- GAME FLOW ---------- */
+function startGame(){
+  document.getElementById('menu').classList.add('hidden');
+  document.getElementById('over').classList.add('hidden');
+  document.getElementById('skinsScreen').classList.add('hidden');
+  document.getElementById('onlineScreen').classList.add('hidden');
+  if(S.randomSkinPerLife){ S.currentSkin = Math.floor(Math.random()*SKINS.length); }
+  resetGame();
+  state = 'playing';
+  if(S.musicEnabled) startMusic();
+}
+function goMenu(){
+  state = 'menu';
+  document.getElementById('over').classList.add('hidden');
+  document.getElementById('skinsScreen').classList.add('hidden');
+  document.getElementById('onlineScreen').classList.add('hidden');
+  document.getElementById('menu').classList.remove('hidden');
+  document.getElementById('bestDisplay').textContent = best;
+  stopMusic();
+}
+document.getElementById('playBtn').onclick = function(){ ensureAudio(); startGame(); };
+document.getElementById('restartBtn').onclick = function(){
+  if(S.confirmBeforeRestart && !confirm('Restart?')) return;
+  startGame();
+};
+document.getElementById('menuBtn').onclick = goMenu;
+document.getElementById('bestDisplay').textContent = best;
+
+window.addEventListener('keydown', function(e){
+  if(e.code === 'Space'){ flap(); }
+  if(e.key === 'F3'){ S.debugOverlay = !S.debugOverlay; e.preventDefault(); }
+});
+canvas.addEventListener('pointerdown', function(){ flap(); });
+
+/* ---------- SKINS SCREEN ---------- */
+function renderSkinsGrid(){
+  var grid = document.getElementById('skinGrid');
+  grid.innerHTML = '';
+  SKINS.forEach(function(sk, i){
+    var card = document.createElement('div');
+    card.className = 'skinCard' + (i===S.currentSkin?' selected':'') + (!skinUnlocked(i)?' locked':'');
+    var c = document.createElement('canvas');
+    c.width = 60; c.height = 60;
+    var cctx = c.getContext('2d');
+    cctx.fillStyle = sk.body;
+    if(sk.shape === 'custom' && customSkinImg.complete && customSkinImg.naturalWidth){
+      cctx.drawImage(customSkinImg,10,10,40,40);
+    } else {
+      cctx.beginPath();
+      if(sk.shape === 'square') cctx.rect(14,14,32,32);
+      else if(sk.shape === 'diamond'){ cctx.moveTo(30,10); cctx.lineTo(50,30); cctx.lineTo(30,50); cctx.lineTo(10,30); cctx.closePath(); }
+      else if(sk.shape === 'star'){
+        for(var k=0;k<10;k++){ var ang=(Math.PI/5)*k-Math.PI/2; var rad=k%2===0?20:10; var px=30+Math.cos(ang)*rad, py=30+Math.sin(ang)*rad; if(k===0) cctx.moveTo(px,py); else cctx.lineTo(px,py); }
+        cctx.closePath();
+      } else cctx.arc(30,30,20,0,7);
+      cctx.fill();
+    }
+    card.appendChild(c);
+    var label = document.createElement('div');
+    label.textContent = sk.name + (!skinUnlocked(i) ? ' 🔒 '+skinRequiredScore(i) : '');
+    card.appendChild(label);
+    card.onclick = function(){
+      if(!skinUnlocked(i)) return;
+      S.currentSkin = i;
+      persistSettings();
+      renderSkinsGrid();
+    };
+    grid.appendChild(card);
+  });
+}
+document.getElementById('skinsBtn').onclick = function(){
+  document.getElementById('menu').classList.add('hidden');
+  document.getElementById('skinsScreen').classList.remove('hidden');
+  renderSkinsGrid();
+};
+document.getElementById('skinsBackBtn').onclick = function(){
+  document.getElementById('skinsScreen').classList.add('hidden');
+  document.getElementById('menu').classList.remove('hidden');
+};
+document.getElementById('skinUploadBtn').onclick = function(){
+  document.getElementById('skinFileInput').click();
+};
+document.getElementById('skinFileInput').onchange = function(e){
+  var file = e.target.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev){
+    customSkinImg.src = ev.target.result;
+    saveCustomSkin(ev.target.result);
+    S.currentSkin = SKINS.length - 1;
+    persistSettings();
+    renderSkinsGrid();
+  };
+  reader.readAsDataURL(file);
 };
 
-// Speed slider
-const speedSlider = document.getElementById('speedSlider');
-const speedVal = document.getElementById('speedVal');
-speedSlider.oninput = () => {
-  gameSpeedMult = parseFloat(speedSlider.value);
-  speedVal.textContent = gameSpeedMult.toFixed(1) + 'x';
+/* ---------- ONLINE SCREEN ---------- */
+document.getElementById('onlineBtn').onclick = function(){
+  document.getElementById('menu').classList.add('hidden');
+  document.getElementById('onlineScreen').classList.remove('hidden');
+  document.getElementById('onlineArea').innerHTML = mpPanelHTML();
+  wireMpUI();
+};
+document.getElementById('onlineBackBtn').onclick = function(){
+  document.getElementById('onlineScreen').classList.add('hidden');
+  document.getElementById('menu').classList.remove('hidden');
 };
 
-// Gap slider
-const gapSlider = document.getElementById('gapSlider');
-const gapVal = document.getElementById('gapVal');
-gapSlider.oninput = () => {
-  pipeGap = parseInt(gapSlider.value);
-  gapVal.textContent = pipeGap;
+/* ---------- ADMIN PANEL CONFIG ---------- */
+var controlsConfig = [
+  // graphics
+  {cat:'graphics',type:'select',key:'skyTheme',label:'Sky Theme',options:['day','sunset','night','space']},
+  {cat:'graphics',type:'select',key:'weather',label:'Weather',options:['none','rain','snow']},
+  {cat:'graphics',type:'select',key:'groundTheme',label:'Ground Theme',options:['grass','sand','snow','city']},
+  {cat:'graphics',type:'select',key:'pipeTheme',label:'Pipe Theme',options:['classic','metal','candy','neon']},
+  {cat:'graphics',type:'toggle',key:'glowEnabled',label:'Glow Effects'},
+  {cat:'graphics',type:'toggle',key:'trailEnabled',label:'Bird Trail'},
+  {cat:'graphics',type:'color',key:'trailColor',label:'Trail Color'},
+  {cat:'graphics',type:'toggle',key:'particlesEnabled',label:'Particles Enabled'},
+  {cat:'graphics',type:'toggle',key:'backgroundParallax',label:'Parallax Clouds'},
+  {cat:'graphics',type:'select',key:'renderQuality',label:'Render Quality',options:[0.5,1,1.5,2]},
+  {cat:'graphics',type:'toggle',key:'dayNightCycle',label:'Day/Night Cycle (visual)'},
+  {cat:'graphics',type:'range',key:'dayNightSpeed',label:'Day/Night Speed',min:0.01,max:1,step:0.01},
+  {cat:'graphics',type:'range',key:'starCount',label:'Star Count',min:0,max:300,step:5},
+  {cat:'graphics',type:'toggle',key:'moonVisible',label:'Moon Visible'},
+  {cat:'graphics',type:'toggle',key:'sunGlow',label:'Sun Glow'},
+  {cat:'graphics',type:'range',key:'cloudCount',label:'Cloud Count',min:0,max:20,step:1},
+  {cat:'graphics',type:'range',key:'cloudSpeed',label:'Cloud Speed',min:5,max:100,step:1},
+  {cat:'graphics',type:'range',key:'cloudOpacity',label:'Cloud Opacity',min:0,max:1,step:0.05},
+  {cat:'graphics',type:'range',key:'groundBumpiness',label:'Ground Bumpiness',min:0,max:20,step:1},
+  {cat:'graphics',type:'color',key:'skyTopColor',label:'Sky Top Color'},
+  {cat:'graphics',type:'color',key:'skyBottomColor',label:'Sky Bottom Color'},
+  {cat:'graphics',type:'color',key:'groundTopColor',label:'Ground Top Color'},
+  {cat:'graphics',type:'color',key:'groundBottomColor',label:'Ground Bottom Color'},
+  // effects
+  {cat:'effects',type:'toggle',key:'vignetteEnabled',label:'Vignette'},
+  {cat:'effects',type:'range',key:'vignetteStrength',label:'Vignette Strength',min:0,max:1,step:0.05},
+  {cat:'effects',type:'toggle',key:'scanlinesEnabled',label:'Scanlines'},
+  {cat:'effects',type:'range',key:'scanlineOpacity',label:'Scanline Opacity',min:0,max:1,step:0.05},
+  {cat:'effects',type:'range',key:'chromaticAberration',label:'Chromatic Aberration',min:0,max:10,step:1},
+  {cat:'effects',type:'toggle',key:'bloomEnabled',label:'Bloom'},
+  {cat:'effects',type:'range',key:'bloomStrength',label:'Bloom Strength',min:0,max:40,step:1},
+  {cat:'effects',type:'range',key:'pixelation',label:'Pixelation',min:1,max:20,step:1},
+  {cat:'effects',type:'toggle',key:'screenShakeEnabled',label:'Screen Shake'},
+  {cat:'effects',type:'range',key:'screenShakeIntensity',label:'Shake Intensity',min:0,max:30,step:1},
+  {cat:'effects',type:'toggle',key:'flashOnScore',label:'Flash On Score'},
+  {cat:'effects',type:'toggle',key:'gridOverlay',label:'Grid Overlay'},
+  {cat:'effects',type:'color',key:'gridColor',label:'Grid Color'},
+  {cat:'effects',type:'toggle',key:'pipeRainbow',label:'Pipe Rainbow Mode'},
+  {cat:'effects',type:'toggle',key:'invertColors',label:'Invert Colors'},
+  {cat:'effects',type:'toggle',key:'mirrorScreen',label:'Mirror Screen'},
+  {cat:'effects',type:'range',key:'cameraZoom',label:'Camera Zoom',min:0.5,max:2,step:0.05},
+  {cat:'effects',type:'range',key:'cameraRotation',label:'Camera Rotation',min:-30,max:30,step:1},
+  {cat:'effects',type:'toggle',key:'motionBlur',label:'Motion Blur (visual)'},
+  // bird
+  {cat:'bird',type:'select',key:'birdShapeOverride',label:'Shape Override',options:['auto','circle','square','diamond','star']},
+  {cat:'bird',type:'range',key:'birdSize',label:'Bird Size',min:8,max:40,step:1},
+  {cat:'bird',type:'toggle',key:'birdTilt',label:'Bird Tilt'},
+  {cat:'bird',type:'toggle',key:'useCustomColors',label:'Use Custom Colors'},
+  {cat:'bird',type:'color',key:'customBody',label:'Custom Body'},
+  {cat:'bird',type:'color',key:'customWing',label:'Custom Wing'},
+  {cat:'bird',type:'color',key:'customBeak',label:'Custom Beak'},
+  {cat:'bird',type:'color',key:'customEye',label:'Custom Eye'},
+  {cat:'bird',type:'toggle',key:'eyeVisible',label:'Eye Visible'},
+  {cat:'bird',type:'toggle',key:'outlineVisible',label:'Outline Visible'},
+  {cat:'bird',type:'color',key:'outlineColor',label:'Outline Color'},
+  {cat:'bird',type:'range',key:'afterimageCount',label:'Afterimage Count (visual)',min:0,max:10,step:1},
+  {cat:'bird',type:'range',key:'rotationSpeedMult',label:'Rotation Speed',min:0,max:3,step:0.1},
+  {cat:'bird',type:'toggle',key:'oscillationEnabled',label:'Oscillation'},
+  {cat:'bird',type:'range',key:'oscillationAmount',label:'Oscillation Amount',min:0,max:20,step:1},
+  {cat:'bird',type:'toggle',key:'randomSkinPerLife',label:'Random Skin Per Life'},
+  {cat:'bird',type:'toggle',key:'doubleJumpEnabled',label:'Double Jump (visual)'},
+  {cat:'bird',type:'toggle',key:'wallJumpEnabled',label:'Wall Jump (visual)'},
+  // pipes
+  {cat:'pipes',type:'range',key:'pipeSpeed',label:'Pipe Speed',min:50,max:800,step:10},
+  {cat:'pipes',type:'range',key:'pipeGap',label:'Pipe Gap',min:80,max:400,step:5},
+  {cat:'pipes',type:'range',key:'pipeWidth',label:'Pipe Width',min:30,max:150,step:5},
+  {cat:'pipes',type:'range',key:'pipeSpacing',label:'Pipe Spacing',min:0.5,max:3,step:0.1},
+  {cat:'pipes',type:'toggle',key:'randomGap',label:'Random Gap'},
+  {cat:'pipes',type:'toggle',key:'movingPipes',label:'Moving Pipes'},
+  {cat:'pipes',type:'select',key:'pipeMovePattern',label:'Move Pattern',options:['sine','linear','random']},
+  {cat:'pipes',type:'range',key:'pipeMoveSpeed',label:'Move Speed',min:10,max:200,step:5},
+  {cat:'pipes',type:'range',key:'pipeMoveAmplitude',label:'Move Amplitude',min:0,max:150,step:5},
+  {cat:'pipes',type:'select',key:'pipeCapStyle',label:'Cap Style',options:['classic','round','flat','spike']},
+  {cat:'pipes',type:'range',key:'pipeWidthVariance',label:'Width Variance',min:0,max:40,step:1},
+  {cat:'pipes',type:'color',key:'pipeColorBody',label:'Pipe Body Color'},
+  {cat:'pipes',type:'color',key:'pipeColorCap',label:'Pipe Cap Color'},
+  {cat:'pipes',type:'color',key:'pipeColorHighlight',label:'Pipe Highlight'},
+  {cat:'pipes',type:'color',key:'pipeColorShadow',label:'Pipe Shadow'},
+  {cat:'pipes',type:'color',key:'pipeGlowColor',label:'Pipe Glow Color'},
+  // gameplay
+  {cat:'gameplay',type:'range',key:'gravity',label:'Gravity',min:200,max:3000,step:50},
+  {cat:'gameplay',type:'range',key:'jumpPower',label:'Jump Power',min:100,max:900,step:10},
+  {cat:'gameplay',type:'range',key:'gameSpeed',label:'Game Speed',min:0.2,max:3,step:0.1},
+  {cat:'gameplay',type:'toggle',key:'autoFlap',label:'Auto Flap (troll)'},
+  {cat:'gameplay',type:'toggle',key:'reverseGravity',label:'Reverse Gravity'},
+  {cat:'gameplay',type:'toggle',key:'groundCollision',label:'Ground Collision'},
+  {cat:'gameplay',type:'toggle',key:'ceilingCollision',label:'Ceiling Collision'},
+  {cat:'gameplay',type:'range',key:'scoreMultiplier',label:'Score Multiplier',min:0.5,max:10,step:0.5},
+  {cat:'gameplay',type:'toggle',key:'comboDisplay',label:'Combo Display'},
+  {cat:'gameplay',type:'toggle',key:'shieldPowerupEnabled',label:'Shield Powerup (visual)'},
+  {cat:'gameplay',type:'toggle',key:'magnetPipesAway',label:'Magnet Pipes Away'},
+  {cat:'gameplay',type:'toggle',key:'slowMoNearMiss',label:'Slow-Mo Near Miss'},
+  {cat:'gameplay',type:'toggle',key:'adaptiveDifficulty',label:'Adaptive Difficulty (visual)'},
+  {cat:'gameplay',type:'range',key:'difficultyRampRate',label:'Difficulty Ramp Rate (visual)',min:0,max:2,step:0.05},
+  // cheats
+  {cat:'cheats',type:'toggle',key:'godMode',label:'God Mode'},
+  {cat:'cheats',type:'toggle',key:'infiniteLives',label:'Infinite Lives'},
+  {cat:'cheats',type:'toggle',key:'autoRestart',label:'Auto Restart'},
+  {cat:'cheats',type:'toggle',key:'timeRewindEnabled',label:'Time Rewind (visual)'},
+  {cat:'cheats',type:'toggle',key:'botPanicTroll',label:'Bot Panic Troll (visual)'},
+  {cat:'cheats',type:'toggle',key:'confirmBeforeRestart',label:'Confirm Before Restart'},
+  {cat:'cheats',type:'toggle',key:'allSkinsUnlocked',label:'Unlock All Skins'},
+  // bot
+  {cat:'bot',type:'toggle',key:'botEnabled',label:'Bot Enabled'},
+  {cat:'bot',type:'range',key:'botAccuracy',label:'Bot Accuracy % (100=perfect/infinite)',min:0,max:100,step:1},
+  {cat:'bot',type:'range',key:'botThinkInterval',label:'Think Interval (visual)',min:0.02,max:1,step:0.01},
+  {cat:'bot',type:'range',key:'botJitter',label:'Bot Jitter (visual)',min:0,max:50,step:1},
+  {cat:'bot',type:'range',key:'botLookaheadPipes',label:'Lookahead Pipes (visual)',min:1,max:5,step:1},
+  {cat:'bot',type:'toggle',key:'botPathVisualization',label:'Path Visualization'},
+  {cat:'bot',type:'toggle',key:'botDifficultyCurve',label:'Difficulty Curve (visual)'},
+  {cat:'bot',type:'toggle',key:'spectatorMode',label:'Spectator Mode (visual)'},
+  {cat:'bot',type:'toggle',key:'multiBotRace',label:'Multi-Bot Race (visual)'},
+  {cat:'bot',type:'range',key:'botCount',label:'Bot Count (visual)',min:1,max:10,step:1},
+  // bot2
+  {cat:'bot2',type:'toggle',key:'botHumanMimic',label:'Human Reaction Timing'},
+  {cat:'bot2',type:'range',key:'botReactionTimeMs',label:'Reaction Time (ms)',min:0,max:500,step:10},
+  {cat:'bot2',type:'range',key:'botOvershootChance',label:'Overshoot Chance',min:0,max:1,step:0.05},
+  {cat:'bot2',type:'toggle',key:'botHesitation',label:'Hesitation (false starts)'},
+  {cat:'bot2',type:'select',key:'botFlapStyle',label:'Flap Style (visual)',options:['smooth','tap','burst']},
+  {cat:'bot2',type:'range',key:'botVisionRange',label:'Vision Range (visual)',min:1,max:5,step:1},
+  {cat:'bot2',type:'toggle',key:'botPanicUnderPressure',label:'Panic Under Pressure (visual)'},
+  {cat:'bot2',type:'range',key:'botConfidence',label:'Confidence',min:0,max:1,step:0.05},
+  {cat:'bot2',type:'toggle',key:'botCelebrateOnScore',label:'Celebrate On Score'},
+  {cat:'bot2',type:'toggle',key:'botAlignPipes',label:'Align Pipes For Bot'},
+  {cat:'bot2',type:'toggle',key:'botShowThoughtBubble',label:'Show Thought Bubble'},
+  {cat:'bot2',type:'toggle',key:'botBlinkEyes',label:'Blink Eyes'},
+  {cat:'bot2',type:'toggle',key:'botIdleSway',label:'Idle Sway'},
+  {cat:'bot2',type:'text',key:'botNameLabel',label:'Bot Name Label'},
+  // performance
+  {cat:'performance',type:'range',key:'lagLevel',label:'Lag Level (frame skip)',min:0,max:4,step:1},
+  {cat:'performance',type:'range',key:'inputLagMs',label:'Input Lag (visual)',min:0,max:500,step:10},
+  {cat:'performance',type:'range',key:'targetFPSCap',label:'Target FPS Cap',min:10,max:144,step:1},
+  {cat:'performance',type:'range',key:'packetLoss',label:'Packet Loss % (MP)',min:0,max:50,step:1},
+  {cat:'performance',type:'toggle',key:'simulateStutter',label:'Simulate Stutter'},
+  {cat:'performance',type:'toggle',key:'lowPowerMode',label:'Low Power Mode (visual)'},
+  {cat:'performance',type:'toggle',key:'vsyncSim',label:'VSync Sim (visual)'},
+  // audio
+  {cat:'audio',type:'range',key:'masterVolume',label:'Master Volume',min:0,max:1,step:0.05},
+  {cat:'audio',type:'range',key:'musicVolume',label:'Music Volume',min:0,max:1,step:0.05},
+  {cat:'audio',type:'range',key:'sfxVolume',label:'SFX Volume',min:0,max:1,step:0.05},
+  {cat:'audio',type:'toggle',key:'sfxEnabled',label:'SFX Enabled'},
+  {cat:'audio',type:'toggle',key:'musicEnabled',label:'Music Enabled'},
+  {cat:'audio',type:'toggle',key:'eightBitMode',label:'8-Bit Mode'},
+  {cat:'audio',type:'toggle',key:'muted',label:'Muted'},
+  {cat:'audio',type:'range',key:'pitchMult',label:'Pitch Multiplier',min:0.5,max:2,step:0.05},
+  {cat:'audio',type:'toggle',key:'reverbEnabled',label:'Reverb (visual)'},
+  {cat:'audio',type:'toggle',key:'lowPassFilter',label:'Low-Pass Filter (visual)'},
+  // audio2
+  {cat:'audio2',type:'range',key:'ambientVolume',label:'Ambient Volume (visual)',min:0,max:1,step:0.05},
+  {cat:'audio2',type:'toggle',key:'uiClickSound',label:'UI Click Sound (visual)'},
+  {cat:'audio2',type:'toggle',key:'hoverSound',label:'Hover Sound (visual)'},
+  {cat:'audio2',type:'select',key:'deathSoundVariant',label:'Death Sound (visual)',options:['classic','explosion','glitch']},
+  {cat:'audio2',type:'select',key:'flapSoundVariant',label:'Flap Sound (visual)',options:['classic','soft','robotic']},
+  {cat:'audio2',type:'select',key:'scoreSoundVariant',label:'Score Sound (visual)',options:['classic','chime','coin']},
+  {cat:'audio2',type:'select',key:'musicTrackSelector',label:'Music Track (visual)',options:['calm','upbeat','retro','none']},
+  {cat:'audio2',type:'range',key:'bassBoost',label:'Bass Boost (visual)',min:0,max:2,step:0.1},
+  {cat:'audio2',type:'range',key:'trebleBoost',label:'Treble Boost (visual)',min:0,max:2,step:0.1},
+  {cat:'audio2',type:'toggle',key:'audioVisualizer',label:'Audio Visualizer (visual)'},
+  {cat:'audio2',type:'toggle',key:'surroundSound',label:'Surround Sound (visual)'},
+  {cat:'audio2',type:'toggle',key:'duckMusicOnSfx',label:'Duck Music on SFX (visual)'},
+  {cat:'audio2',type:'toggle',key:'fadeInMusic',label:'Fade In Music (visual)'},
+  {cat:'audio2',type:'toggle',key:'fadeOutOnDeath',label:'Fade Out On Death (visual)'},
+  {cat:'audio2',type:'toggle',key:'muteOnTabSwitch',label:'Mute On Tab Switch (visual)'},
+  // ui
+  {cat:'ui',type:'color',key:'uiThemeColor',label:'UI Theme Color'},
+  {cat:'ui',type:'select',key:'scoreFont',label:'Score Font',options:['sans-serif','monospace','serif','cursive']},
+  {cat:'ui',type:'range',key:'scoreSize',label:'Score Size',min:20,max:80,step:2},
+  {cat:'ui',type:'toggle',key:'toastNotifications',label:'Toast Notifications (visual)'},
+  {cat:'ui',type:'toggle',key:'achievementsEnabled',label:'Achievements (visual)'},
+  {cat:'ui',type:'toggle',key:'leaderboardEnabled',label:'Leaderboard (visual)'},
+  {cat:'ui',type:'toggle',key:'customCursor',label:'Custom Cursor (visual)'},
+  {cat:'ui',type:'toggle',key:'crosshairOverlay',label:'Crosshair Overlay (visual)'},
+  {cat:'ui',type:'toggle',key:'minimapEnabled',label:'Minimap (visual)'},
+  // ui2
+  {cat:'ui2',type:'toggle',key:'buttonAnimation',label:'Button Animation (visual)'},
+  {cat:'ui2',type:'toggle',key:'menuBackgroundAnimated',label:'Animated Menu BG (visual)'},
+  {cat:'ui2',type:'toggle',key:'menuParticleEffect',label:'Menu Particles (visual)'},
+  {cat:'ui2',type:'toggle',key:'darkModeUI',label:'Dark Mode UI (visual)'},
+  {cat:'ui2',type:'toggle',key:'roundedCorners',label:'Rounded Corners (visual)'},
+  {cat:'ui2',type:'range',key:'uiOpacity',label:'UI Opacity (visual)',min:0.3,max:1,step:0.05},
+  {cat:'ui2',type:'toggle',key:'tooltipsEnabled',label:'Tooltips (visual)'},
+  {cat:'ui2',type:'toggle',key:'animatedTransitions',label:'Animated Transitions (visual)'},
+  {cat:'ui2',type:'select',key:'uiFontWeight',label:'UI Font Weight (visual)',options:['normal','bold']},
+  {cat:'ui2',type:'toggle',key:'uiBorderGlow',label:'UI Border Glow (visual)'},
+  {cat:'ui2',type:'select',key:'notificationPosition',label:'Notification Position (visual)',options:['top','bottom']},
+  {cat:'ui2',type:'toggle',key:'compactAdminPanel',label:'Compact Admin Panel (visual)'},
+  // mp settings
+  {cat:'mpsettings',type:'toggle',key:'mpShowGhost',label:'Show Peer Ghost'},
+  {cat:'mpsettings',type:'range',key:'mpNetworkLatency',label:'Sim Latency ms',min:0,max:500,step:10},
+  {cat:'mpsettings',type:'range',key:'mpNetworkJitter',label:'Sim Jitter ms',min:0,max:200,step:10},
+  // debug
+  {cat:'debug',type:'toggle',key:'debugOverlay',label:'Debug Overlay (F3)'},
+  {cat:'debug',type:'toggle',key:'fpsCounterVisible',label:'FPS Counter'},
+  {cat:'debug',type:'toggle',key:'hitboxEnabled',label:'Show Hitboxes'},
+  {cat:'debug',type:'toggle',key:'showCoords',label:'Show Coordinates'},
+  {cat:'debug',type:'toggle',key:'showVelocityVectors',label:'Show Velocity Vectors'},
+  {cat:'debug',type:'toggle',key:'consoleLogEnabled',label:'Console Logging (visual)'},
+  {cat:'debug',type:'toggle',key:'replayRecording',label:'Replay Recording (visual)'},
+  {cat:'debug',type:'toggle',key:'ghostRecordingPlayback',label:'Ghost Playback (visual)'},
+  // graphics2
+  {cat:'graphics2',type:'select',key:'textureDetail',label:'Texture Detail (visual)',options:['low','med','high']},
+  {cat:'graphics2',type:'select',key:'shadowQuality',label:'Shadow Quality (visual)',options:['off','low','high']},
+  {cat:'graphics2',type:'toggle',key:'antiAliasing',label:'Anti-Aliasing (visual)'},
+  {cat:'graphics2',type:'toggle',key:'birdShadow',label:'Bird Shadow (visual)'},
+  {cat:'graphics2',type:'toggle',key:'pipeShadow',label:'Pipe Shadow (visual)'},
+  {cat:'graphics2',type:'range',key:'backgroundBlur',label:'Background Blur (visual)',min:0,max:10,step:1},
+  {cat:'graphics2',type:'range',key:'lightingAngle',label:'Lighting Angle (visual)',min:0,max:360,step:5},
+  {cat:'graphics2',type:'range',key:'ambientBrightness',label:'Ambient Brightness',min:0,max:2,step:0.05},
+  {cat:'graphics2',type:'range',key:'contrast',label:'Contrast',min:0.5,max:2,step:0.05},
+  {cat:'graphics2',type:'range',key:'saturation',label:'Saturation',min:0,max:2,step:0.05},
+  {cat:'graphics2',type:'range',key:'hueRotate',label:'Hue Rotate',min:0,max:360,step:5},
+  {cat:'graphics2',type:'range',key:'sharpness',label:'Sharpness (visual)',min:0,max:2,step:0.1},
+  {cat:'graphics2',type:'range',key:'cloudShapeVariety',label:'Cloud Shape Variety (visual)',min:1,max:5,step:1},
+  {cat:'graphics2',type:'range',key:'starTwinkleSpeed',label:'Star Twinkle Speed',min:0,max:5,step:0.1},
+  {cat:'graphics2',type:'range',key:'moonPhase',label:'Moon Phase',min:0,max:1,step:0.05},
+  {cat:'graphics2',type:'range',key:'sunSize',label:'Sun Size',min:10,max:60,step:1},
+  {cat:'graphics2',type:'toggle',key:'horizonGlow',label:'Horizon Glow (visual)'},
+  {cat:'graphics2',type:'toggle',key:'fogEnabled',label:'Fog'},
+  {cat:'graphics2',type:'range',key:'fogDensity',label:'Fog Density',min:0,max:1,step:0.05},
+  {cat:'graphics2',type:'color',key:'fogColor',label:'Fog Color'},
+  // particles
+  {cat:'particles',type:'range',key:'particleCount',label:'Particle Count (visual)',min:0,max:500,step:10},
+  {cat:'particles',type:'range',key:'particleSize',label:'Particle Size (visual)',min:1,max:10,step:1},
+  {cat:'particles',type:'range',key:'particleSpeed',label:'Particle Speed (visual)',min:10,max:200,step:5},
+  {cat:'particles',type:'range',key:'particleGravity',label:'Particle Gravity (visual)',min:-200,max:200,step:10},
+  {cat:'particles',type:'color',key:'particleColor',label:'Particle Color (visual)'},
+  {cat:'particles',type:'select',key:'particleShape',label:'Particle Shape (visual)',options:['circle','square','star']},
+  {cat:'particles',type:'toggle',key:'confettiOnScore',label:'Confetti On Score (visual)'},
+  {cat:'particles',type:'toggle',key:'explosionOnDeath',label:'Explosion On Death (visual)'},
+  {cat:'particles',type:'range',key:'trailParticleSize',label:'Trail Particle Size (visual)',min:1,max:10,step:1},
+  {cat:'particles',type:'range',key:'trailLength',label:'Trail Length (visual)',min:5,max:60,step:5},
+  {cat:'particles',type:'range',key:'snowflakeSizeVariance',label:'Snowflake Size Variance',min:0,max:5,step:0.5},
+  {cat:'particles',type:'range',key:'rainAngle',label:'Rain Angle',min:-45,max:45,step:5},
+  {cat:'particles',type:'range',key:'rainSpeed',label:'Rain Speed',min:100,max:800,step:20},
+  {cat:'particles',type:'toggle',key:'puddleReflections',label:'Puddle Reflections (visual)'},
+  {cat:'particles',type:'toggle',key:'leafParticles',label:'Leaf Particles (visual)'},
+  {cat:'particles',type:'toggle',key:'fireflyParticles',label:'Firefly Particles (visual)'},
+  {cat:'particles',type:'toggle',key:'bubbleParticles',label:'Bubble Particles (visual)'},
+  {cat:'particles',type:'toggle',key:'sparkleOnFlap',label:'Sparkle On Flap (visual)'},
+  {cat:'particles',type:'toggle',key:'dustOnGround',label:'Dust On Ground (visual)'},
+  {cat:'particles',type:'toggle',key:'smokeTrail',label:'Smoke Trail (visual)'},
+  // physics
+  {cat:'physics',type:'range',key:'airResistance',label:'Air Resistance (visual)',min:0,max:1,step:0.05},
+  {cat:'physics',type:'range',key:'terminalVelocity',label:'Terminal Velocity (visual)',min:200,max:2000,step:50},
+  {cat:'physics',type:'toggle',key:'bounceOnGround',label:'Bounce On Ground (visual)'},
+  {cat:'physics',type:'range',key:'bounceDamping',label:'Bounce Damping (visual)',min:0,max:1,step:0.05},
+  {cat:'physics',type:'range',key:'windForce',label:'Wind Force',min:-200,max:200,step:10},
+  {cat:'physics',type:'range',key:'windVariability',label:'Wind Variability (visual)',min:0,max:100,step:5},
+  {cat:'physics',type:'range',key:'momentumCarry',label:'Momentum Carry (visual)',min:0,max:1,step:0.05},
+  {cat:'physics',type:'range',key:'flapCooldown',label:'Flap Cooldown (ms)',min:0,max:500,step:10},
+  {cat:'physics',type:'range',key:'doubleFlapWindow',label:'Double Flap Window (visual)',min:0,max:500,step:10},
+  {cat:'physics',type:'range',key:'dragCoefficient',label:'Drag Coefficient (visual)',min:0,max:2,step:0.05},
+  {cat:'physics',type:'range',key:'massMultiplier',label:'Mass Multiplier (visual)',min:0.5,max:3,step:0.1},
+  {cat:'physics',type:'toggle',key:'elasticCollision',label:'Elastic Collision (visual)'},
+  {cat:'physics',type:'toggle',key:'pipeBounce',label:'Pipe Bounce (visual)'},
+  {cat:'physics',type:'range',key:'groundFriction',label:'Ground Friction (visual)',min:0,max:1,step:0.05},
+  {cat:'physics',type:'range',key:'gravityRamp',label:'Gravity Ramp (visual)',min:0,max:2,step:0.05},
+  {cat:'physics',type:'select',key:'flapImpulseCurve',label:'Flap Impulse Curve (visual)',options:['linear','ease','sharp']},
+  {cat:'physics',type:'range',key:'maxFallSpeed',label:'Max Fall Speed',min:200,max:2000,step:50},
+  {cat:'physics',type:'range',key:'maxRiseSpeed',label:'Max Rise Speed',min:200,max:2000,step:50},
+  {cat:'physics',type:'toggle',key:'inertiaEnabled',label:'Inertia (visual)'},
+  {cat:'physics',type:'range',key:'flapBufferMs',label:'Flap Buffer (visual)',min:0,max:300,step:10},
+  // camera
+  {cat:'camera',type:'toggle',key:'cameraShakeOnFlap',label:'Shake On Flap'},
+  {cat:'camera',type:'range',key:'cameraFollowSmoothness',label:'Follow Smoothness (visual)',min:0,max:1,step:0.05},
+  {cat:'camera',type:'range',key:'cameraOffsetX',label:'Camera Offset X',min:-100,max:100,step:5},
+  {cat:'camera',type:'range',key:'cameraOffsetY',label:'Camera Offset Y',min:-100,max:100,step:5},
+  {cat:'camera',type:'toggle',key:'cameraTiltWithBird',label:'Tilt With Bird (visual)'},
+  {cat:'camera',type:'range',key:'parallaxDepthLayers',label:'Parallax Depth Layers (visual)',min:1,max:5,step:1},
+  {cat:'camera',type:'toggle',key:'zoomOnDeath',label:'Zoom On Death (visual)'},
+  {cat:'camera',type:'toggle',key:'slowMotionOnDeath',label:'Slow Motion On Death (visual)'},
+  {cat:'camera',type:'toggle',key:'letterboxBars',label:'Letterbox Bars (visual)'},
+  {cat:'camera',type:'toggle',key:'cinematicMode',label:'Cinematic Mode (visual)'},
+  {cat:'camera',type:'toggle',key:'screenEdgeGlow',label:'Screen Edge Glow (visual)'},
+  {cat:'camera',type:'toggle',key:'cameraShakeOnDeath',label:'Shake On Death'},
+  {cat:'camera',type:'range',key:'cameraFOV',label:'Camera FOV (visual)',min:0.5,max:2,step:0.05},
+  {cat:'camera',type:'range',key:'cameraLeadAmount',label:'Camera Lead Amount (visual)',min:0,max:50,step:5},
+  {cat:'camera',type:'toggle',key:'cameraSnapback',label:'Camera Snapback (visual)'},
+  {cat:'camera',type:'range',key:'dynamicZoomSpeed',label:'Dynamic Zoom Speed (visual)',min:0,max:2,step:0.05},
+  {cat:'camera',type:'toggle',key:'freeLookDebug',label:'Free Look Debug (visual)'},
+  {cat:'camera',type:'range',key:'cameraInertia',label:'Camera Inertia (visual)',min:0,max:1,step:0.05},
+  // accessibility
+  {cat:'accessibility',type:'select',key:'colorblindMode',label:'Colorblind Mode',options:['off','protanopia','deuteranopia','tritanopia']},
+  {cat:'accessibility',type:'toggle',key:'highContrastMode',label:'High Contrast Mode'},
+  {cat:'accessibility',type:'toggle',key:'reduceMotion',label:'Reduce Motion'},
+  {cat:'accessibility',type:'toggle',key:'largeText',label:'Large Text (visual)'},
+  {cat:'accessibility',type:'toggle',key:'simplifiedGraphics',label:'Simplified Graphics (visual)'},
+  {cat:'accessibility',type:'toggle',key:'oneTapMode',label:'One-Tap Mode (visual)'},
+  {cat:'accessibility',type:'toggle',key:'autoPauseOnBlur',label:'Auto Pause On Blur (visual)'},
+  {cat:'accessibility',type:'toggle',key:'hapticFeedback',label:'Haptic Feedback (visual)'},
+  {cat:'accessibility',type:'toggle',key:'screenReaderHints',label:'Screen Reader Hints (visual)'},
+  {cat:'accessibility',type:'toggle',key:'subtitleHints',label:'Subtitle Hints (visual)'},
+  {cat:'accessibility',type:'range',key:'uiScale',label:'UI Scale (visual)',min:0.5,max:2,step:0.05},
+  {cat:'accessibility',type:'toggle',key:'textToSpeechScore',label:'Text-To-Speech Score (visual)'},
+  // world
+  {cat:'world',type:'range',key:'timeOfDay',label:'Time Of Day (hr)',min:0,max:24,step:0.5},
+  {cat:'world',type:'select',key:'seasonSelector',label:'Season (visual)',options:['spring','summer','autumn','winter']},
+  {cat:'world',type:'select',key:'biomeSelector',label:'Biome (visual)',options:['plains','desert','arctic','urban']},
+  {cat:'world',type:'range',key:'cityDensity',label:'City Density',min:0,max:10,step:1},
+  {cat:'world',type:'toggle',key:'mountainsVisible',label:'Mountains Visible (visual)'},
+  {cat:'world',type:'toggle',key:'waterReflections',label:'Water Reflections (visual)'},
+  {cat:'world',type:'toggle',key:'birdShadowOnGround',label:'Bird Shadow On Ground (visual)'},
+  {cat:'world',type:'toggle',key:'dynamicShadows',label:'Dynamic Shadows (visual)'},
+  {cat:'world',type:'toggle',key:'windParticles',label:'Wind Particles (visual)'},
+  {cat:'world',type:'toggle',key:'ambientSoundEnabled',label:'Ambient Sound (visual)'},
+  {cat:'world',type:'toggle',key:'birdsInBackground',label:'Birds In Background (visual)'},
+  {cat:'world',type:'toggle',key:'insectsAmbient',label:'Insects Ambient (visual)'},
+  {cat:'world',type:'range',key:'weatherTransitionSpeed',label:'Weather Transition Speed (visual)',min:0.1,max:5,step:0.1},
+  {cat:'world',type:'toggle',key:'lightningEnabled',label:'Lightning (visual)'},
+  {cat:'world',type:'toggle',key:'rainbowAfterRain',label:'Rainbow After Rain (visual)'},
+  {cat:'world',type:'toggle',key:'auroraEnabled',label:'Aurora'},
+  // pipes2
+  {cat:'pipes2',type:'select',key:'pipeTexturePattern',label:'Pipe Texture (visual)',options:['plain','striped','dotted','brick']},
+  {cat:'pipes2',type:'toggle',key:'pipeRoundedCorners',label:'Rounded Corners'},
+  {cat:'pipes2',type:'range',key:'pipeTransparency',label:'Pipe Transparency',min:0,max:1,step:0.05},
+  {cat:'pipes2',type:'toggle',key:'pipeOutlineEnabled',label:'Pipe Outline'},
+  {cat:'pipes2',type:'color',key:'pipeOutlineColor',label:'Pipe Outline Color'},
+  {cat:'pipes2',type:'toggle',key:'pipeBreakAnimation',label:'Break Animation (visual)'},
+  {cat:'pipes2',type:'toggle',key:'pipeWarningFlash',label:'Warning Flash (visual)'},
+  {cat:'pipes2',type:'range',key:'pipeCountLimit',label:'Pipe Count Limit',min:5,max:50,step:1},
+  {cat:'pipes2',type:'toggle',key:'doublePipesMode',label:'Double Pipes Mode (visual)'},
+  {cat:'pipes2',type:'toggle',key:'tripleGapMode',label:'Triple Gap Mode (visual)'},
+  {cat:'pipes2',type:'range',key:'pipeSwayAmount',label:'Pipe Sway Amount (visual)',min:0,max:30,step:1},
+  {cat:'pipes2',type:'toggle',key:'pipeMaterialShine',label:'Material Shine (visual)'},
+  {cat:'pipes2',type:'toggle',key:'pipeDamageDecals',label:'Damage Decals (visual)'},
+  {cat:'pipes2',type:'toggle',key:'pipeNumberLabels',label:'Number Labels (visual)'},
+  {cat:'pipes2',type:'toggle',key:'pipeDistanceMarkers',label:'Distance Markers (visual)'},
+  // stats
+  {cat:'stats',type:'toggle',key:'showSessionStats',label:'Show Session Stats'},
+  {cat:'stats',type:'toggle',key:'showTotalFlaps',label:'Show Total Flaps'},
+  {cat:'stats',type:'toggle',key:'showTotalDeaths',label:'Show Total Deaths'},
+  {cat:'stats',type:'toggle',key:'showPlayTime',label:'Show Play Time'},
+  {cat:'stats',type:'toggle',key:'showAverageScore',label:'Show Average Score'},
+  {cat:'stats',type:'toggle',key:'showAccuracyPercent',label:'Show Bot Accuracy'},
+  {cat:'stats',type:'toggle',key:'dailyStreakTracker',label:'Daily Streak Tracker (visual)'},
+  {cat:'stats',type:'toggle',key:'achievementsPopup',label:'Achievements Popup (visual)'},
+  {cat:'stats',type:'toggle',key:'shareScoreButton',label:'Share Score Button (visual)'},
+  {cat:'stats',type:'toggle',key:'qrCodeShare',label:'QR Code Share (visual)'},
+  {cat:'stats',type:'select',key:'statsOverlayPosition',label:'Stats Position (visual)',options:['topleft','topright','bottomleft','bottomright']},
+  // misc2
+  {cat:'misc2',type:'select',key:'languageSelector',label:'Language (visual)',options:['en','es','fr','de']},
+  {cat:'misc2',type:'select',key:'unitSystem',label:'Unit System (visual)',options:['metric','imperial']},
+  {cat:'misc2',type:'toggle',key:'screenshotButton',label:'Screenshot Button (visual)'},
+  {cat:'misc2',type:'toggle',key:'recordGifButton',label:'Record GIF Button (visual)'},
+  {cat:'misc2',type:'toggle',key:'cloudSaveEnabled',label:'Cloud Save (visual)'},
+  {cat:'misc2',type:'toggle',key:'importReplayButton',label:'Import Replay (visual)'},
+  {cat:'misc2',type:'toggle',key:'exportReplayButton',label:'Export Replay (visual)'},
+  {cat:'misc2',type:'toggle',key:'customMusicUpload',label:'Custom Music Upload (visual)'},
+  {cat:'misc2',type:'toggle',key:'backgroundMusicVolumeFade',label:'Music Volume Fade (visual)'},
+  {cat:'misc2',type:'toggle',key:'loadingScreenTips',label:'Loading Screen Tips (visual)'},
+  {cat:'misc2',type:'toggle',key:'secretKonamiCode',label:'Konami Code (visual)'},
+  {cat:'misc2',type:'toggle',key:'easterEggsEnabled',label:'Easter Eggs (visual)'},
+  // challenges
+  {cat:'challenges',type:'toggle',key:'dailyChallengeEnabled',label:'Daily Challenge (visual)'},
+  {cat:'challenges',type:'toggle',key:'weeklyChallengeEnabled',label:'Weekly Challenge (visual)'},
+  {cat:'challenges',type:'select',key:'challengeDifficulty',label:'Challenge Difficulty (visual)',options:['easy','normal','hard']},
+  {cat:'challenges',type:'toggle',key:'bonusObjectives',label:'Bonus Objectives (visual)'},
+  {cat:'challenges',type:'range',key:'scoreGoal',label:'Score Goal (visual)',min:5,max:200,step:5},
+  {cat:'challenges',type:'toggle',key:'timeAttackMode',label:'Time Attack Mode (visual)'},
+  {cat:'challenges',type:'toggle',key:'survivalMode',label:'Survival Mode (visual)'},
+  {cat:'challenges',type:'toggle',key:'zenMode',label:'Zen Mode (visual)'},
+  {cat:'challenges',type:'toggle',key:'practiceMode',label:'Practice Mode (visual)'},
+  {cat:'challenges',type:'toggle',key:'speedrunTimer',label:'Speedrun Timer (visual)'},
+  {cat:'challenges',type:'toggle',key:'checkpointSystem',label:'Checkpoint System (visual)'},
+  {cat:'challenges',type:'range',key:'livesCount',label:'Lives Count (visual)',min:1,max:10,step:1},
+  {cat:'challenges',type:'range',key:'comboMultiplierCap',label:'Combo Multiplier Cap (visual)',min:1,max:20,step:1},
+  {cat:'challenges',type:'toggle',key:'streakBonus',label:'Streak Bonus (visual)'},
+  {cat:'challenges',type:'toggle',key:'randomEventsEnabled',label:'Random Events (visual)'}
+];
+
+var CATS = ['graphics','graphics2','effects','bird','pipes','pipes2','gameplay','cheats','bot','bot2','performance','audio','audio2','ui','ui2','mpsettings','debug','particles','physics','camera','accessibility','world','stats','misc2','challenges','presets'];
+var currentTab = 'graphics';
+
+function buildTab(cat){
+  var html = '';
+  controlsConfig.filter(function(c){return c.cat===cat;}).forEach(function(c){
+    var key = c.key;
+    var val = S[key];
+    html += '<div class="ctrlRow">';
+    html += '<label>'+c.label+(c.type==='range'?'<span class="valSpan" id="val_'+key+'">'+val+'</span>':'')+'</label>';
+    if(c.type === 'toggle'){
+      html += '<input type="checkbox" data-key="'+key+'" data-type="toggle" '+(val?'checked':'')+'>';
+    } else if(c.type === 'range'){
+      html += '<input type="range" data-key="'+key+'" data-type="range" min="'+c.min+'" max="'+c.max+'" step="'+c.step+'" value="'+val+'">';
+    } else if(c.type === 'select'){
+      html += '<select data-key="'+key+'" data-type="select">';
+      c.options.forEach(function(o){ html += '<option value="'+o+'" '+(String(o)===String(val)?'selected':'')+'>'+o+'</option>'; });
+      html += '</select>';
+    } else if(c.type === 'color'){
+      html += '<input type="color" data-key="'+key+'" data-type="color" value="'+val+'">';
+    } else if(c.type === 'text'){
+      html += '<input type="text" data-key="'+key+'" data-type="text" value="'+val+'">';
+    }
+    html += '</div>';
+  });
+  return html;
+}
+
+function mpPanelHTML(){
+  return '<div class="ctrlRow"><button class="actionBtn" id="mpHostBtn">Host Game</button>' +
+    '<button class="actionBtn" id="mpJoinBtn">Join Game</button></div>' +
+    '<div id="mpArea" class="ctrlRow">' +
+    '<div id="mpHostArea" class="hidden"><label>Send this code:</label><textarea id="mpOfferOut" readonly></textarea>' +
+    '<label>Paste answer code:</label><textarea id="mpAnswerIn"></textarea>' +
+    '<button class="actionBtn" id="mpFinishBtn">Connect</button></div>' +
+    '<div id="mpJoinArea" class="hidden"><label>Paste host code:</label><textarea id="mpOfferIn"></textarea>' +
+    '<button class="actionBtn" id="mpGenAnswerBtn">Generate Answer</button>' +
+    '<label>Your answer code:</label><textarea id="mpAnswerOut" readonly></textarea></div>' +
+    '<div id="mpStatus">Status: Offline</div></div>';
+}
+
+function cheatsExtraHTML(){
+  return '<div class="ctrlRow">' +
+    '<button class="actionBtn" id="btnAdd10">+10 Score</button>' +
+    '<button class="actionBtn" id="btnSetScore">Set Score</button>' +
+    '<button class="actionBtn" id="btnResetBest">Reset Best</button>' +
+    '<button class="actionBtn" id="btnResetAll">Reset All Settings</button>' +
+    '<button class="actionBtn" id="btnExport">Export Settings</button>' +
+    '<button class="actionBtn" id="btnImport">Import Settings</button>' +
+    '</div>';
+}
+function statsExtraHTML(){
+  return '<div class="ctrlRow"><button class="actionBtn" id="btnResetStats">Reset Stats</button></div>';
+}
+
+function presetsHTML(){
+  return '<div class="ctrlRow">' +
+    '<button class="actionBtn" data-preset="easy">Easy</button>' +
+    '<button class="actionBtn" data-preset="normal">Normal</button>' +
+    '<button class="actionBtn" data-preset="hard">Hard</button>' +
+    '<button class="actionBtn" data-preset="insane">Insane</button>' +
+    '<button class="actionBtn" data-preset="troll">Troll</button>' +
+    '<button class="actionBtn" data-preset="pro">Pro</button>' +
+    '<button class="actionBtn" data-preset="botshow">Bot Showcase</button>' +
+    '<button class="actionBtn" data-preset="resetall">Reset Defaults</button>' +
+    '</div>';
+}
+function applyPreset(name){
+  if(name === 'easy'){ S.pipeGap=240; S.pipeSpeed=140; S.gravity=850; S.jumpPower=340; S.pipeSpacing=2; }
+  else if(name === 'normal'){ S.pipeGap=190; S.pipeSpeed=180; S.gravity=1000; S.jumpPower=360; S.pipeSpacing=1.6; }
+  else if(name === 'hard'){ S.pipeGap=150; S.pipeSpeed=240; S.gravity=1150; S.jumpPower=380; S.pipeSpacing=1.3; }
+  else if(name === 'insane'){ S.pipeGap=110; S.pipeSpeed=320; S.gravity=1300; S.jumpPower=400; S.pipeSpacing=1.1; }
+  else if(name === 'troll'){ S.reverseGravity=!S.reverseGravity; S.lagLevel=2; S.invertColors=true; }
+  else if(name === 'pro'){ S.glowEnabled=true; S.trailEnabled=true; S.particlesEnabled=true; S.pipeTheme='neon'; }
+  else if(name === 'botshow'){ S.botEnabled=true; S.botAccuracy=100; S.botAlignPipes=true; S.botHumanMimic=true; S.botReactionTimeMs=140; }
+  else if(name === 'resetall'){ for(var k in DEFAULTS) S[k]=DEFAULTS[k]; }
+  persistSettings();
+  updateCanvasFilter();
+  renderTab(currentTab);
+}
+
+function renderTab(cat){
+  currentTab = cat;
+  var body = document.getElementById('adminBody');
+  if(cat === 'mpsettings'){
+    body.innerHTML = buildTab(cat);
+  } else if(cat === 'cheats'){
+    body.innerHTML = buildTab(cat) + cheatsExtraHTML();
+    wireCheatButtons();
+  } else if(cat === 'stats'){
+    body.innerHTML = buildTab(cat) + statsExtraHTML();
+    document.getElementById('btnResetStats').onclick = function(){
+      totalFlaps=0; totalDeaths=0; scoresHistory=[]; sessionStart=Date.now();
+    };
+  } else if(cat === 'presets'){
+    body.innerHTML = presetsHTML();
+    Array.prototype.forEach.call(body.querySelectorAll('[data-preset]'), function(btn){
+      btn.onclick = function(){ applyPreset(btn.dataset.preset); };
+    });
+  } else {
+    body.innerHTML = buildTab(cat);
+  }
+  document.querySelectorAll('.tabBtn').forEach(function(b){ b.classList.toggle('active', b.dataset.tab===cat); });
+  body.querySelectorAll('[data-key]').forEach(function(input){
+    input.addEventListener('input', function(){
+      var key = input.dataset.key, type = input.dataset.type;
+      var v;
+      if(type === 'toggle') v = input.checked;
+      else if(type === 'range') v = parseFloat(input.value);
+      else v = input.value;
+      S[key] = v;
+      var span = document.getElementById('val_'+key);
+      if(span) span.textContent = v;
+      if(key === 'renderQuality') resizeCanvas();
+      if(key === 'musicEnabled'){ if(v) startMusic(); else stopMusic(); }
+      if(key === 'muted' && v){ stopMusic(); }
+      if(['colorblindMode','highContrastMode','contrast','saturation','hueRotate','ambientBrightness'].indexOf(key) !== -1) updateCanvasFilter();
+      persistSettings();
+    });
+  });
+}
+
+function wireCheatButtons(){
+  document.getElementById('btnAdd10').onclick = function(){ score += 10; };
+  document.getElementById('btnSetScore').onclick = function(){
+    var v = prompt('Set score to:', Math.floor(score));
+    if(v !== null && !isNaN(v)) score = parseFloat(v);
+  };
+  document.getElementById('btnResetBest').onclick = function(){
+    best = 0;
+    try{ safeStorage.setItem('flapyBest', 0); }catch(e){}
+    document.getElementById('bestDisplay').textContent = best;
+  };
+  document.getElementById('btnResetAll').onclick = function(){
+    if(!confirm('Reset ALL settings to default?')) return;
+    for(var k in DEFAULTS) S[k] = DEFAULTS[k];
+    persistSettings();
+    updateCanvasFilter();
+    renderTab(currentTab);
+  };
+  document.getElementById('btnExport').onclick = function(){
+    prompt('Copy settings JSON:', JSON.stringify(S));
+  };
+  document.getElementById('btnImport').onclick = function(){
+    var v = prompt('Paste settings JSON:');
+    if(!v) return;
+    try{
+      var parsed = JSON.parse(v);
+      for(var k in parsed) S[k]=parsed[k];
+      persistSettings();
+      updateCanvasFilter();
+      renderTab(currentTab);
+    }catch(e){ alert('Invalid JSON'); }
+  };
+}
+
+var adminTabsDiv = document.getElementById('adminTabs');
+CATS.forEach(function(cat){
+  var b = document.createElement('button');
+  b.className = 'tabBtn';
+  b.dataset.tab = cat;
+  b.textContent = cat.charAt(0).toUpperCase()+cat.slice(1);
+  b.onclick = function(){ renderTab(cat); };
+  adminTabsDiv.appendChild(b);
+});
+
+var adminUnlocked = false;
+document.getElementById('gearBtn').onclick = function(){
+  if(adminUnlocked){ openAdmin(); return; }
+  document.getElementById('pinModal').classList.remove('hidden');
+  document.getElementById('pinInput').value = '';
+  document.getElementById('pinErr').textContent = '';
+};
+document.getElementById('pinCancel').onclick = function(){ document.getElementById('pinModal').classList.add('hidden'); };
+document.getElementById('pinSubmit').onclick = submitPin;
+document.getElementById('pinInput').addEventListener('keydown', function(e){ if(e.key==='Enter') submitPin(); });
+function submitPin(){
+  var v = document.getElementById('pinInput').value;
+  if(v === '1677'){
+    adminUnlocked = true;
+    document.getElementById('pinModal').classList.add('hidden');
+    openAdmin();
+  } else {
+    document.getElementById('pinErr').textContent = 'Wrong PIN';
+  }
+}
+function openAdmin(){
+  document.getElementById('adminPanel').classList.add('open');
+  renderTab(currentTab);
+}
+document.getElementById('adminCloseBtn').onclick = function(){
+  document.getElementById('adminPanel').classList.remove('open');
 };
 
-// Add score button
-document.getElementById('addScoreBtn').onclick = () => {
-  score += 10;
-  scoreDisplay.textContent = score;
-};
+/* ---------- MULTIPLAYER (WebRTC manual code) ---------- */
+var pc = null, dc = null, mpConnected = false;
+var peerState = {y:null};
+function wireMpUI(){
+  document.getElementById('mpHostBtn').onclick = mpHost;
+  document.getElementById('mpJoinBtn').onclick = function(){
+    document.getElementById('mpJoinArea').classList.remove('hidden');
+    document.getElementById('mpHostArea').classList.add('hidden');
+  };
+  document.getElementById('mpGenAnswerBtn').onclick = mpGenAnswer;
+  document.getElementById('mpFinishBtn').onclick = mpFinishConnect;
+}
+function setupDC(){
+  dc.onopen = function(){
+    mpConnected = true;
+    var st = document.getElementById('mpStatus');
+    if(st) st.textContent = 'Status: Connected! 🎮';
+  };
+  dc.onclose = function(){ mpConnected = false; };
+  dc.onmessage = function(e){
+    try{
+      var msg = JSON.parse(e.data);
+      if(msg.t === 'pos') peerState.y = msg.y;
+    }catch(err){}
+  };
+}
+function mpHost(){
+  document.getElementById('mpHostArea').classList.remove('hidden');
+  document.getElementById('mpJoinArea').classList.add('hidden');
+  pc = new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]});
+  dc = pc.createDataChannel('game');
+  setupDC();
+  pc.onicecandidate = function(e){
+    if(e.candidate === null){
+      document.getElementById('mpOfferOut').value = btoa(JSON.stringify(pc.localDescription));
+    }
+  };
+  pc.createOffer().then(function(offer){ return pc.setLocalDescription(offer); });
+}
+function mpGenAnswer(){
+  var offerCode = document.getElementById('mpOfferIn').value.trim();
+  if(!offerCode) return;
+  pc = new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]});
+  pc.ondatachannel = function(e){ dc = e.channel; setupDC(); };
+  pc.onicecandidate = function(e){
+    if(e.candidate === null){
+      document.getElementById('mpAnswerOut').value = btoa(JSON.stringify(pc.localDescription));
+    }
+  };
+  var offer = JSON.parse(atob(offerCode));
+  pc.setRemoteDescription(offer).then(function(){
+    return pc.createAnswer();
+  }).then(function(answer){
+    return pc.setLocalDescription(answer);
+  });
+}
+function mpFinishConnect(){
+  var answerCode = document.getElementById('mpAnswerIn').value.trim();
+  if(!answerCode || !pc) return;
+  var answer = JSON.parse(atob(answerCode));
+  pc.setRemoteDescription(answer);
+}
+function mpSend(obj){
+  if(!dc || dc.readyState !== 'open') return;
+  if(S.packetLoss > 0 && Math.random()*100 < S.packetLoss) return;
+  var delay = S.mpNetworkLatency + Math.random()*S.mpNetworkJitter;
+  setTimeout(function(){
+    try{ dc.send(JSON.stringify(obj)); }catch(e){}
+  }, delay);
+}
 
-// Reset best score
-document.getElementById('resetBestBtn').onclick = () => {
-  bestScore = 0;
-  localStorage.setItem('flapyBest', 0);
-};
-
-// Initial render for menu background
-render();
-
-})();
 </script>
 </body>
 </html>
