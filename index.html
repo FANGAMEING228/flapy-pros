@@ -19,20 +19,28 @@
   #pinBox{background:#222;padding:24px;border-radius:12px;text-align:center;color:#fff;}
   #pinBox input{font-size:24px;text-align:center;width:140px;padding:8px;border-radius:8px;border:none;margin:10px 0;}
   #pinErr{color:#ff5555;font-size:13px;height:16px;}
-  #adminPanel{position:fixed;top:0;right:-360px;width:340px;height:100%;background:#1b1b1f;color:#fff;z-index:800;transition:right 0.25s;overflow-y:auto;box-shadow:-4px 0 20px rgba(0,0,0,0.5);}
-  #adminPanel.open{right:0;}
-  #adminHeader{padding:12px;background:#111;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2;}
-  #adminTabs{display:flex;flex-wrap:wrap;gap:4px;padding:8px;background:#111;position:sticky;top:42px;z-index:2;max-height:160px;overflow-y:auto;}
-  .tabBtn{background:#333;border:none;color:#ccc;padding:6px 8px;border-radius:6px;font-size:10px;cursor:pointer;}
-  .tabBtn.active{background:#ffcc00;color:#222;font-weight:bold;}
-  .ctrlRow{padding:8px 12px;border-bottom:1px solid #2c2c33;}
-  .ctrlRow label{display:block;font-size:12px;margin-bottom:4px;color:#ccc;}
-  .ctrlRow input[type=range]{width:100%;}
-  .ctrlRow input[type=color]{width:50px;height:28px;border:none;}
-  .ctrlRow select, .ctrlRow input[type=text]{width:100%;padding:4px;border-radius:4px;border:none;}
-  .valSpan{float:right;color:#ffcc00;font-size:11px;}
-  .actionBtn{background:#444;color:#fff;border:none;padding:8px;border-radius:6px;margin:4px;cursor:pointer;font-size:12px;}
-  .closeBtn{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;}
+  #adminPanel{position:fixed;top:0;left:-360px;width:340px;height:100%;background:linear-gradient(180deg,#1b1b22,#121216);color:#fff;z-index:800;transition:left 0.28s cubic-bezier(.2,.8,.2,1);overflow-y:auto;box-shadow:4px 0 28px rgba(0,0,0,0.6);border-right:1px solid #2c2c36;}
+  #adminPanel.open{left:0;}
+  #adminHeader{padding:14px 16px;background:linear-gradient(90deg,#141418,#1a1a20);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2;border-bottom:1px solid #2c2c36;box-shadow:0 4px 12px rgba(0,0,0,0.35);}
+  #adminHeader b{letter-spacing:1px;background:linear-gradient(90deg,#ffcc00,#ff9966);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:15px;}
+  #adminTabs{display:flex;flex-wrap:wrap;gap:5px;padding:10px;background:#141418;position:sticky;top:50px;z-index:2;max-height:170px;overflow-y:auto;border-bottom:1px solid #2c2c36;}
+  .tabBtn{background:#2a2a33;border:1px solid #33333d;color:#bbb;padding:6px 9px;border-radius:7px;font-size:10px;cursor:pointer;transition:background 0.15s,color 0.15s,transform 0.1s;}
+  .tabBtn:hover{background:#38383f;color:#fff;}
+  .tabBtn:active{transform:scale(0.95);}
+  .tabBtn.active{background:linear-gradient(90deg,#ffcc00,#ffaa00);color:#1a1a1a;font-weight:bold;border-color:#ffcc00;box-shadow:0 0 8px rgba(255,204,0,0.4);}
+  .ctrlRow{padding:9px 14px;border-bottom:1px solid #26262e;transition:background 0.15s;}
+  .ctrlRow:hover{background:rgba(255,255,255,0.03);}
+  .ctrlRow label{display:block;font-size:12px;margin-bottom:5px;color:#c9c9d2;}
+  .ctrlRow input[type=range]{width:100%;accent-color:#ffcc00;}
+  .ctrlRow input[type=checkbox]{width:17px;height:17px;accent-color:#ffcc00;cursor:pointer;}
+  .ctrlRow input[type=color]{width:50px;height:28px;border:none;border-radius:6px;cursor:pointer;}
+  .ctrlRow select, .ctrlRow input[type=text]{width:100%;padding:6px;border-radius:6px;border:1px solid #33333d;background:#232329;color:#eee;}
+  .valSpan{float:right;color:#ffcc00;font-size:11px;font-weight:bold;}
+  .actionBtn{background:linear-gradient(180deg,#4a4a54,#38383f);color:#fff;border:1px solid #4a4a56;padding:9px 12px;border-radius:7px;margin:4px;cursor:pointer;font-size:12px;transition:transform 0.1s,background 0.15s;}
+  .actionBtn:hover{background:linear-gradient(180deg,#55555f,#424249);}
+  .actionBtn:active{transform:scale(0.96);}
+  .closeBtn{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;opacity:0.8;}
+  .closeBtn:hover{opacity:1;}
   #skinsScreen, #onlineScreen{position:fixed;inset:0;background:rgba(10,10,15,0.95);z-index:700;display:flex;flex-direction:column;align-items:center;color:#fff;overflow-y:auto;padding:20px 10px 40px;}
   #skinGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:12px;width:100%;max-width:700px;margin-top:16px;}
   .skinCard{background:#222;border-radius:10px;padding:8px;cursor:pointer;border:2px solid transparent;text-align:center;}
@@ -60,6 +68,7 @@
   <button class="bigBtn" id="playBtn">▶ PLAY</button>
   <button class="bigBtn" id="skinsBtn" style="background:#555;color:#fff;">🎨 Skins</button>
   <button class="bigBtn" id="onlineBtn" style="background:#2979ff;color:#fff;">🌐 Online</button>
+  <button class="bigBtn" id="rebindBtn" style="background:#00bfa5;color:#fff;">⌨ Rebind</button>
 </div>
 
 <div class="overlay hidden" id="over">
@@ -83,6 +92,15 @@
   <h1 style="font-size:28px;">Online Multiplayer</h1>
   <div id="onlineArea" style="width:90%;max-width:400px;"></div>
   <button class="bigBtn" id="onlineBackBtn" style="margin-top:20px;background:#555;">← Back</button>
+</div>
+
+<div class="overlay hidden" id="rebindScreen">
+  <h1 style="font-size:28px;">Rebind Jump</h1>
+  <div style="margin:10px 0;">Current key: <b id="currentBindDisplay">SPACE</b></div>
+  <button class="bigBtn" id="rebindCaptureBtn" style="background:#00bfa5;">🎯 Click then press a key</button>
+  <div id="rebindListening" class="hidden" style="margin-top:10px;font-size:14px;color:#ffcc00;">Press any key… (Esc to cancel)</div>
+  <button class="bigBtn" id="rebindResetBtn" style="background:#555;margin-top:20px;">↻ Reset to Space</button>
+  <button class="bigBtn" id="rebindBackBtn" style="background:#555;">← Back</button>
 </div>
 
 <button id="gearBtn">⚙️</button>
@@ -187,6 +205,8 @@ var DEFAULTS = {
   showVelocityVectors:false, consoleLogEnabled:false, replayRecording:false, ghostRecordingPlayback:false,
   // skins
   currentSkin:0,
+  // keybinds
+  jumpKey:'Space', jumpKeyLabel:'SPACE',
   // graphics2
   textureDetail:'med', shadowQuality:'low', antiAliasing:true, birdShadow:false, pipeShadow:false,
   backgroundBlur:0, lightingAngle:45, ambientBrightness:1, contrast:1, saturation:1, hueRotate:0,
@@ -235,7 +255,63 @@ var DEFAULTS = {
   dailyChallengeEnabled:false, weeklyChallengeEnabled:false, challengeDifficulty:'normal',
   bonusObjectives:false, scoreGoal:20, timeAttackMode:false, survivalMode:false, zenMode:false,
   practiceMode:false, speedrunTimer:false, checkpointSystem:false, livesCount:1,
-  comboMultiplierCap:5, streakBonus:false, randomEventsEnabled:false
+  comboMultiplierCap:5, streakBonus:false, randomEventsEnabled:false,
+  // decor
+  cursorPulse:false, flapGrain:false, buttonContour:false, bannerBounce:false, pipeEcho:false, deathShadowcast:'off', badgeFrame:'#ffffff', iconSway:false, snow2Matte:false, particleBounce:false, comboTint:false, seasonGlint:false, moon2Shadow:false, cloud3Sheen:false, fog3Lowlight:false, moon2Wave:0, meterFog:'none', scoreHalo:'#ffffff', deathNeon:false, deathShadow:0, fog3Fog:false, star3Smoke:false, comboRipple:'none', iconChrome:false, fog3Star:false,
+  // decor2
+  badgeGrain:'#ffffff', weatherTrail:false, skyConfetti:0, scoreVignette:'classic', cameraRay:1, foregroundSheen:false, flapLowlight:false, bannerBounce2:'linear', star3Grain:false, panelRay:false, groundFlash:false, particleBounce2:'off', moon2Star:'linear', toastPrism:0, cursorLowlight:false, seasonFlash:false, rain2Hue:0, jumpShadowcast:false, panelGlint:'#ffffff', lightShadowcast:'none', foregroundCloud:false, iconHighlight:false, tickerSpark:0, cursorFog:false, flapTrail:false,
+  // auras
+  avatarWave:false, hudBurst:0, backgroundShine:0, jumpHighlight:'linear', cameraContour:false, lightPulse2:'#ffffff', star3Warp:1, cursorChrome:false, scoreFrost:false, bannerNoise:'none', birdRipple:'#ffffff', groundNoise:false, skyEmber:false, panelScanline:false, hudVignette:0, avatarShine:false, grid2Drift:false, buttonShadow:'#ffffff', rain2Smoke:1, fog3Aura:'#ffffff', buttonTrail:0, buttonChrome:false, musicLowlight:0, rain2Texture:false, fog3Chrome:false,
+  // auras2
+  snow2Shadow:false, iconSparkle:false, flapGradient:1, grid2Vignette:0, particleStar:false, moon2Sheen:0, rain2Beam:false, musicNeon:false, groundContour:false, weatherTrail2:false, bannerFlare:-50, particleTrail:0, soundBurst:'off', flapPulse2:false, avatarChrome:'round', skyWave:-50, avatarOutline2:false, jumpBorder:'#ffffff', weatherScanline:false, sun2Mist:'#ffffff', lightBend:false, scoreSparkle:-50, avatarShadow:false, iconVignette:0, backgroundDust:false,
+  // retro
+  flapCloud:false, particleWarp:0, meterHighlight:false, badgePastel:'#ffffff', buttonHaze:false, cursorGlint:0, comboMetallic:'none', seasonBorder:'#ffffff', jumpShadowcast2:0, groundEcho:'#ffffff', rain2Matte:false, birdEmber:false, jumpHue:-50, rain2Sparkle:false, scoreTint:0, star3Glare:0, skyRainbow:false, skySmoke:false, flapGlint:false, badgeDrift:'none', flapHue:false, wind2Pulse:false, seasonDrift:'#ffffff', flapGloss:false, buttonStar:false,
+  // retro2
+  grid2Grain:false, fog3Dust:false, deathGrain:false, musicPulse2:false, comboBurst:false, cloud3Silhouette:-50, seasonPulse:false, jumpPattern:'classic', skyGlint:'linear', cloud3Confetti:-50, panelFlash:-50, musicPrism:false, rain2Glow:-50, musicFog:0, seasonConfetti:'#ffffff', cursorPastel:0, wind2Spark:0, badgeMist:false, wind2Star:'#ffffff', soundPastel:-50, birdPastel:false, cameraJitter:'round', weatherFade:1, cameraSilhouette:0, menuMetallic:-50,
+  // seasons2
+  seasonEcho:false, lightGrain:false, foregroundPulse:false, flapShine:'off', fog3Sway:'#ffffff', avatarOverlay:1, sun2Chrome:false, birdGlint:0, soundOutline2:0, badgeChrome:false, fog3Haze:-50, badgeConfetti:-50, panelBounce:1, particleShine:0, flapMatte:1, flapMatte2:0, trail3Scanline:false, seasonConfetti2:0, backgroundTint:false, moon2Tint:false, scoreSway:0, iconFade:0, cameraSway:-50, pipeStar:0, cloud3Pastel:1,
+  // seasons3
+  iconContour:'none', hudGrain:false, rain2Beam2:false, moon2Frost:'#ffffff', sun2Gradient:0, meterLowlight:false, sun2Pulse:false, rain2Haze:0, groundSheen:0, cameraBend:false, seasonStar:false, wind2Prism:false, grid2Shimmer:0, cloud3Grain:'#ffffff', scoreHalo2:false, flapFrame:false, meterTint:false, backgroundShine2:'#ffffff', cursorVignette:0, star3Gradient:'round', cursorHue:false, buttonPulse:false, avatarStar:0, scoreChrome:false, lightStreak:'off',
+  // soundscape
+  cloud3Lowlight:0, scoreShadowcast:'#ffffff', seasonSparkle:1, buttonJitter:false, fog3Tint:0, toastGloss:'round', grid2Fade:-50, comboSpark:false, menuMatte:0, fog3Star2:false, pipeRay:false, soundBeam:false, cloud3Sheen2:false, comboMatte:0, toastOverlay:false, flapDrift:-50, flapShine2:'#ffffff', hudTwist:false, menuNeon:false, sun2Chrome2:false, bannerCloud:-50, toastDust:-50, seasonSmoke:0, lightPrism:false, cursorOverlay:false,
+  // soundscape2
+  cursorLowlight2:false, musicVignette:0, bannerHighlight:'classic', buttonOverlay:false, deathFog:false, lightSparkle:0, comboHalo:false, badgeNeon:false, hudGlint:false, avatarMetallic:1, snow2Frost:false, groundPrism:0, scorePulse2:0, avatarAura:false, foregroundPastel:false, flapStreak:1, tickerGrain:1, snow2Warp:false, bannerBounce3:false, avatarTrail:'off', cameraVignette:false, menuHue:false, soundRipple:false, birdDrift:-50, grid2Neon:false,
+  // skyfx
+  deathMetallic:false, fog3Ripple:'#ffffff', deathSheen:'#ffffff', bannerFrame:0, iconGrain:'#ffffff', foregroundGloss:false, scoreTrail:false, lightMetallic:0, fog3Pastel:0, panelContour:1, menuHalo:0, tickerPrism:false, menuNoise:'#ffffff', avatarShimmer:'#ffffff', comboHalo2:false, grid2Outline2:'#ffffff', snow2Matte2:false, bannerJitter:'#ffffff', hudEcho:0, wind2Ember:false, buttonHue:false, wind2Ray:false, sun2Flicker:0, weatherPrism:false, cursorPulse2:0,
+  // skyfx2
+  iconFade2:0, musicOutline2:false, meterRay:'#ffffff', snow2Aura:false, comboMist:false, snow2Beam:false, pipeScanline:false, lightSparkle2:1, menuGrain:false, fog3Streak:'#ffffff', foregroundRay:false, panelGloss:1, grid2Chrome:-50, foregroundComet:false, tickerSilhouette:false, scoreMatte:0, panelGloss2:false, trail3Pastel:'round', hudTint:-50, grid2Dust:false, badgeContour:1, weatherOverlay:false, avatarComet:false, wind2Halo:false, grid2Star:0,
+  // groundfx
+  hudFlicker:false, panelEmber:false, snow2Shadow2:1, birdGlare:0, scoreShine:false, seasonOrbit:'#ffffff', menuEmber:'#ffffff', iconStar:false, hudContour:false, meterBurst:false, trail3Noise:false, rain2Shadow:'#ffffff', buttonWarp:false, lightPulse:false, weatherTrail3:false, cloud3Cloud:0, flapHighlight:-50, soundGradient:false, menuStar:'none', hudGlare:false, fog3Prism:0, birdFade:false, iconHue:false, snow2Dust:'classic', rain2Prism:0,
+  // groundfx2
+  musicComet:0, flapStar:'classic', avatarNeon:false, pipeOrbit:false, birdAura:'linear', trail3Noise2:'classic', deathOverlay:'classic', backgroundShadow:'#ffffff', skyRainbow2:0, bannerFog:false, menuNeon2:false, wind2Pattern:false, backgroundContour:false, toastShadowcast:false, particlePrism:0, seasonFlash2:0, foregroundGrain:'#ffffff', sun2Fog:false, sun2Sparkle:false, iconStreak:0, jumpStar:'#ffffff', star3Glint:'#ffffff', deathShine:false, meterSpark:'none', scoreFade:false,
+  // birdfx
+  wind2Flash:false, skyFlicker:false, hudFlash:false, flapLowlight2:false, moon2Bend:false, iconSway2:'none', wind2Shadow:-50, wind2Matte:false, star3Vignette:1, flapFog:false, star3Contour:'#ffffff', cloud3Trail:0, musicStreak:0, cameraShimmer:false, seasonChrome:false, avatarBorder:false, badgeBorder:'none', deathEmber:false, tickerGlow:false, foregroundMist:0, soundFlash:'#ffffff', pipeMist:false, cloud3Scanline:'classic', pipePattern:false, groundMist:-50,
+  // birdfx2
+  cursorBurst:1, star3Silhouette:'off', snow2Shadowcast:false, meterHalo:'#ffffff', toastPastel:0, groundFlare:1, buttonBeam:0, menuSpark:'none', scoreMist:false, meterSpark2:-50, toastNeon:-50, tickerJitter:false, cursorVignette2:1, deathDrift:false, fog3Pulse2:0, weatherBounce:false, jumpCloud:false, grid2Burst:false, menuEcho:0, star3Mist:0, bannerEmber:'#ffffff', cursorDrift:false, rain2Aura:false, tickerRainbow:false, buttonShadowcast:false,
+  // pipefx
+  foregroundFlare:false, buttonDust:0, cursorMatte:'none', rain2Pulse:'classic', pipeTexture:false, lightFrost:false, birdTexture:false, avatarPulse2:false, foregroundPulse2:false, toastVignette:1, fog3Frost:false, star3Rainbow:false, avatarWave2:false, foregroundHue:'off', menuGloss:1, hudWarp:0, cameraSilhouette2:false, cloud3Jitter:false, trail3Beam:0, skyGrain:-50, groundGlow:false, lightVignette:false, jumpNeon:false, cursorGlow:1, soundMist:-50,
+  // pipefx2
+  deathShadowcast2:0, scoreOrbit:false, rain2Shimmer:0, weatherBounce2:'linear', wind2Neon:false, sun2Shimmer:false, particleBend:false, menuJitter:false, flapJitter:'linear', toastWave:0, seasonGrain:false, particleRipple:0, toastSilhouette:false, cloud3Dust:'#ffffff', foregroundScanline:false, foregroundPrism:false, soundTint:'#ffffff', scorePattern:'#ffffff', hudFade:'round', snow2Spark:'#ffffff', weatherTint:0, grid2Warp:'#ffffff', lightMatte:'off', cloud3Shadowcast:false, lightFade:0,
+  // hud2
+  groundCloud:false, scoreEcho:'round', panelComet:-50, badgeHalo:-50, musicSpark:'linear', panelTint:false, snow2Glint:false, menuShadowcast:'#ffffff', soundHalo:false, snow2Warp2:-50, meterHue:false, star3Metallic:1, seasonAura:'#ffffff', seasonBurst:false, buttonComet:false, jumpTint:false, menuGlare:false, lightOrbit:false, tickerWave:false, badgeStar:'#ffffff', seasonMist:'#ffffff', toastEcho:'#ffffff', rain2Silhouette:false, pipeFog:false, soundVignette:false,
+  // hud3
+  hudOverlay:false, backgroundTint2:false, trail3Shadow:-50, toastFlicker:'#ffffff', seasonMist2:'linear', foregroundHue2:false, meterGradient:0, wind2Fog:'#ffffff', flapWarp:'classic', snow2Noise:0, lightShine:false, star3Warp2:0, moon2Shadowcast:1, particleFrame:'none', jumpAura:'#ffffff', grid2Cloud:0, toastStreak:false, menuHue2:false, snow2Silhouette:false, rain2Echo:false, snow2Dust2:false, wind2Aura:-50, star3Scanline:0, star3Grain2:false, weatherShadow:'#ffffff',
+  // network3
+  seasonGlare:false, skyMetallic:0, grid2Twist:'off', menuShimmer:false, cameraTint:-50, toastBounce:false, trail3Scanline2:false, cursorAura:false, wind2Bend:false, cursorRay:'round', pipeSilhouette:'none', foregroundNeon:0, meterSmoke:false, avatarSway:false, menuHighlight:false, scoreHighlight:-50, panelShimmer:1, skyComet:false, jumpShimmer:false, scoreDust:false, buttonEmber:false, skySmoke2:0, soundFade:0, backgroundBurst:0, trail3Frame:false,
+  // netfx
+  musicHalo:false, lightSilhouette:-50, grid2Prism:false, musicMetallic:false, groundEmber:false, cursorCloud:1, snow2Comet:false, soundRay:0, toastGloss2:false, rain2Wave:-50, soundContour:false, weatherGlint:false, weatherNeon:false, snow2Bounce:false, snow2Dust3:0, cloud3Jitter2:false, groundRipple:'#ffffff', sun2Fog2:0, pipeGlare:'linear', skyMist:false, flapFog2:false, moon2Flicker:'none', snow2Cloud:false, snow2Ripple:'none', toastFog:0,
+  // motionfx
+  comboChrome:false, pipeTexture2:-50, moon2Streak:false, jumpTwist:false, meterMetallic:0, cursorHaze:false, snow2Pattern:0, weatherDust:false, badgeContour2:false, lightHue:'#ffffff', soundFog:0, cursorFrame:false, flapRay:false, star3Cloud:-50, backgroundEcho:false, lightOrbit2:-50, wind2Drift:'off', backgroundConfetti:'#ffffff', scoreTwist:-50, cloud3Mist:-50, soundMist2:-50, groundStreak:0, lightGradient:false, weatherGrain:false, toastMetallic:false,
+  // motionfx2
+  jumpFrame:'#ffffff', badgeMatte:false, lightLowlight:false, panelGradient:'round', foregroundGradient:'#ffffff', meterFrost:'off', pipeWave:false, avatarSheen:'#ffffff', cameraSway2:'off', hudContour2:false, lightFlare:false, sun2Pastel:0, groundHue:1, grid2Fade2:false, seasonGlare2:false, weatherDust2:0, star3Silhouette2:0, weatherScanline2:0, comboTwist:false, foregroundShadow:false, trail3Comet:'linear', flapHue2:false, avatarConfetti:false, particleRay:1, hudRainbow:0,
+  // social
+  menuOrbit:1, flapVignette:'classic', groundAura:false, hudShine:false, iconSparkle2:false, rain2Haze2:false, star3Pulse2:false, skyPulse2:false, avatarOverlay2:false, badgeMetallic:false, moon2Shadowcast2:-50, comboStreak:false, buttonOrbit:false, seasonFog:false, musicSilhouette:-50, skyHalo:false, backgroundEmber:-50, fog3Tint2:'round', backgroundSpark:'classic', particleOrbit:'classic', bannerFrost:-50, iconBeam:'classic', grid2Shimmer2:false, seasonFlash3:-50, lightPulse3:'linear',
+  // social2
+  jumpNoise:false, bannerFlare2:false, toastStar:false, flapFlicker:'off', musicShimmer:0, wind2Tint:0, wind2Shadowcast:'linear', groundHaze:0, badgeSpark:'#ffffff', grid2Highlight:0, soundBend:0, iconSmoke:'#ffffff', jumpFlare:false, flapMatte3:0, deathPastel:false, cameraBeam:false, grid2Dust2:0, trail3Streak:'round', moon2Orbit:false, foregroundNeon2:false, trail3Wave:false, snow2Prism:0, musicLowlight2:false, badgeGloss:false, buttonScanline:false,
+  // extras
+  groundHighlight:false, deathAura:false, wind2Ember2:0, backgroundGlow:0, wind2Shine:0, trail3Spark:false, groundEcho2:'#ffffff', avatarNoise:0, soundSway:false, skyOrbit:0, trail3Flicker:false, lightGlint:false, trail3Bend:'#ffffff', iconHighlight2:0, panelFade:false, musicFlash:false, particleBend2:'#ffffff', jumpTexture:false, seasonNeon:'none', soundPulse2:-50, weatherEcho:0, soundHaze:0, flapGlow:false, moon2Scanline:0, seasonPastel:'round',
+  // extras2
+  birdSheen:'#ffffff', star3Scanline2:false, cursorFade:false, particlePulse2:'#ffffff', panelRainbow:false, trail3Cloud:'none', deathHaze:0, fog3Cloud:-50, grid2Lowlight:'#ffffff', cameraChrome:'#ffffff', tickerWave2:1, toastFog2:false, avatarFlash:false, badgeShadowcast:false, avatarLowlight:false, particleSpark:1, cursorBorder:'linear', menuSilhouette:0, fog3Mist:1, fog3Trail:1, lightShimmer:0, birdVignette:'off', skyBounce:false, scoreContour:false, scoreShine2:false,
 };
 
 function loadSettings(){
@@ -344,6 +420,7 @@ var afterimages = [];
 var weatherParticles = [];
 var fpsFrames = 0, fpsLast = 0, fpsValue = 0;
 var lastFlapTime = -99999;
+var flapAnim = 0;
 var lastBotGapY = null;
 var sessionStart = Date.now();
 var totalFlaps = 0, totalDeaths = 0, scoresHistory = [];
@@ -371,6 +448,7 @@ function flap(){
   lastFlapTime = now;
   bird.vy = (S.reverseGravity ? S.jumpPower : -S.jumpPower);
   totalFlaps++;
+  flapAnim = 1;
   if(S.cameraShakeOnFlap) screenShakeTimer = Math.max(screenShakeTimer, 0.08);
   playTone('flap');
 }
@@ -650,6 +728,7 @@ function update(dt){
     if(afterimages[j].life <= 0) afterimages.splice(j,1);
   }
   if(botMem.celebrateTimer > 0) botMem.celebrateTimer -= dt;
+  if(flapAnim > 0) flapAnim = Math.max(0, flapAnim - dt*4);
 
   updateWeather(dt);
   checkCollisions();
@@ -667,14 +746,22 @@ function idleMenuUpdate(dt){
 function drawSky(){
   var w = canvas.width/DPR, h = canvas.height/DPR;
   ctx.save(); ctx.scale(DPR,DPR);
-  var top = S.skyTopColor, bot = S.skyBottomColor;
-  if(S.skyTheme === 'sunset'){ top='#ff9966'; bot='#ffcc99'; }
-  else if(S.skyTheme === 'night'){ top='#0b1026'; bot='#1b2a4a'; }
-  else if(S.skyTheme === 'space'){ top='#000010'; bot='#0a0a2a'; }
+  var top = S.skyTopColor, mid = null, bot = S.skyBottomColor;
+  if(S.skyTheme === 'sunset'){ top='#4a3b6b'; mid='#ff8a65'; bot='#ffd9a0'; }
+  else if(S.skyTheme === 'night'){ top='#05070f'; mid='#121a33'; bot='#243354'; }
+  else if(S.skyTheme === 'space'){ top='#000006'; mid='#07071a'; bot='#10102e'; }
   var grad = ctx.createLinearGradient(0,0,0,h);
-  grad.addColorStop(0, top); grad.addColorStop(1, bot);
+  grad.addColorStop(0, top);
+  if(mid) grad.addColorStop(0.55, mid);
+  grad.addColorStop(1, bot);
   ctx.fillStyle = grad;
   ctx.fillRect(0,0,w,h);
+  // soft horizon glow band for extra depth
+  var hgrad = ctx.createLinearGradient(0,h*0.55,0,h-50);
+  hgrad.addColorStop(0,'rgba(255,255,255,0)');
+  hgrad.addColorStop(1, S.skyTheme==='sunset' ? 'rgba(255,200,140,0.25)' : (S.skyTheme==='day' ? 'rgba(255,255,255,0.12)' : 'rgba(120,140,220,0.08)'));
+  ctx.fillStyle = hgrad;
+  ctx.fillRect(0,h*0.55,w,h*0.45-50);
 
   // time-of-day darkening overlay
   var nightFactor = Math.max(0, Math.sin((S.timeOfDay/24)*Math.PI*2 - Math.PI/2)) * -1;
@@ -688,22 +775,44 @@ function drawSky(){
   }
 
   if(S.skyTheme === 'night' || S.skyTheme === 'space'){
-    ctx.fillStyle = '#fff';
     for(var i=0;i<S.starCount;i++){
       var sx = (i*53.7)%w, sy=(i*91.3)%h;
-      ctx.globalAlpha = 0.3+Math.sin(performance.now()/500*S.starTwinkleSpeed+i)*0.3+0.3;
-      ctx.fillRect(sx,sy,2,2);
+      var tw = 0.3+Math.sin(performance.now()/500*S.starTwinkleSpeed+i)*0.3+0.3;
+      var sr = 1 + (i%3)*0.6;
+      ctx.globalAlpha = tw;
+      var stGrad = ctx.createRadialGradient(sx,sy,0,sx,sy,sr*3);
+      stGrad.addColorStop(0,'rgba(255,255,255,0.9)');
+      stGrad.addColorStop(1,'rgba(255,255,255,0)');
+      ctx.fillStyle = stGrad;
+      ctx.beginPath(); ctx.arc(sx,sy,sr*3,0,7); ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(sx,sy,sr*0.6,0,7); ctx.fill();
     }
     ctx.globalAlpha = 1;
     if(S.moonVisible){
-      ctx.fillStyle = '#eee';
-      ctx.beginPath(); ctx.arc(w-60,60,24*S.moonPhase+6,0,7); ctx.fill();
+      var mr = 24*S.moonPhase+6;
+      var mgrad = ctx.createRadialGradient(w-66,54,0,w-60,60,mr*1.6);
+      mgrad.addColorStop(0,'rgba(255,255,255,0.35)');
+      mgrad.addColorStop(1,'rgba(255,255,255,0)');
+      ctx.fillStyle = mgrad;
+      ctx.beginPath(); ctx.arc(w-60,60,mr*1.6,0,7); ctx.fill();
+      var mbody = ctx.createRadialGradient(w-66,54,1,w-60,60,mr);
+      mbody.addColorStop(0,'#ffffff'); mbody.addColorStop(1,'#cfd3dc');
+      ctx.fillStyle = mbody;
+      ctx.beginPath(); ctx.arc(w-60,60,mr,0,7); ctx.fill();
     }
   }
   if(S.skyTheme === 'day' && S.sunGlow){
     ctx.save();
-    ctx.shadowColor = '#fff59d'; ctx.shadowBlur = 30;
-    ctx.fillStyle = '#fff59d';
+    var sgrad = ctx.createRadialGradient(w-70,60,0,w-70,60,S.sunSize*2.2);
+    sgrad.addColorStop(0,'rgba(255,245,157,0.55)');
+    sgrad.addColorStop(1,'rgba(255,245,157,0)');
+    ctx.fillStyle = sgrad;
+    ctx.beginPath(); ctx.arc(w-70,60,S.sunSize*2.2,0,7); ctx.fill();
+    var sbody = ctx.createRadialGradient(w-76,54,1,w-70,60,S.sunSize);
+    sbody.addColorStop(0,'#ffffff'); sbody.addColorStop(1,'#ffd54f');
+    ctx.shadowColor = '#fff59d'; ctx.shadowBlur = 20;
+    ctx.fillStyle = sbody;
     ctx.beginPath(); ctx.arc(w-70,60,S.sunSize,0,7); ctx.fill();
     ctx.restore();
   }
@@ -731,20 +840,31 @@ function hexToRgba(hex, a){
   if(hex.length===7){ r=parseInt(hex.substr(1,2),16); g=parseInt(hex.substr(3,2),16); b=parseInt(hex.substr(5,2),16); }
   return 'rgba('+r+','+g+','+b+','+a+')';
 }
+function shadeColor(hex, amt){
+  if(!hex || hex.length !== 7 || hex[0] !== '#') return hex;
+  var r = Math.max(0,Math.min(255, parseInt(hex.substr(1,2),16) + amt));
+  var g = Math.max(0,Math.min(255, parseInt(hex.substr(3,2),16) + amt));
+  var b = Math.max(0,Math.min(255, parseInt(hex.substr(5,2),16) + amt));
+  return 'rgb('+r+','+g+','+b+')';
+}
 var cloudOffsets = [];
 function drawClouds(){
   if(!S.backgroundParallax || S.reduceMotion) return;
   var w = canvas.width/DPR, h = canvas.height/DPR;
   ctx.save(); ctx.scale(DPR,DPR);
-  ctx.fillStyle = 'rgba(255,255,255,' + S.cloudOpacity + ')';
   var n = S.cloudCount;
   for(var i=0;i<n;i++){
     if(cloudOffsets[i] === undefined) cloudOffsets[i] = Math.random()*w;
     cloudOffsets[i] -= S.cloudSpeed*0.005;
     if(cloudOffsets[i] < -80) cloudOffsets[i] = w+80;
     var cx = cloudOffsets[i], cy = 40+ (i*47)%(h*0.4);
+    var cgrad = ctx.createLinearGradient(cx,cy-18,cx,cy+14);
+    cgrad.addColorStop(0, 'rgba(255,255,255,'+S.cloudOpacity+')');
+    cgrad.addColorStop(1, 'rgba(210,220,235,'+(S.cloudOpacity*0.75)+')');
+    ctx.fillStyle = cgrad;
     ctx.beginPath();
     ctx.arc(cx,cy,20,0,7); ctx.arc(cx+20,cy+5,16,0,7); ctx.arc(cx-20,cy+5,16,0,7);
+    ctx.arc(cx+6,cy-10,13,0,7); ctx.arc(cx-10,cy-6,11,0,7);
     ctx.fill();
   }
   ctx.restore();
@@ -760,16 +880,44 @@ function drawGround(){
   grad.addColorStop(0, top); grad.addColorStop(1, bot);
   ctx.fillStyle = grad;
   ctx.fillRect(0,h-50,w,50);
+  // crisp highlight along the top edge for separation from the sky
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.fillRect(0,h-50,w,2);
   ctx.fillStyle = 'rgba(0,0,0,0.15)';
   for(var x=0;x<w;x+=16){
     var by = h-50+Math.sin(x*0.3)*S.groundBumpiness*0.3;
     ctx.fillRect(x,by,8,4);
   }
+  if(S.groundTheme === 'grass'){
+    ctx.strokeStyle = 'rgba(70,110,40,0.5)';
+    ctx.lineWidth = 2;
+    for(var gx=3; gx<w; gx+=11){
+      var gby = h-50+Math.sin(gx*0.3)*S.groundBumpiness*0.3;
+      ctx.beginPath();
+      ctx.moveTo(gx, gby);
+      ctx.lineTo(gx-2, gby-6);
+      ctx.moveTo(gx, gby);
+      ctx.lineTo(gx+2, gby-5);
+      ctx.stroke();
+    }
+  }
   if(S.cityDensity > 0 && S.groundTheme === 'city'){
-    ctx.fillStyle = 'rgba(40,40,50,0.5)';
+    var bw = w/S.cityDensity-4;
     for(var bx=0; bx<w; bx+=w/S.cityDensity){
       var bh = 20 + ((bx*13)%40);
-      ctx.fillRect(bx, h-50-bh, w/S.cityDensity-4, bh);
+      var bgrad = ctx.createLinearGradient(bx,h-50-bh,bx+bw,h-50-bh);
+      bgrad.addColorStop(0,'rgba(30,30,40,0.6)');
+      bgrad.addColorStop(1,'rgba(55,55,68,0.55)');
+      ctx.fillStyle = bgrad;
+      ctx.fillRect(bx, h-50-bh, bw, bh);
+      if(S.skyTheme === 'night' || S.skyTheme === 'space'){
+        ctx.fillStyle = 'rgba(255,221,120,0.75)';
+        for(var wy=h-50-bh+4; wy<h-50-2; wy+=7){
+          for(var wx=bx+3; wx<bx+bw-3; wx+=6){
+            if(((wx+wy)*7)%13 < 4) ctx.fillRect(wx,wy,2,3);
+          }
+        }
+      }
     }
   }
   ctx.restore();
@@ -805,23 +953,43 @@ function drawPipeRect(x,y,w,h){
     ctx.stroke();
   }
 }
+function pipeBodyGradient(x, w){
+  var g = ctx.createLinearGradient(x,0,x+w,0);
+  g.addColorStop(0, pipeColorFor('shadow'));
+  g.addColorStop(0.18, pipeColorFor('body'));
+  g.addColorStop(0.55, pipeColorFor('hl'));
+  g.addColorStop(0.75, pipeColorFor('body'));
+  g.addColorStop(1, pipeColorFor('shadow'));
+  return g;
+}
 function drawPipes(){
   var h = canvas.height/DPR;
   ctx.save(); ctx.scale(DPR,DPR);
   ctx.globalAlpha = S.pipeTransparency;
   pipes.forEach(function(p){
     if(S.glowEnabled || S.bloomEnabled){ ctx.shadowColor = S.pipeGlowColor; ctx.shadowBlur = 16; } else { ctx.shadowBlur = 0; }
-    ctx.fillStyle = pipeColorFor('body');
+    ctx.fillStyle = pipeBodyGradient(p.x, p.w);
     drawPipeRect(p.x, 0, p.w, p.gapY);
     drawPipeRect(p.x, p.gapY+p.gap, p.w, h-50-(p.gapY+p.gap));
-    ctx.fillStyle = pipeColorFor('cap');
+    ctx.shadowBlur = 0;
+    var capGrad = ctx.createLinearGradient(p.x-4,0,p.x+p.w+4,0);
+    capGrad.addColorStop(0, pipeColorFor('shadow'));
+    capGrad.addColorStop(0.5, pipeColorFor('cap'));
+    capGrad.addColorStop(1, pipeColorFor('shadow'));
+    ctx.fillStyle = capGrad;
     var capH = S.pipeCapStyle === 'spike' ? 28 : 20;
     if(S.pipeCapStyle !== 'flat'){
       ctx.fillRect(p.x-4, p.gapY-capH, p.w+8, capH);
       ctx.fillRect(p.x-4, p.gapY+p.gap, p.w+8, capH);
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.fillRect(p.x-4, p.gapY-capH, p.w+8, 2);
+      ctx.fillRect(p.x-4, p.gapY+p.gap, p.w+8, 2);
     }
     ctx.fillStyle = pipeColorFor('hl');
-    ctx.fillRect(p.x+4, 0, 6, p.gapY);
+    ctx.globalAlpha = S.pipeTransparency * 0.6;
+    ctx.fillRect(p.x+4, 0, 5, p.gapY);
+    ctx.fillRect(p.x+4, p.gapY+p.gap, 5, h-50-(p.gapY+p.gap));
+    ctx.globalAlpha = S.pipeTransparency;
     ctx.shadowBlur = 0;
     if(S.hitboxEnabled){
       ctx.strokeStyle = '#ff0000';
@@ -876,18 +1044,43 @@ function drawBird(){
   if(S.botEnabled && botMem.celebrateTimer > 0) ctx.rotate(Math.sin(performance.now()/40)*0.3);
   else if(S.birdTilt) ctx.rotate((bird.rot||0)*Math.PI/180);
 
+  // soft contact shadow under the bird gives it weight
+  ctx.save();
+  ctx.globalAlpha = 0.18;
+  ctx.fillStyle = '#000';
+  ctx.beginPath(); ctx.ellipse(1, bird.r*0.6, bird.r*0.9, bird.r*0.35, 0, 0, 7); ctx.fill();
+  ctx.restore();
+
   if(shape === 'custom' && customSkinImg.complete && customSkinImg.naturalWidth){
     var r = bird.r;
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 6; ctx.shadowOffsetY = 2;
     ctx.drawImage(customSkinImg, -r, -r, r*2, r*2);
+    ctx.restore();
   } else {
     if(S.outlineVisible){ ctx.strokeStyle = S.outlineColor; ctx.lineWidth = 2; }
-    ctx.fillStyle = body;
+    var bodyGrad = ctx.createRadialGradient(-bird.r*0.3,-bird.r*0.35,bird.r*0.1,0,0,bird.r*1.15);
+    bodyGrad.addColorStop(0, shadeColor(body, 35));
+    bodyGrad.addColorStop(0.55, body);
+    bodyGrad.addColorStop(1, shadeColor(body, -25));
+    ctx.fillStyle = bodyGrad;
     drawShapePath(shape, bird.r);
     ctx.fill();
     if(S.outlineVisible) ctx.stroke();
-    ctx.fillStyle = wing;
-    ctx.beginPath(); ctx.ellipse(-2,4,bird.r*0.5,bird.r*0.3,0,0,7); ctx.fill();
-    ctx.fillStyle = beak;
+    var wingGrad = ctx.createLinearGradient(-bird.r*0.4,0,bird.r*0.4,bird.r*0.5);
+    wingGrad.addColorStop(0, shadeColor(wing, 15));
+    wingGrad.addColorStop(1, shadeColor(wing, -15));
+    ctx.fillStyle = wingGrad;
+    ctx.beginPath();
+    ctx.moveTo(-bird.r*0.55, bird.r*0.1);
+    ctx.quadraticCurveTo(-bird.r*0.1, bird.r*0.65, bird.r*0.3, bird.r*0.2);
+    ctx.quadraticCurveTo(-bird.r*0.05, bird.r*0.1, -bird.r*0.55, bird.r*0.1);
+    ctx.closePath();
+    ctx.fill();
+    var beakGrad = ctx.createLinearGradient(bird.r*0.6,0,bird.r*1.3,0);
+    beakGrad.addColorStop(0, shadeColor(beak, 10));
+    beakGrad.addColorStop(1, shadeColor(beak, -15));
+    ctx.fillStyle = beakGrad;
     ctx.beginPath(); ctx.moveTo(bird.r*0.7,-2); ctx.lineTo(bird.r*1.3,2); ctx.lineTo(bird.r*0.7,6); ctx.closePath(); ctx.fill();
     if(S.eyeVisible){
       var blink = (S.botEnabled && S.botBlinkEyes && Math.sin(performance.now()/800) > 0.95);
@@ -1031,13 +1224,20 @@ function drawHUD(){
   ctx.save(); ctx.scale(DPR,DPR);
   if(state === 'playing' || state === 'dead'){
     ctx.font = (S.scoreSize) + 'px ' + S.scoreFont;
-    ctx.fillStyle = '#fff';
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 3;
-    ctx.textAlign = 'center';
     var txt = Math.floor(score);
-    ctx.strokeText(txt, (canvas.width/DPR)/2, 70);
-    ctx.fillText(txt, (canvas.width/DPR)/2, 70);
+    var cx = (canvas.width/DPR)/2;
+    ctx.textAlign = 'center';
+    ctx.strokeStyle = 'rgba(0,0,0,0.65)';
+    ctx.lineWidth = 4;
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.4)'; ctx.shadowBlur = 6; ctx.shadowOffsetY = 2;
+    ctx.strokeText(txt, cx, 70);
+    ctx.restore();
+    var scoreGrad = ctx.createLinearGradient(0,70-S.scoreSize*0.8,0,70);
+    scoreGrad.addColorStop(0,'#ffffff');
+    scoreGrad.addColorStop(1,'#e8e8e8');
+    ctx.fillStyle = scoreGrad;
+    ctx.fillText(txt, cx, 70);
     if(S.comboDisplay){
       ctx.font = '14px sans-serif';
       ctx.fillText('x'+S.scoreMultiplier, (canvas.width/DPR)/2, 95);
@@ -1163,6 +1363,7 @@ function startGame(){
   document.getElementById('over').classList.add('hidden');
   document.getElementById('skinsScreen').classList.add('hidden');
   document.getElementById('onlineScreen').classList.add('hidden');
+  document.getElementById('rebindScreen').classList.add('hidden');
   if(S.randomSkinPerLife){ S.currentSkin = Math.floor(Math.random()*SKINS.length); }
   resetGame();
   state = 'playing';
@@ -1173,6 +1374,7 @@ function goMenu(){
   document.getElementById('over').classList.add('hidden');
   document.getElementById('skinsScreen').classList.add('hidden');
   document.getElementById('onlineScreen').classList.add('hidden');
+  document.getElementById('rebindScreen').classList.add('hidden');
   document.getElementById('menu').classList.remove('hidden');
   document.getElementById('bestDisplay').textContent = best;
   stopMusic();
@@ -1185,11 +1387,50 @@ document.getElementById('restartBtn').onclick = function(){
 document.getElementById('menuBtn').onclick = goMenu;
 document.getElementById('bestDisplay').textContent = best;
 
+var rebindListening = false;
+function updateBindDisplay(){
+  var d = document.getElementById('currentBindDisplay');
+  if(d) d.textContent = S.jumpKeyLabel || S.jumpKey;
+}
 window.addEventListener('keydown', function(e){
-  if(e.code === 'Space'){ flap(); }
+  if(rebindListening){
+    e.preventDefault();
+    rebindListening = false;
+    document.getElementById('rebindListening').classList.add('hidden');
+    if(e.key === 'Escape') return;
+    S.jumpKey = e.code;
+    S.jumpKeyLabel = (e.key.length === 1 ? e.key.toUpperCase() : e.key.replace('Key','').replace('Digit','').replace('Arrow','')) || e.code;
+    persistSettings();
+    updateBindDisplay();
+    return;
+  }
+  if(e.code === S.jumpKey){ flap(); if(e.code === 'Space') e.preventDefault(); }
   if(e.key === 'F3'){ S.debugOverlay = !S.debugOverlay; e.preventDefault(); }
 });
 canvas.addEventListener('pointerdown', function(){ flap(); });
+
+/* ---------- REBIND ---------- */
+document.getElementById('rebindBtn').onclick = function(){
+  document.getElementById('menu').classList.add('hidden');
+  document.getElementById('rebindScreen').classList.remove('hidden');
+  updateBindDisplay();
+};
+document.getElementById('rebindBackBtn').onclick = function(){
+  rebindListening = false;
+  document.getElementById('rebindListening').classList.add('hidden');
+  document.getElementById('rebindScreen').classList.add('hidden');
+  document.getElementById('menu').classList.remove('hidden');
+};
+document.getElementById('rebindResetBtn').onclick = function(){
+  S.jumpKey = 'Space';
+  S.jumpKeyLabel = 'SPACE';
+  persistSettings();
+  updateBindDisplay();
+};
+document.getElementById('rebindCaptureBtn').onclick = function(){
+  rebindListening = true;
+  document.getElementById('rebindListening').classList.remove('hidden');
+};
 
 /* ---------- SKINS SCREEN ---------- */
 function renderSkinsGrid(){
@@ -1635,10 +1876,710 @@ var controlsConfig = [
   {cat:'challenges',type:'range',key:'livesCount',label:'Lives Count (visual)',min:1,max:10,step:1},
   {cat:'challenges',type:'range',key:'comboMultiplierCap',label:'Combo Multiplier Cap (visual)',min:1,max:20,step:1},
   {cat:'challenges',type:'toggle',key:'streakBonus',label:'Streak Bonus (visual)'},
-  {cat:'challenges',type:'toggle',key:'randomEventsEnabled',label:'Random Events (visual)'}
+  {cat:'challenges',type:'toggle',key:'randomEventsEnabled',label:'Random Events (visual)'},
+  {cat:'decor',type:'toggle',key:'cursorPulse',label:'Cursor Pulse (visual)'},
+  {cat:'decor',type:'toggle',key:'flapGrain',label:'Flap Grain (visual)'},
+  {cat:'decor',type:'toggle',key:'buttonContour',label:'Button Contour (visual)'},
+  {cat:'decor',type:'toggle',key:'bannerBounce',label:'Banner Bounce (visual)'},
+  {cat:'decor',type:'toggle',key:'pipeEcho',label:'Pipe Echo (visual)'},
+  {cat:'decor',type:'select',key:'deathShadowcast',label:'Death Shadowcast (visual)',options:['off','low','med','high']},
+  {cat:'decor',type:'color',key:'badgeFrame',label:'Badge Frame (visual)'},
+  {cat:'decor',type:'toggle',key:'iconSway',label:'Icon Sway (visual)'},
+  {cat:'decor',type:'toggle',key:'snow2Matte',label:'Snow Matte (visual)'},
+  {cat:'decor',type:'toggle',key:'particleBounce',label:'Particle Bounce (visual)'},
+  {cat:'decor',type:'toggle',key:'comboTint',label:'Combo Tint (visual)'},
+  {cat:'decor',type:'toggle',key:'seasonGlint',label:'Season Glint (visual)'},
+  {cat:'decor',type:'toggle',key:'moon2Shadow',label:'Moon Shadow (visual)'},
+  {cat:'decor',type:'toggle',key:'cloud3Sheen',label:'Cloud Sheen (visual)'},
+  {cat:'decor',type:'toggle',key:'fog3Lowlight',label:'Fog Lowlight (visual)'},
+  {cat:'decor',type:'range',key:'moon2Wave',label:'Moon Wave (visual)',min:0,max:100,step:5},
+  {cat:'decor',type:'select',key:'meterFog',label:'Meter Fog (visual)',options:['none','subtle','bold','extreme']},
+  {cat:'decor',type:'color',key:'scoreHalo',label:'Score Halo (visual)'},
+  {cat:'decor',type:'toggle',key:'deathNeon',label:'Death Neon (visual)'},
+  {cat:'decor',type:'range',key:'deathShadow',label:'Death Shadow (visual)',min:0,max:100,step:5},
+  {cat:'decor',type:'toggle',key:'fog3Fog',label:'Fog Fog (visual)'},
+  {cat:'decor',type:'toggle',key:'star3Smoke',label:'Star Smoke (visual)'},
+  {cat:'decor',type:'select',key:'comboRipple',label:'Combo Ripple (visual)',options:['none','subtle','bold','extreme']},
+  {cat:'decor',type:'toggle',key:'iconChrome',label:'Icon Chrome (visual)'},
+  {cat:'decor',type:'toggle',key:'fog3Star',label:'Fog Star (visual)'},
+  {cat:'decor2',type:'color',key:'badgeGrain',label:'Badge Grain (visual)'},
+  {cat:'decor2',type:'toggle',key:'weatherTrail',label:'Weather Trail (visual)'},
+  {cat:'decor2',type:'range',key:'skyConfetti',label:'Sky Confetti (visual)',min:0,max:100,step:5},
+  {cat:'decor2',type:'select',key:'scoreVignette',label:'Score Vignette (visual)',options:['classic','modern','retro','future']},
+  {cat:'decor2',type:'range',key:'cameraRay',label:'Camera Ray (visual)',min:1,max:5,step:1},
+  {cat:'decor2',type:'toggle',key:'foregroundSheen',label:'Foreground Sheen (visual)'},
+  {cat:'decor2',type:'toggle',key:'flapLowlight',label:'Flap Lowlight (visual)'},
+  {cat:'decor2',type:'select',key:'bannerBounce2',label:'Banner Bounce (visual)',options:['linear','ease','bounce','elastic']},
+  {cat:'decor2',type:'toggle',key:'star3Grain',label:'Star Grain (visual)'},
+  {cat:'decor2',type:'toggle',key:'panelRay',label:'Panel Ray (visual)'},
+  {cat:'decor2',type:'toggle',key:'groundFlash',label:'Ground Flash (visual)'},
+  {cat:'decor2',type:'select',key:'particleBounce2',label:'Particle Bounce (visual)',options:['off','low','med','high']},
+  {cat:'decor2',type:'select',key:'moon2Star',label:'Moon Star (visual)',options:['linear','ease','bounce','elastic']},
+  {cat:'decor2',type:'range',key:'toastPrism',label:'Toast Prism (visual)',min:0,max:1,step:0.05},
+  {cat:'decor2',type:'toggle',key:'cursorLowlight',label:'Cursor Lowlight (visual)'},
+  {cat:'decor2',type:'toggle',key:'seasonFlash',label:'Season Flash (visual)'},
+  {cat:'decor2',type:'range',key:'rain2Hue',label:'Rain Hue (visual)',min:0,max:1,step:0.05},
+  {cat:'decor2',type:'toggle',key:'jumpShadowcast',label:'Jump Shadowcast (visual)'},
+  {cat:'decor2',type:'color',key:'panelGlint',label:'Panel Glint (visual)'},
+  {cat:'decor2',type:'select',key:'lightShadowcast',label:'Light Shadowcast (visual)',options:['none','subtle','bold','extreme']},
+  {cat:'decor2',type:'toggle',key:'foregroundCloud',label:'Foreground Cloud (visual)'},
+  {cat:'decor2',type:'toggle',key:'iconHighlight',label:'Icon Highlight (visual)'},
+  {cat:'decor2',type:'range',key:'tickerSpark',label:'Ticker Spark (visual)',min:0,max:1,step:0.05},
+  {cat:'decor2',type:'toggle',key:'cursorFog',label:'Cursor Fog (visual)'},
+  {cat:'decor2',type:'toggle',key:'flapTrail',label:'Flap Trail (visual)'},
+  {cat:'auras',type:'toggle',key:'avatarWave',label:'Avatar Wave (visual)'},
+  {cat:'auras',type:'range',key:'hudBurst',label:'Hud Burst (visual)',min:0,max:10,step:1},
+  {cat:'auras',type:'range',key:'backgroundShine',label:'Background Shine (visual)',min:0,max:10,step:1},
+  {cat:'auras',type:'select',key:'jumpHighlight',label:'Jump Highlight (visual)',options:['linear','ease','bounce','elastic']},
+  {cat:'auras',type:'toggle',key:'cameraContour',label:'Camera Contour (visual)'},
+  {cat:'auras',type:'color',key:'lightPulse2',label:'Light Pulse (visual)'},
+  {cat:'auras',type:'range',key:'star3Warp',label:'Star Warp (visual)',min:1,max:5,step:1},
+  {cat:'auras',type:'toggle',key:'cursorChrome',label:'Cursor Chrome (visual)'},
+  {cat:'auras',type:'toggle',key:'scoreFrost',label:'Score Frost (visual)'},
+  {cat:'auras',type:'select',key:'bannerNoise',label:'Banner Noise (visual)',options:['none','subtle','bold','extreme']},
+  {cat:'auras',type:'color',key:'birdRipple',label:'Bird Ripple (visual)'},
+  {cat:'auras',type:'toggle',key:'groundNoise',label:'Ground Noise (visual)'},
+  {cat:'auras',type:'toggle',key:'skyEmber',label:'Sky Ember (visual)'},
+  {cat:'auras',type:'toggle',key:'panelScanline',label:'Panel Scanline (visual)'},
+  {cat:'auras',type:'range',key:'hudVignette',label:'Hud Vignette (visual)',min:0,max:10,step:1},
+  {cat:'auras',type:'toggle',key:'avatarShine',label:'Avatar Shine (visual)'},
+  {cat:'auras',type:'toggle',key:'grid2Drift',label:'Grid Drift (visual)'},
+  {cat:'auras',type:'color',key:'buttonShadow',label:'Button Shadow (visual)'},
+  {cat:'auras',type:'range',key:'rain2Smoke',label:'Rain Smoke (visual)',min:1,max:5,step:1},
+  {cat:'auras',type:'color',key:'fog3Aura',label:'Fog Aura (visual)'},
+  {cat:'auras',type:'range',key:'buttonTrail',label:'Button Trail (visual)',min:0,max:100,step:5},
+  {cat:'auras',type:'toggle',key:'buttonChrome',label:'Button Chrome (visual)'},
+  {cat:'auras',type:'range',key:'musicLowlight',label:'Music Lowlight (visual)',min:0,max:10,step:1},
+  {cat:'auras',type:'toggle',key:'rain2Texture',label:'Rain Texture (visual)'},
+  {cat:'auras',type:'toggle',key:'fog3Chrome',label:'Fog Chrome (visual)'},
+  {cat:'auras2',type:'toggle',key:'snow2Shadow',label:'Snow Shadow (visual)'},
+  {cat:'auras2',type:'toggle',key:'iconSparkle',label:'Icon Sparkle (visual)'},
+  {cat:'auras2',type:'range',key:'flapGradient',label:'Flap Gradient (visual)',min:1,max:5,step:1},
+  {cat:'auras2',type:'range',key:'grid2Vignette',label:'Grid Vignette (visual)',min:0,max:1,step:0.05},
+  {cat:'auras2',type:'toggle',key:'particleStar',label:'Particle Star (visual)'},
+  {cat:'auras2',type:'range',key:'moon2Sheen',label:'Moon Sheen (visual)',min:0,max:100,step:5},
+  {cat:'auras2',type:'toggle',key:'rain2Beam',label:'Rain Beam (visual)'},
+  {cat:'auras2',type:'toggle',key:'musicNeon',label:'Music Neon (visual)'},
+  {cat:'auras2',type:'toggle',key:'groundContour',label:'Ground Contour (visual)'},
+  {cat:'auras2',type:'toggle',key:'weatherTrail2',label:'Weather Trail (visual)'},
+  {cat:'auras2',type:'range',key:'bannerFlare',label:'Banner Flare (visual)',min:-50,max:50,step:5},
+  {cat:'auras2',type:'range',key:'particleTrail',label:'Particle Trail (visual)',min:0,max:1,step:0.05},
+  {cat:'auras2',type:'select',key:'soundBurst',label:'Sound Burst (visual)',options:['off','low','med','high']},
+  {cat:'auras2',type:'toggle',key:'flapPulse2',label:'Flap Pulse (visual)'},
+  {cat:'auras2',type:'select',key:'avatarChrome',label:'Avatar Chrome (visual)',options:['round','square','sharp','soft']},
+  {cat:'auras2',type:'range',key:'skyWave',label:'Sky Wave (visual)',min:-50,max:50,step:5},
+  {cat:'auras2',type:'toggle',key:'avatarOutline2',label:'Avatar Outline (visual)'},
+  {cat:'auras2',type:'color',key:'jumpBorder',label:'Jump Border (visual)'},
+  {cat:'auras2',type:'toggle',key:'weatherScanline',label:'Weather Scanline (visual)'},
+  {cat:'auras2',type:'color',key:'sun2Mist',label:'Sun Mist (visual)'},
+  {cat:'auras2',type:'toggle',key:'lightBend',label:'Light Bend (visual)'},
+  {cat:'auras2',type:'range',key:'scoreSparkle',label:'Score Sparkle (visual)',min:-50,max:50,step:5},
+  {cat:'auras2',type:'toggle',key:'avatarShadow',label:'Avatar Shadow (visual)'},
+  {cat:'auras2',type:'range',key:'iconVignette',label:'Icon Vignette (visual)',min:0,max:100,step:5},
+  {cat:'auras2',type:'toggle',key:'backgroundDust',label:'Background Dust (visual)'},
+  {cat:'retro',type:'toggle',key:'flapCloud',label:'Flap Cloud (visual)'},
+  {cat:'retro',type:'range',key:'particleWarp',label:'Particle Warp (visual)',min:0,max:100,step:5},
+  {cat:'retro',type:'toggle',key:'meterHighlight',label:'Meter Highlight (visual)'},
+  {cat:'retro',type:'color',key:'badgePastel',label:'Badge Pastel (visual)'},
+  {cat:'retro',type:'toggle',key:'buttonHaze',label:'Button Haze (visual)'},
+  {cat:'retro',type:'range',key:'cursorGlint',label:'Cursor Glint (visual)',min:0,max:10,step:1},
+  {cat:'retro',type:'select',key:'comboMetallic',label:'Combo Metallic (visual)',options:['none','subtle','bold','extreme']},
+  {cat:'retro',type:'color',key:'seasonBorder',label:'Season Border (visual)'},
+  {cat:'retro',type:'range',key:'jumpShadowcast2',label:'Jump Shadowcast (visual)',min:0,max:100,step:5},
+  {cat:'retro',type:'color',key:'groundEcho',label:'Ground Echo (visual)'},
+  {cat:'retro',type:'toggle',key:'rain2Matte',label:'Rain Matte (visual)'},
+  {cat:'retro',type:'toggle',key:'birdEmber',label:'Bird Ember (visual)'},
+  {cat:'retro',type:'range',key:'jumpHue',label:'Jump Hue (visual)',min:-50,max:50,step:5},
+  {cat:'retro',type:'toggle',key:'rain2Sparkle',label:'Rain Sparkle (visual)'},
+  {cat:'retro',type:'range',key:'scoreTint',label:'Score Tint (visual)',min:0,max:1,step:0.05},
+  {cat:'retro',type:'range',key:'star3Glare',label:'Star Glare (visual)',min:0,max:10,step:1},
+  {cat:'retro',type:'toggle',key:'skyRainbow',label:'Sky Rainbow (visual)'},
+  {cat:'retro',type:'toggle',key:'skySmoke',label:'Sky Smoke (visual)'},
+  {cat:'retro',type:'toggle',key:'flapGlint',label:'Flap Glint (visual)'},
+  {cat:'retro',type:'select',key:'badgeDrift',label:'Badge Drift (visual)',options:['none','subtle','bold','extreme']},
+  {cat:'retro',type:'toggle',key:'flapHue',label:'Flap Hue (visual)'},
+  {cat:'retro',type:'toggle',key:'wind2Pulse',label:'Wind Pulse (visual)'},
+  {cat:'retro',type:'color',key:'seasonDrift',label:'Season Drift (visual)'},
+  {cat:'retro',type:'toggle',key:'flapGloss',label:'Flap Gloss (visual)'},
+  {cat:'retro',type:'toggle',key:'buttonStar',label:'Button Star (visual)'},
+  {cat:'retro2',type:'toggle',key:'grid2Grain',label:'Grid Grain (visual)'},
+  {cat:'retro2',type:'toggle',key:'fog3Dust',label:'Fog Dust (visual)'},
+  {cat:'retro2',type:'toggle',key:'deathGrain',label:'Death Grain (visual)'},
+  {cat:'retro2',type:'toggle',key:'musicPulse2',label:'Music Pulse (visual)'},
+  {cat:'retro2',type:'toggle',key:'comboBurst',label:'Combo Burst (visual)'},
+  {cat:'retro2',type:'range',key:'cloud3Silhouette',label:'Cloud Silhouette (visual)',min:-50,max:50,step:5},
+  {cat:'retro2',type:'toggle',key:'seasonPulse',label:'Season Pulse (visual)'},
+  {cat:'retro2',type:'select',key:'jumpPattern',label:'Jump Pattern (visual)',options:['classic','modern','retro','future']},
+  {cat:'retro2',type:'select',key:'skyGlint',label:'Sky Glint (visual)',options:['linear','ease','bounce','elastic']},
+  {cat:'retro2',type:'range',key:'cloud3Confetti',label:'Cloud Confetti (visual)',min:-50,max:50,step:5},
+  {cat:'retro2',type:'range',key:'panelFlash',label:'Panel Flash (visual)',min:-50,max:50,step:5},
+  {cat:'retro2',type:'toggle',key:'musicPrism',label:'Music Prism (visual)'},
+  {cat:'retro2',type:'range',key:'rain2Glow',label:'Rain Glow (visual)',min:-50,max:50,step:5},
+  {cat:'retro2',type:'range',key:'musicFog',label:'Music Fog (visual)',min:0,max:1,step:0.05},
+  {cat:'retro2',type:'color',key:'seasonConfetti',label:'Season Confetti (visual)'},
+  {cat:'retro2',type:'range',key:'cursorPastel',label:'Cursor Pastel (visual)',min:0,max:100,step:5},
+  {cat:'retro2',type:'range',key:'wind2Spark',label:'Wind Spark (visual)',min:0,max:100,step:5},
+  {cat:'retro2',type:'toggle',key:'badgeMist',label:'Badge Mist (visual)'},
+  {cat:'retro2',type:'color',key:'wind2Star',label:'Wind Star (visual)'},
+  {cat:'retro2',type:'range',key:'soundPastel',label:'Sound Pastel (visual)',min:-50,max:50,step:5},
+  {cat:'retro2',type:'toggle',key:'birdPastel',label:'Bird Pastel (visual)'},
+  {cat:'retro2',type:'select',key:'cameraJitter',label:'Camera Jitter (visual)',options:['round','square','sharp','soft']},
+  {cat:'retro2',type:'range',key:'weatherFade',label:'Weather Fade (visual)',min:1,max:5,step:1},
+  {cat:'retro2',type:'range',key:'cameraSilhouette',label:'Camera Silhouette (visual)',min:0,max:10,step:1},
+  {cat:'retro2',type:'range',key:'menuMetallic',label:'Menu Metallic (visual)',min:-50,max:50,step:5},
+  {cat:'seasons2',type:'toggle',key:'seasonEcho',label:'Season Echo (visual)'},
+  {cat:'seasons2',type:'toggle',key:'lightGrain',label:'Light Grain (visual)'},
+  {cat:'seasons2',type:'toggle',key:'foregroundPulse',label:'Foreground Pulse (visual)'},
+  {cat:'seasons2',type:'select',key:'flapShine',label:'Flap Shine (visual)',options:['off','low','med','high']},
+  {cat:'seasons2',type:'color',key:'fog3Sway',label:'Fog Sway (visual)'},
+  {cat:'seasons2',type:'range',key:'avatarOverlay',label:'Avatar Overlay (visual)',min:1,max:5,step:1},
+  {cat:'seasons2',type:'toggle',key:'sun2Chrome',label:'Sun Chrome (visual)'},
+  {cat:'seasons2',type:'range',key:'birdGlint',label:'Bird Glint (visual)',min:0,max:10,step:1},
+  {cat:'seasons2',type:'range',key:'soundOutline2',label:'Sound Outline (visual)',min:0,max:1,step:0.05},
+  {cat:'seasons2',type:'toggle',key:'badgeChrome',label:'Badge Chrome (visual)'},
+  {cat:'seasons2',type:'range',key:'fog3Haze',label:'Fog Haze (visual)',min:-50,max:50,step:5},
+  {cat:'seasons2',type:'range',key:'badgeConfetti',label:'Badge Confetti (visual)',min:-50,max:50,step:5},
+  {cat:'seasons2',type:'range',key:'panelBounce',label:'Panel Bounce (visual)',min:1,max:5,step:1},
+  {cat:'seasons2',type:'range',key:'particleShine',label:'Particle Shine (visual)',min:0,max:100,step:5},
+  {cat:'seasons2',type:'range',key:'flapMatte',label:'Flap Matte (visual)',min:1,max:5,step:1},
+  {cat:'seasons2',type:'range',key:'flapMatte2',label:'Flap Matte (visual)',min:0,max:1,step:0.05},
+  {cat:'seasons2',type:'toggle',key:'trail3Scanline',label:'Trail Scanline (visual)'},
+  {cat:'seasons2',type:'range',key:'seasonConfetti2',label:'Season Confetti (visual)',min:0,max:1,step:0.05},
+  {cat:'seasons2',type:'toggle',key:'backgroundTint',label:'Background Tint (visual)'},
+  {cat:'seasons2',type:'toggle',key:'moon2Tint',label:'Moon Tint (visual)'},
+  {cat:'seasons2',type:'range',key:'scoreSway',label:'Score Sway (visual)',min:0,max:100,step:5},
+  {cat:'seasons2',type:'range',key:'iconFade',label:'Icon Fade (visual)',min:0,max:1,step:0.05},
+  {cat:'seasons2',type:'range',key:'cameraSway',label:'Camera Sway (visual)',min:-50,max:50,step:5},
+  {cat:'seasons2',type:'range',key:'pipeStar',label:'Pipe Star (visual)',min:0,max:1,step:0.05},
+  {cat:'seasons2',type:'range',key:'cloud3Pastel',label:'Cloud Pastel (visual)',min:1,max:5,step:1},
+  {cat:'seasons3',type:'select',key:'iconContour',label:'Icon Contour (visual)',options:['none','subtle','bold','extreme']},
+  {cat:'seasons3',type:'toggle',key:'hudGrain',label:'Hud Grain (visual)'},
+  {cat:'seasons3',type:'toggle',key:'rain2Beam2',label:'Rain Beam (visual)'},
+  {cat:'seasons3',type:'color',key:'moon2Frost',label:'Moon Frost (visual)'},
+  {cat:'seasons3',type:'range',key:'sun2Gradient',label:'Sun Gradient (visual)',min:0,max:10,step:1},
+  {cat:'seasons3',type:'toggle',key:'meterLowlight',label:'Meter Lowlight (visual)'},
+  {cat:'seasons3',type:'toggle',key:'sun2Pulse',label:'Sun Pulse (visual)'},
+  {cat:'seasons3',type:'range',key:'rain2Haze',label:'Rain Haze (visual)',min:0,max:10,step:1},
+  {cat:'seasons3',type:'range',key:'groundSheen',label:'Ground Sheen (visual)',min:0,max:100,step:5},
+  {cat:'seasons3',type:'toggle',key:'cameraBend',label:'Camera Bend (visual)'},
+  {cat:'seasons3',type:'toggle',key:'seasonStar',label:'Season Star (visual)'},
+  {cat:'seasons3',type:'toggle',key:'wind2Prism',label:'Wind Prism (visual)'},
+  {cat:'seasons3',type:'range',key:'grid2Shimmer',label:'Grid Shimmer (visual)',min:0,max:1,step:0.05},
+  {cat:'seasons3',type:'color',key:'cloud3Grain',label:'Cloud Grain (visual)'},
+  {cat:'seasons3',type:'toggle',key:'scoreHalo2',label:'Score Halo (visual)'},
+  {cat:'seasons3',type:'toggle',key:'flapFrame',label:'Flap Frame (visual)'},
+  {cat:'seasons3',type:'toggle',key:'meterTint',label:'Meter Tint (visual)'},
+  {cat:'seasons3',type:'color',key:'backgroundShine2',label:'Background Shine (visual)'},
+  {cat:'seasons3',type:'range',key:'cursorVignette',label:'Cursor Vignette (visual)',min:0,max:100,step:5},
+  {cat:'seasons3',type:'select',key:'star3Gradient',label:'Star Gradient (visual)',options:['round','square','sharp','soft']},
+  {cat:'seasons3',type:'toggle',key:'cursorHue',label:'Cursor Hue (visual)'},
+  {cat:'seasons3',type:'toggle',key:'buttonPulse',label:'Button Pulse (visual)'},
+  {cat:'seasons3',type:'range',key:'avatarStar',label:'Avatar Star (visual)',min:0,max:10,step:1},
+  {cat:'seasons3',type:'toggle',key:'scoreChrome',label:'Score Chrome (visual)'},
+  {cat:'seasons3',type:'select',key:'lightStreak',label:'Light Streak (visual)',options:['off','low','med','high']},
+  {cat:'soundscape',type:'range',key:'cloud3Lowlight',label:'Cloud Lowlight (visual)',min:0,max:100,step:5},
+  {cat:'soundscape',type:'color',key:'scoreShadowcast',label:'Score Shadowcast (visual)'},
+  {cat:'soundscape',type:'range',key:'seasonSparkle',label:'Season Sparkle (visual)',min:1,max:5,step:1},
+  {cat:'soundscape',type:'toggle',key:'buttonJitter',label:'Button Jitter (visual)'},
+  {cat:'soundscape',type:'range',key:'fog3Tint',label:'Fog Tint (visual)',min:0,max:10,step:1},
+  {cat:'soundscape',type:'select',key:'toastGloss',label:'Toast Gloss (visual)',options:['round','square','sharp','soft']},
+  {cat:'soundscape',type:'range',key:'grid2Fade',label:'Grid Fade (visual)',min:-50,max:50,step:5},
+  {cat:'soundscape',type:'toggle',key:'comboSpark',label:'Combo Spark (visual)'},
+  {cat:'soundscape',type:'range',key:'menuMatte',label:'Menu Matte (visual)',min:0,max:10,step:1},
+  {cat:'soundscape',type:'toggle',key:'fog3Star2',label:'Fog Star (visual)'},
+  {cat:'soundscape',type:'toggle',key:'pipeRay',label:'Pipe Ray (visual)'},
+  {cat:'soundscape',type:'toggle',key:'soundBeam',label:'Sound Beam (visual)'},
+  {cat:'soundscape',type:'toggle',key:'cloud3Sheen2',label:'Cloud Sheen (visual)'},
+  {cat:'soundscape',type:'range',key:'comboMatte',label:'Combo Matte (visual)',min:0,max:1,step:0.05},
+  {cat:'soundscape',type:'toggle',key:'toastOverlay',label:'Toast Overlay (visual)'},
+  {cat:'soundscape',type:'range',key:'flapDrift',label:'Flap Drift (visual)',min:-50,max:50,step:5},
+  {cat:'soundscape',type:'color',key:'flapShine2',label:'Flap Shine (visual)'},
+  {cat:'soundscape',type:'toggle',key:'hudTwist',label:'Hud Twist (visual)'},
+  {cat:'soundscape',type:'toggle',key:'menuNeon',label:'Menu Neon (visual)'},
+  {cat:'soundscape',type:'toggle',key:'sun2Chrome2',label:'Sun Chrome (visual)'},
+  {cat:'soundscape',type:'range',key:'bannerCloud',label:'Banner Cloud (visual)',min:-50,max:50,step:5},
+  {cat:'soundscape',type:'range',key:'toastDust',label:'Toast Dust (visual)',min:-50,max:50,step:5},
+  {cat:'soundscape',type:'range',key:'seasonSmoke',label:'Season Smoke (visual)',min:0,max:100,step:5},
+  {cat:'soundscape',type:'toggle',key:'lightPrism',label:'Light Prism (visual)'},
+  {cat:'soundscape',type:'toggle',key:'cursorOverlay',label:'Cursor Overlay (visual)'},
+  {cat:'soundscape2',type:'toggle',key:'cursorLowlight2',label:'Cursor Lowlight (visual)'},
+  {cat:'soundscape2',type:'range',key:'musicVignette',label:'Music Vignette (visual)',min:0,max:100,step:5},
+  {cat:'soundscape2',type:'select',key:'bannerHighlight',label:'Banner Highlight (visual)',options:['classic','modern','retro','future']},
+  {cat:'soundscape2',type:'toggle',key:'buttonOverlay',label:'Button Overlay (visual)'},
+  {cat:'soundscape2',type:'toggle',key:'deathFog',label:'Death Fog (visual)'},
+  {cat:'soundscape2',type:'range',key:'lightSparkle',label:'Light Sparkle (visual)',min:0,max:10,step:1},
+  {cat:'soundscape2',type:'toggle',key:'comboHalo',label:'Combo Halo (visual)'},
+  {cat:'soundscape2',type:'toggle',key:'badgeNeon',label:'Badge Neon (visual)'},
+  {cat:'soundscape2',type:'toggle',key:'hudGlint',label:'Hud Glint (visual)'},
+  {cat:'soundscape2',type:'range',key:'avatarMetallic',label:'Avatar Metallic (visual)',min:1,max:5,step:1},
+  {cat:'soundscape2',type:'toggle',key:'snow2Frost',label:'Snow Frost (visual)'},
+  {cat:'soundscape2',type:'range',key:'groundPrism',label:'Ground Prism (visual)',min:0,max:1,step:0.05},
+  {cat:'soundscape2',type:'range',key:'scorePulse2',label:'Score Pulse (visual)',min:0,max:1,step:0.05},
+  {cat:'soundscape2',type:'toggle',key:'avatarAura',label:'Avatar Aura (visual)'},
+  {cat:'soundscape2',type:'toggle',key:'foregroundPastel',label:'Foreground Pastel (visual)'},
+  {cat:'soundscape2',type:'range',key:'flapStreak',label:'Flap Streak (visual)',min:1,max:5,step:1},
+  {cat:'soundscape2',type:'range',key:'tickerGrain',label:'Ticker Grain (visual)',min:1,max:5,step:1},
+  {cat:'soundscape2',type:'toggle',key:'snow2Warp',label:'Snow Warp (visual)'},
+  {cat:'soundscape2',type:'toggle',key:'bannerBounce3',label:'Banner Bounce (visual)'},
+  {cat:'soundscape2',type:'select',key:'avatarTrail',label:'Avatar Trail (visual)',options:['off','low','med','high']},
+  {cat:'soundscape2',type:'toggle',key:'cameraVignette',label:'Camera Vignette (visual)'},
+  {cat:'soundscape2',type:'toggle',key:'menuHue',label:'Menu Hue (visual)'},
+  {cat:'soundscape2',type:'toggle',key:'soundRipple',label:'Sound Ripple (visual)'},
+  {cat:'soundscape2',type:'range',key:'birdDrift',label:'Bird Drift (visual)',min:-50,max:50,step:5},
+  {cat:'soundscape2',type:'toggle',key:'grid2Neon',label:'Grid Neon (visual)'},
+  {cat:'skyfx',type:'toggle',key:'deathMetallic',label:'Death Metallic (visual)'},
+  {cat:'skyfx',type:'color',key:'fog3Ripple',label:'Fog Ripple (visual)'},
+  {cat:'skyfx',type:'color',key:'deathSheen',label:'Death Sheen (visual)'},
+  {cat:'skyfx',type:'range',key:'bannerFrame',label:'Banner Frame (visual)',min:0,max:1,step:0.05},
+  {cat:'skyfx',type:'color',key:'iconGrain',label:'Icon Grain (visual)'},
+  {cat:'skyfx',type:'toggle',key:'foregroundGloss',label:'Foreground Gloss (visual)'},
+  {cat:'skyfx',type:'toggle',key:'scoreTrail',label:'Score Trail (visual)'},
+  {cat:'skyfx',type:'range',key:'lightMetallic',label:'Light Metallic (visual)',min:0,max:1,step:0.05},
+  {cat:'skyfx',type:'range',key:'fog3Pastel',label:'Fog Pastel (visual)',min:0,max:100,step:5},
+  {cat:'skyfx',type:'range',key:'panelContour',label:'Panel Contour (visual)',min:1,max:5,step:1},
+  {cat:'skyfx',type:'range',key:'menuHalo',label:'Menu Halo (visual)',min:0,max:100,step:5},
+  {cat:'skyfx',type:'toggle',key:'tickerPrism',label:'Ticker Prism (visual)'},
+  {cat:'skyfx',type:'color',key:'menuNoise',label:'Menu Noise (visual)'},
+  {cat:'skyfx',type:'color',key:'avatarShimmer',label:'Avatar Shimmer (visual)'},
+  {cat:'skyfx',type:'toggle',key:'comboHalo2',label:'Combo Halo (visual)'},
+  {cat:'skyfx',type:'color',key:'grid2Outline2',label:'Grid Outline (visual)'},
+  {cat:'skyfx',type:'toggle',key:'snow2Matte2',label:'Snow Matte (visual)'},
+  {cat:'skyfx',type:'color',key:'bannerJitter',label:'Banner Jitter (visual)'},
+  {cat:'skyfx',type:'range',key:'hudEcho',label:'Hud Echo (visual)',min:0,max:100,step:5},
+  {cat:'skyfx',type:'toggle',key:'wind2Ember',label:'Wind Ember (visual)'},
+  {cat:'skyfx',type:'toggle',key:'buttonHue',label:'Button Hue (visual)'},
+  {cat:'skyfx',type:'toggle',key:'wind2Ray',label:'Wind Ray (visual)'},
+  {cat:'skyfx',type:'range',key:'sun2Flicker',label:'Sun Flicker (visual)',min:0,max:1,step:0.05},
+  {cat:'skyfx',type:'toggle',key:'weatherPrism',label:'Weather Prism (visual)'},
+  {cat:'skyfx',type:'range',key:'cursorPulse2',label:'Cursor Pulse (visual)',min:0,max:1,step:0.05},
+  {cat:'skyfx2',type:'range',key:'iconFade2',label:'Icon Fade (visual)',min:0,max:1,step:0.05},
+  {cat:'skyfx2',type:'toggle',key:'musicOutline2',label:'Music Outline (visual)'},
+  {cat:'skyfx2',type:'color',key:'meterRay',label:'Meter Ray (visual)'},
+  {cat:'skyfx2',type:'toggle',key:'snow2Aura',label:'Snow Aura (visual)'},
+  {cat:'skyfx2',type:'toggle',key:'comboMist',label:'Combo Mist (visual)'},
+  {cat:'skyfx2',type:'toggle',key:'snow2Beam',label:'Snow Beam (visual)'},
+  {cat:'skyfx2',type:'toggle',key:'pipeScanline',label:'Pipe Scanline (visual)'},
+  {cat:'skyfx2',type:'range',key:'lightSparkle2',label:'Light Sparkle (visual)',min:1,max:5,step:1},
+  {cat:'skyfx2',type:'toggle',key:'menuGrain',label:'Menu Grain (visual)'},
+  {cat:'skyfx2',type:'color',key:'fog3Streak',label:'Fog Streak (visual)'},
+  {cat:'skyfx2',type:'toggle',key:'foregroundRay',label:'Foreground Ray (visual)'},
+  {cat:'skyfx2',type:'range',key:'panelGloss',label:'Panel Gloss (visual)',min:1,max:5,step:1},
+  {cat:'skyfx2',type:'range',key:'grid2Chrome',label:'Grid Chrome (visual)',min:-50,max:50,step:5},
+  {cat:'skyfx2',type:'toggle',key:'foregroundComet',label:'Foreground Comet (visual)'},
+  {cat:'skyfx2',type:'toggle',key:'tickerSilhouette',label:'Ticker Silhouette (visual)'},
+  {cat:'skyfx2',type:'range',key:'scoreMatte',label:'Score Matte (visual)',min:0,max:100,step:5},
+  {cat:'skyfx2',type:'toggle',key:'panelGloss2',label:'Panel Gloss (visual)'},
+  {cat:'skyfx2',type:'select',key:'trail3Pastel',label:'Trail Pastel (visual)',options:['round','square','sharp','soft']},
+  {cat:'skyfx2',type:'range',key:'hudTint',label:'Hud Tint (visual)',min:-50,max:50,step:5},
+  {cat:'skyfx2',type:'toggle',key:'grid2Dust',label:'Grid Dust (visual)'},
+  {cat:'skyfx2',type:'range',key:'badgeContour',label:'Badge Contour (visual)',min:1,max:5,step:1},
+  {cat:'skyfx2',type:'toggle',key:'weatherOverlay',label:'Weather Overlay (visual)'},
+  {cat:'skyfx2',type:'toggle',key:'avatarComet',label:'Avatar Comet (visual)'},
+  {cat:'skyfx2',type:'toggle',key:'wind2Halo',label:'Wind Halo (visual)'},
+  {cat:'skyfx2',type:'range',key:'grid2Star',label:'Grid Star (visual)',min:0,max:10,step:1},
+  {cat:'groundfx',type:'toggle',key:'hudFlicker',label:'Hud Flicker (visual)'},
+  {cat:'groundfx',type:'toggle',key:'panelEmber',label:'Panel Ember (visual)'},
+  {cat:'groundfx',type:'range',key:'snow2Shadow2',label:'Snow Shadow (visual)',min:1,max:5,step:1},
+  {cat:'groundfx',type:'range',key:'birdGlare',label:'Bird Glare (visual)',min:0,max:10,step:1},
+  {cat:'groundfx',type:'toggle',key:'scoreShine',label:'Score Shine (visual)'},
+  {cat:'groundfx',type:'color',key:'seasonOrbit',label:'Season Orbit (visual)'},
+  {cat:'groundfx',type:'color',key:'menuEmber',label:'Menu Ember (visual)'},
+  {cat:'groundfx',type:'toggle',key:'iconStar',label:'Icon Star (visual)'},
+  {cat:'groundfx',type:'toggle',key:'hudContour',label:'Hud Contour (visual)'},
+  {cat:'groundfx',type:'toggle',key:'meterBurst',label:'Meter Burst (visual)'},
+  {cat:'groundfx',type:'toggle',key:'trail3Noise',label:'Trail Noise (visual)'},
+  {cat:'groundfx',type:'color',key:'rain2Shadow',label:'Rain Shadow (visual)'},
+  {cat:'groundfx',type:'toggle',key:'buttonWarp',label:'Button Warp (visual)'},
+  {cat:'groundfx',type:'toggle',key:'lightPulse',label:'Light Pulse (visual)'},
+  {cat:'groundfx',type:'toggle',key:'weatherTrail3',label:'Weather Trail (visual)'},
+  {cat:'groundfx',type:'range',key:'cloud3Cloud',label:'Cloud Cloud (visual)',min:0,max:10,step:1},
+  {cat:'groundfx',type:'range',key:'flapHighlight',label:'Flap Highlight (visual)',min:-50,max:50,step:5},
+  {cat:'groundfx',type:'toggle',key:'soundGradient',label:'Sound Gradient (visual)'},
+  {cat:'groundfx',type:'select',key:'menuStar',label:'Menu Star (visual)',options:['none','subtle','bold','extreme']},
+  {cat:'groundfx',type:'toggle',key:'hudGlare',label:'Hud Glare (visual)'},
+  {cat:'groundfx',type:'range',key:'fog3Prism',label:'Fog Prism (visual)',min:0,max:100,step:5},
+  {cat:'groundfx',type:'toggle',key:'birdFade',label:'Bird Fade (visual)'},
+  {cat:'groundfx',type:'toggle',key:'iconHue',label:'Icon Hue (visual)'},
+  {cat:'groundfx',type:'select',key:'snow2Dust',label:'Snow Dust (visual)',options:['classic','modern','retro','future']},
+  {cat:'groundfx',type:'range',key:'rain2Prism',label:'Rain Prism (visual)',min:0,max:100,step:5},
+  {cat:'groundfx2',type:'range',key:'musicComet',label:'Music Comet (visual)',min:0,max:1,step:0.05},
+  {cat:'groundfx2',type:'select',key:'flapStar',label:'Flap Star (visual)',options:['classic','modern','retro','future']},
+  {cat:'groundfx2',type:'toggle',key:'avatarNeon',label:'Avatar Neon (visual)'},
+  {cat:'groundfx2',type:'toggle',key:'pipeOrbit',label:'Pipe Orbit (visual)'},
+  {cat:'groundfx2',type:'select',key:'birdAura',label:'Bird Aura (visual)',options:['linear','ease','bounce','elastic']},
+  {cat:'groundfx2',type:'select',key:'trail3Noise2',label:'Trail Noise (visual)',options:['classic','modern','retro','future']},
+  {cat:'groundfx2',type:'select',key:'deathOverlay',label:'Death Overlay (visual)',options:['classic','modern','retro','future']},
+  {cat:'groundfx2',type:'color',key:'backgroundShadow',label:'Background Shadow (visual)'},
+  {cat:'groundfx2',type:'range',key:'skyRainbow2',label:'Sky Rainbow (visual)',min:0,max:1,step:0.05},
+  {cat:'groundfx2',type:'toggle',key:'bannerFog',label:'Banner Fog (visual)'},
+  {cat:'groundfx2',type:'toggle',key:'menuNeon2',label:'Menu Neon (visual)'},
+  {cat:'groundfx2',type:'toggle',key:'wind2Pattern',label:'Wind Pattern (visual)'},
+  {cat:'groundfx2',type:'toggle',key:'backgroundContour',label:'Background Contour (visual)'},
+  {cat:'groundfx2',type:'toggle',key:'toastShadowcast',label:'Toast Shadowcast (visual)'},
+  {cat:'groundfx2',type:'range',key:'particlePrism',label:'Particle Prism (visual)',min:0,max:100,step:5},
+  {cat:'groundfx2',type:'range',key:'seasonFlash2',label:'Season Flash (visual)',min:0,max:1,step:0.05},
+  {cat:'groundfx2',type:'color',key:'foregroundGrain',label:'Foreground Grain (visual)'},
+  {cat:'groundfx2',type:'toggle',key:'sun2Fog',label:'Sun Fog (visual)'},
+  {cat:'groundfx2',type:'toggle',key:'sun2Sparkle',label:'Sun Sparkle (visual)'},
+  {cat:'groundfx2',type:'range',key:'iconStreak',label:'Icon Streak (visual)',min:0,max:100,step:5},
+  {cat:'groundfx2',type:'color',key:'jumpStar',label:'Jump Star (visual)'},
+  {cat:'groundfx2',type:'color',key:'star3Glint',label:'Star Glint (visual)'},
+  {cat:'groundfx2',type:'toggle',key:'deathShine',label:'Death Shine (visual)'},
+  {cat:'groundfx2',type:'select',key:'meterSpark',label:'Meter Spark (visual)',options:['none','subtle','bold','extreme']},
+  {cat:'groundfx2',type:'toggle',key:'scoreFade',label:'Score Fade (visual)'},
+  {cat:'birdfx',type:'toggle',key:'wind2Flash',label:'Wind Flash (visual)'},
+  {cat:'birdfx',type:'toggle',key:'skyFlicker',label:'Sky Flicker (visual)'},
+  {cat:'birdfx',type:'toggle',key:'hudFlash',label:'Hud Flash (visual)'},
+  {cat:'birdfx',type:'toggle',key:'flapLowlight2',label:'Flap Lowlight (visual)'},
+  {cat:'birdfx',type:'toggle',key:'moon2Bend',label:'Moon Bend (visual)'},
+  {cat:'birdfx',type:'select',key:'iconSway2',label:'Icon Sway (visual)',options:['none','subtle','bold','extreme']},
+  {cat:'birdfx',type:'range',key:'wind2Shadow',label:'Wind Shadow (visual)',min:-50,max:50,step:5},
+  {cat:'birdfx',type:'toggle',key:'wind2Matte',label:'Wind Matte (visual)'},
+  {cat:'birdfx',type:'range',key:'star3Vignette',label:'Star Vignette (visual)',min:1,max:5,step:1},
+  {cat:'birdfx',type:'toggle',key:'flapFog',label:'Flap Fog (visual)'},
+  {cat:'birdfx',type:'color',key:'star3Contour',label:'Star Contour (visual)'},
+  {cat:'birdfx',type:'range',key:'cloud3Trail',label:'Cloud Trail (visual)',min:0,max:100,step:5},
+  {cat:'birdfx',type:'range',key:'musicStreak',label:'Music Streak (visual)',min:0,max:1,step:0.05},
+  {cat:'birdfx',type:'toggle',key:'cameraShimmer',label:'Camera Shimmer (visual)'},
+  {cat:'birdfx',type:'toggle',key:'seasonChrome',label:'Season Chrome (visual)'},
+  {cat:'birdfx',type:'toggle',key:'avatarBorder',label:'Avatar Border (visual)'},
+  {cat:'birdfx',type:'select',key:'badgeBorder',label:'Badge Border (visual)',options:['none','subtle','bold','extreme']},
+  {cat:'birdfx',type:'toggle',key:'deathEmber',label:'Death Ember (visual)'},
+  {cat:'birdfx',type:'toggle',key:'tickerGlow',label:'Ticker Glow (visual)'},
+  {cat:'birdfx',type:'range',key:'foregroundMist',label:'Foreground Mist (visual)',min:0,max:100,step:5},
+  {cat:'birdfx',type:'color',key:'soundFlash',label:'Sound Flash (visual)'},
+  {cat:'birdfx',type:'toggle',key:'pipeMist',label:'Pipe Mist (visual)'},
+  {cat:'birdfx',type:'select',key:'cloud3Scanline',label:'Cloud Scanline (visual)',options:['classic','modern','retro','future']},
+  {cat:'birdfx',type:'toggle',key:'pipePattern',label:'Pipe Pattern (visual)'},
+  {cat:'birdfx',type:'range',key:'groundMist',label:'Ground Mist (visual)',min:-50,max:50,step:5},
+  {cat:'birdfx2',type:'range',key:'cursorBurst',label:'Cursor Burst (visual)',min:1,max:5,step:1},
+  {cat:'birdfx2',type:'select',key:'star3Silhouette',label:'Star Silhouette (visual)',options:['off','low','med','high']},
+  {cat:'birdfx2',type:'toggle',key:'snow2Shadowcast',label:'Snow Shadowcast (visual)'},
+  {cat:'birdfx2',type:'color',key:'meterHalo',label:'Meter Halo (visual)'},
+  {cat:'birdfx2',type:'range',key:'toastPastel',label:'Toast Pastel (visual)',min:0,max:1,step:0.05},
+  {cat:'birdfx2',type:'range',key:'groundFlare',label:'Ground Flare (visual)',min:1,max:5,step:1},
+  {cat:'birdfx2',type:'range',key:'buttonBeam',label:'Button Beam (visual)',min:0,max:1,step:0.05},
+  {cat:'birdfx2',type:'select',key:'menuSpark',label:'Menu Spark (visual)',options:['none','subtle','bold','extreme']},
+  {cat:'birdfx2',type:'toggle',key:'scoreMist',label:'Score Mist (visual)'},
+  {cat:'birdfx2',type:'range',key:'meterSpark2',label:'Meter Spark (visual)',min:-50,max:50,step:5},
+  {cat:'birdfx2',type:'range',key:'toastNeon',label:'Toast Neon (visual)',min:-50,max:50,step:5},
+  {cat:'birdfx2',type:'toggle',key:'tickerJitter',label:'Ticker Jitter (visual)'},
+  {cat:'birdfx2',type:'range',key:'cursorVignette2',label:'Cursor Vignette (visual)',min:1,max:5,step:1},
+  {cat:'birdfx2',type:'toggle',key:'deathDrift',label:'Death Drift (visual)'},
+  {cat:'birdfx2',type:'range',key:'fog3Pulse2',label:'Fog Pulse (visual)',min:0,max:1,step:0.05},
+  {cat:'birdfx2',type:'toggle',key:'weatherBounce',label:'Weather Bounce (visual)'},
+  {cat:'birdfx2',type:'toggle',key:'jumpCloud',label:'Jump Cloud (visual)'},
+  {cat:'birdfx2',type:'toggle',key:'grid2Burst',label:'Grid Burst (visual)'},
+  {cat:'birdfx2',type:'range',key:'menuEcho',label:'Menu Echo (visual)',min:0,max:1,step:0.05},
+  {cat:'birdfx2',type:'range',key:'star3Mist',label:'Star Mist (visual)',min:0,max:1,step:0.05},
+  {cat:'birdfx2',type:'color',key:'bannerEmber',label:'Banner Ember (visual)'},
+  {cat:'birdfx2',type:'toggle',key:'cursorDrift',label:'Cursor Drift (visual)'},
+  {cat:'birdfx2',type:'toggle',key:'rain2Aura',label:'Rain Aura (visual)'},
+  {cat:'birdfx2',type:'toggle',key:'tickerRainbow',label:'Ticker Rainbow (visual)'},
+  {cat:'birdfx2',type:'toggle',key:'buttonShadowcast',label:'Button Shadowcast (visual)'},
+  {cat:'pipefx',type:'toggle',key:'foregroundFlare',label:'Foreground Flare (visual)'},
+  {cat:'pipefx',type:'range',key:'buttonDust',label:'Button Dust (visual)',min:0,max:100,step:5},
+  {cat:'pipefx',type:'select',key:'cursorMatte',label:'Cursor Matte (visual)',options:['none','subtle','bold','extreme']},
+  {cat:'pipefx',type:'select',key:'rain2Pulse',label:'Rain Pulse (visual)',options:['classic','modern','retro','future']},
+  {cat:'pipefx',type:'toggle',key:'pipeTexture',label:'Pipe Texture (visual)'},
+  {cat:'pipefx',type:'toggle',key:'lightFrost',label:'Light Frost (visual)'},
+  {cat:'pipefx',type:'toggle',key:'birdTexture',label:'Bird Texture (visual)'},
+  {cat:'pipefx',type:'toggle',key:'avatarPulse2',label:'Avatar Pulse (visual)'},
+  {cat:'pipefx',type:'toggle',key:'foregroundPulse2',label:'Foreground Pulse (visual)'},
+  {cat:'pipefx',type:'range',key:'toastVignette',label:'Toast Vignette (visual)',min:1,max:5,step:1},
+  {cat:'pipefx',type:'toggle',key:'fog3Frost',label:'Fog Frost (visual)'},
+  {cat:'pipefx',type:'toggle',key:'star3Rainbow',label:'Star Rainbow (visual)'},
+  {cat:'pipefx',type:'toggle',key:'avatarWave2',label:'Avatar Wave (visual)'},
+  {cat:'pipefx',type:'select',key:'foregroundHue',label:'Foreground Hue (visual)',options:['off','low','med','high']},
+  {cat:'pipefx',type:'range',key:'menuGloss',label:'Menu Gloss (visual)',min:1,max:5,step:1},
+  {cat:'pipefx',type:'range',key:'hudWarp',label:'Hud Warp (visual)',min:0,max:100,step:5},
+  {cat:'pipefx',type:'toggle',key:'cameraSilhouette2',label:'Camera Silhouette (visual)'},
+  {cat:'pipefx',type:'toggle',key:'cloud3Jitter',label:'Cloud Jitter (visual)'},
+  {cat:'pipefx',type:'range',key:'trail3Beam',label:'Trail Beam (visual)',min:0,max:100,step:5},
+  {cat:'pipefx',type:'range',key:'skyGrain',label:'Sky Grain (visual)',min:-50,max:50,step:5},
+  {cat:'pipefx',type:'toggle',key:'groundGlow',label:'Ground Glow (visual)'},
+  {cat:'pipefx',type:'toggle',key:'lightVignette',label:'Light Vignette (visual)'},
+  {cat:'pipefx',type:'toggle',key:'jumpNeon',label:'Jump Neon (visual)'},
+  {cat:'pipefx',type:'range',key:'cursorGlow',label:'Cursor Glow (visual)',min:1,max:5,step:1},
+  {cat:'pipefx',type:'range',key:'soundMist',label:'Sound Mist (visual)',min:-50,max:50,step:5},
+  {cat:'pipefx2',type:'range',key:'deathShadowcast2',label:'Death Shadowcast (visual)',min:0,max:100,step:5},
+  {cat:'pipefx2',type:'toggle',key:'scoreOrbit',label:'Score Orbit (visual)'},
+  {cat:'pipefx2',type:'range',key:'rain2Shimmer',label:'Rain Shimmer (visual)',min:0,max:1,step:0.05},
+  {cat:'pipefx2',type:'select',key:'weatherBounce2',label:'Weather Bounce (visual)',options:['linear','ease','bounce','elastic']},
+  {cat:'pipefx2',type:'toggle',key:'wind2Neon',label:'Wind Neon (visual)'},
+  {cat:'pipefx2',type:'toggle',key:'sun2Shimmer',label:'Sun Shimmer (visual)'},
+  {cat:'pipefx2',type:'toggle',key:'particleBend',label:'Particle Bend (visual)'},
+  {cat:'pipefx2',type:'toggle',key:'menuJitter',label:'Menu Jitter (visual)'},
+  {cat:'pipefx2',type:'select',key:'flapJitter',label:'Flap Jitter (visual)',options:['linear','ease','bounce','elastic']},
+  {cat:'pipefx2',type:'range',key:'toastWave',label:'Toast Wave (visual)',min:0,max:100,step:5},
+  {cat:'pipefx2',type:'toggle',key:'seasonGrain',label:'Season Grain (visual)'},
+  {cat:'pipefx2',type:'range',key:'particleRipple',label:'Particle Ripple (visual)',min:0,max:1,step:0.05},
+  {cat:'pipefx2',type:'toggle',key:'toastSilhouette',label:'Toast Silhouette (visual)'},
+  {cat:'pipefx2',type:'color',key:'cloud3Dust',label:'Cloud Dust (visual)'},
+  {cat:'pipefx2',type:'toggle',key:'foregroundScanline',label:'Foreground Scanline (visual)'},
+  {cat:'pipefx2',type:'toggle',key:'foregroundPrism',label:'Foreground Prism (visual)'},
+  {cat:'pipefx2',type:'color',key:'soundTint',label:'Sound Tint (visual)'},
+  {cat:'pipefx2',type:'color',key:'scorePattern',label:'Score Pattern (visual)'},
+  {cat:'pipefx2',type:'select',key:'hudFade',label:'Hud Fade (visual)',options:['round','square','sharp','soft']},
+  {cat:'pipefx2',type:'color',key:'snow2Spark',label:'Snow Spark (visual)'},
+  {cat:'pipefx2',type:'range',key:'weatherTint',label:'Weather Tint (visual)',min:0,max:1,step:0.05},
+  {cat:'pipefx2',type:'color',key:'grid2Warp',label:'Grid Warp (visual)'},
+  {cat:'pipefx2',type:'select',key:'lightMatte',label:'Light Matte (visual)',options:['off','low','med','high']},
+  {cat:'pipefx2',type:'toggle',key:'cloud3Shadowcast',label:'Cloud Shadowcast (visual)'},
+  {cat:'pipefx2',type:'range',key:'lightFade',label:'Light Fade (visual)',min:0,max:1,step:0.05},
+  {cat:'hud2',type:'toggle',key:'groundCloud',label:'Ground Cloud (visual)'},
+  {cat:'hud2',type:'select',key:'scoreEcho',label:'Score Echo (visual)',options:['round','square','sharp','soft']},
+  {cat:'hud2',type:'range',key:'panelComet',label:'Panel Comet (visual)',min:-50,max:50,step:5},
+  {cat:'hud2',type:'range',key:'badgeHalo',label:'Badge Halo (visual)',min:-50,max:50,step:5},
+  {cat:'hud2',type:'select',key:'musicSpark',label:'Music Spark (visual)',options:['linear','ease','bounce','elastic']},
+  {cat:'hud2',type:'toggle',key:'panelTint',label:'Panel Tint (visual)'},
+  {cat:'hud2',type:'toggle',key:'snow2Glint',label:'Snow Glint (visual)'},
+  {cat:'hud2',type:'color',key:'menuShadowcast',label:'Menu Shadowcast (visual)'},
+  {cat:'hud2',type:'toggle',key:'soundHalo',label:'Sound Halo (visual)'},
+  {cat:'hud2',type:'range',key:'snow2Warp2',label:'Snow Warp (visual)',min:-50,max:50,step:5},
+  {cat:'hud2',type:'toggle',key:'meterHue',label:'Meter Hue (visual)'},
+  {cat:'hud2',type:'range',key:'star3Metallic',label:'Star Metallic (visual)',min:1,max:5,step:1},
+  {cat:'hud2',type:'color',key:'seasonAura',label:'Season Aura (visual)'},
+  {cat:'hud2',type:'toggle',key:'seasonBurst',label:'Season Burst (visual)'},
+  {cat:'hud2',type:'toggle',key:'buttonComet',label:'Button Comet (visual)'},
+  {cat:'hud2',type:'toggle',key:'jumpTint',label:'Jump Tint (visual)'},
+  {cat:'hud2',type:'toggle',key:'menuGlare',label:'Menu Glare (visual)'},
+  {cat:'hud2',type:'toggle',key:'lightOrbit',label:'Light Orbit (visual)'},
+  {cat:'hud2',type:'toggle',key:'tickerWave',label:'Ticker Wave (visual)'},
+  {cat:'hud2',type:'color',key:'badgeStar',label:'Badge Star (visual)'},
+  {cat:'hud2',type:'color',key:'seasonMist',label:'Season Mist (visual)'},
+  {cat:'hud2',type:'color',key:'toastEcho',label:'Toast Echo (visual)'},
+  {cat:'hud2',type:'toggle',key:'rain2Silhouette',label:'Rain Silhouette (visual)'},
+  {cat:'hud2',type:'toggle',key:'pipeFog',label:'Pipe Fog (visual)'},
+  {cat:'hud2',type:'toggle',key:'soundVignette',label:'Sound Vignette (visual)'},
+  {cat:'hud3',type:'toggle',key:'hudOverlay',label:'Hud Overlay (visual)'},
+  {cat:'hud3',type:'toggle',key:'backgroundTint2',label:'Background Tint (visual)'},
+  {cat:'hud3',type:'range',key:'trail3Shadow',label:'Trail Shadow (visual)',min:-50,max:50,step:5},
+  {cat:'hud3',type:'color',key:'toastFlicker',label:'Toast Flicker (visual)'},
+  {cat:'hud3',type:'select',key:'seasonMist2',label:'Season Mist (visual)',options:['linear','ease','bounce','elastic']},
+  {cat:'hud3',type:'toggle',key:'foregroundHue2',label:'Foreground Hue (visual)'},
+  {cat:'hud3',type:'range',key:'meterGradient',label:'Meter Gradient (visual)',min:0,max:1,step:0.05},
+  {cat:'hud3',type:'color',key:'wind2Fog',label:'Wind Fog (visual)'},
+  {cat:'hud3',type:'select',key:'flapWarp',label:'Flap Warp (visual)',options:['classic','modern','retro','future']},
+  {cat:'hud3',type:'range',key:'snow2Noise',label:'Snow Noise (visual)',min:0,max:10,step:1},
+  {cat:'hud3',type:'toggle',key:'lightShine',label:'Light Shine (visual)'},
+  {cat:'hud3',type:'range',key:'star3Warp2',label:'Star Warp (visual)',min:0,max:100,step:5},
+  {cat:'hud3',type:'range',key:'moon2Shadowcast',label:'Moon Shadowcast (visual)',min:1,max:5,step:1},
+  {cat:'hud3',type:'select',key:'particleFrame',label:'Particle Frame (visual)',options:['none','subtle','bold','extreme']},
+  {cat:'hud3',type:'color',key:'jumpAura',label:'Jump Aura (visual)'},
+  {cat:'hud3',type:'range',key:'grid2Cloud',label:'Grid Cloud (visual)',min:0,max:1,step:0.05},
+  {cat:'hud3',type:'toggle',key:'toastStreak',label:'Toast Streak (visual)'},
+  {cat:'hud3',type:'toggle',key:'menuHue2',label:'Menu Hue (visual)'},
+  {cat:'hud3',type:'toggle',key:'snow2Silhouette',label:'Snow Silhouette (visual)'},
+  {cat:'hud3',type:'toggle',key:'rain2Echo',label:'Rain Echo (visual)'},
+  {cat:'hud3',type:'toggle',key:'snow2Dust2',label:'Snow Dust (visual)'},
+  {cat:'hud3',type:'range',key:'wind2Aura',label:'Wind Aura (visual)',min:-50,max:50,step:5},
+  {cat:'hud3',type:'range',key:'star3Scanline',label:'Star Scanline (visual)',min:0,max:1,step:0.05},
+  {cat:'hud3',type:'toggle',key:'star3Grain2',label:'Star Grain (visual)'},
+  {cat:'hud3',type:'color',key:'weatherShadow',label:'Weather Shadow (visual)'},
+  {cat:'network3',type:'toggle',key:'seasonGlare',label:'Season Glare (visual)'},
+  {cat:'network3',type:'range',key:'skyMetallic',label:'Sky Metallic (visual)',min:0,max:10,step:1},
+  {cat:'network3',type:'select',key:'grid2Twist',label:'Grid Twist (visual)',options:['off','low','med','high']},
+  {cat:'network3',type:'toggle',key:'menuShimmer',label:'Menu Shimmer (visual)'},
+  {cat:'network3',type:'range',key:'cameraTint',label:'Camera Tint (visual)',min:-50,max:50,step:5},
+  {cat:'network3',type:'toggle',key:'toastBounce',label:'Toast Bounce (visual)'},
+  {cat:'network3',type:'toggle',key:'trail3Scanline2',label:'Trail Scanline (visual)'},
+  {cat:'network3',type:'toggle',key:'cursorAura',label:'Cursor Aura (visual)'},
+  {cat:'network3',type:'toggle',key:'wind2Bend',label:'Wind Bend (visual)'},
+  {cat:'network3',type:'select',key:'cursorRay',label:'Cursor Ray (visual)',options:['round','square','sharp','soft']},
+  {cat:'network3',type:'select',key:'pipeSilhouette',label:'Pipe Silhouette (visual)',options:['none','subtle','bold','extreme']},
+  {cat:'network3',type:'range',key:'foregroundNeon',label:'Foreground Neon (visual)',min:0,max:1,step:0.05},
+  {cat:'network3',type:'toggle',key:'meterSmoke',label:'Meter Smoke (visual)'},
+  {cat:'network3',type:'toggle',key:'avatarSway',label:'Avatar Sway (visual)'},
+  {cat:'network3',type:'toggle',key:'menuHighlight',label:'Menu Highlight (visual)'},
+  {cat:'network3',type:'range',key:'scoreHighlight',label:'Score Highlight (visual)',min:-50,max:50,step:5},
+  {cat:'network3',type:'range',key:'panelShimmer',label:'Panel Shimmer (visual)',min:1,max:5,step:1},
+  {cat:'network3',type:'toggle',key:'skyComet',label:'Sky Comet (visual)'},
+  {cat:'network3',type:'toggle',key:'jumpShimmer',label:'Jump Shimmer (visual)'},
+  {cat:'network3',type:'toggle',key:'scoreDust',label:'Score Dust (visual)'},
+  {cat:'network3',type:'toggle',key:'buttonEmber',label:'Button Ember (visual)'},
+  {cat:'network3',type:'range',key:'skySmoke2',label:'Sky Smoke (visual)',min:0,max:100,step:5},
+  {cat:'network3',type:'range',key:'soundFade',label:'Sound Fade (visual)',min:0,max:10,step:1},
+  {cat:'network3',type:'range',key:'backgroundBurst',label:'Background Burst (visual)',min:0,max:1,step:0.05},
+  {cat:'network3',type:'toggle',key:'trail3Frame',label:'Trail Frame (visual)'},
+  {cat:'netfx',type:'toggle',key:'musicHalo',label:'Music Halo (visual)'},
+  {cat:'netfx',type:'range',key:'lightSilhouette',label:'Light Silhouette (visual)',min:-50,max:50,step:5},
+  {cat:'netfx',type:'toggle',key:'grid2Prism',label:'Grid Prism (visual)'},
+  {cat:'netfx',type:'toggle',key:'musicMetallic',label:'Music Metallic (visual)'},
+  {cat:'netfx',type:'toggle',key:'groundEmber',label:'Ground Ember (visual)'},
+  {cat:'netfx',type:'range',key:'cursorCloud',label:'Cursor Cloud (visual)',min:1,max:5,step:1},
+  {cat:'netfx',type:'toggle',key:'snow2Comet',label:'Snow Comet (visual)'},
+  {cat:'netfx',type:'range',key:'soundRay',label:'Sound Ray (visual)',min:0,max:100,step:5},
+  {cat:'netfx',type:'toggle',key:'toastGloss2',label:'Toast Gloss (visual)'},
+  {cat:'netfx',type:'range',key:'rain2Wave',label:'Rain Wave (visual)',min:-50,max:50,step:5},
+  {cat:'netfx',type:'toggle',key:'soundContour',label:'Sound Contour (visual)'},
+  {cat:'netfx',type:'toggle',key:'weatherGlint',label:'Weather Glint (visual)'},
+  {cat:'netfx',type:'toggle',key:'weatherNeon',label:'Weather Neon (visual)'},
+  {cat:'netfx',type:'toggle',key:'snow2Bounce',label:'Snow Bounce (visual)'},
+  {cat:'netfx',type:'range',key:'snow2Dust3',label:'Snow Dust (visual)',min:0,max:1,step:0.05},
+  {cat:'netfx',type:'toggle',key:'cloud3Jitter2',label:'Cloud Jitter (visual)'},
+  {cat:'netfx',type:'color',key:'groundRipple',label:'Ground Ripple (visual)'},
+  {cat:'netfx',type:'range',key:'sun2Fog2',label:'Sun Fog (visual)',min:0,max:10,step:1},
+  {cat:'netfx',type:'select',key:'pipeGlare',label:'Pipe Glare (visual)',options:['linear','ease','bounce','elastic']},
+  {cat:'netfx',type:'toggle',key:'skyMist',label:'Sky Mist (visual)'},
+  {cat:'netfx',type:'toggle',key:'flapFog2',label:'Flap Fog (visual)'},
+  {cat:'netfx',type:'select',key:'moon2Flicker',label:'Moon Flicker (visual)',options:['none','subtle','bold','extreme']},
+  {cat:'netfx',type:'toggle',key:'snow2Cloud',label:'Snow Cloud (visual)'},
+  {cat:'netfx',type:'select',key:'snow2Ripple',label:'Snow Ripple (visual)',options:['none','subtle','bold','extreme']},
+  {cat:'netfx',type:'range',key:'toastFog',label:'Toast Fog (visual)',min:0,max:100,step:5},
+  {cat:'motionfx',type:'toggle',key:'comboChrome',label:'Combo Chrome (visual)'},
+  {cat:'motionfx',type:'range',key:'pipeTexture2',label:'Pipe Texture (visual)',min:-50,max:50,step:5},
+  {cat:'motionfx',type:'toggle',key:'moon2Streak',label:'Moon Streak (visual)'},
+  {cat:'motionfx',type:'toggle',key:'jumpTwist',label:'Jump Twist (visual)'},
+  {cat:'motionfx',type:'range',key:'meterMetallic',label:'Meter Metallic (visual)',min:0,max:10,step:1},
+  {cat:'motionfx',type:'toggle',key:'cursorHaze',label:'Cursor Haze (visual)'},
+  {cat:'motionfx',type:'range',key:'snow2Pattern',label:'Snow Pattern (visual)',min:0,max:1,step:0.05},
+  {cat:'motionfx',type:'toggle',key:'weatherDust',label:'Weather Dust (visual)'},
+  {cat:'motionfx',type:'toggle',key:'badgeContour2',label:'Badge Contour (visual)'},
+  {cat:'motionfx',type:'color',key:'lightHue',label:'Light Hue (visual)'},
+  {cat:'motionfx',type:'range',key:'soundFog',label:'Sound Fog (visual)',min:0,max:10,step:1},
+  {cat:'motionfx',type:'toggle',key:'cursorFrame',label:'Cursor Frame (visual)'},
+  {cat:'motionfx',type:'toggle',key:'flapRay',label:'Flap Ray (visual)'},
+  {cat:'motionfx',type:'range',key:'star3Cloud',label:'Star Cloud (visual)',min:-50,max:50,step:5},
+  {cat:'motionfx',type:'toggle',key:'backgroundEcho',label:'Background Echo (visual)'},
+  {cat:'motionfx',type:'range',key:'lightOrbit2',label:'Light Orbit (visual)',min:-50,max:50,step:5},
+  {cat:'motionfx',type:'select',key:'wind2Drift',label:'Wind Drift (visual)',options:['off','low','med','high']},
+  {cat:'motionfx',type:'color',key:'backgroundConfetti',label:'Background Confetti (visual)'},
+  {cat:'motionfx',type:'range',key:'scoreTwist',label:'Score Twist (visual)',min:-50,max:50,step:5},
+  {cat:'motionfx',type:'range',key:'cloud3Mist',label:'Cloud Mist (visual)',min:-50,max:50,step:5},
+  {cat:'motionfx',type:'range',key:'soundMist2',label:'Sound Mist (visual)',min:-50,max:50,step:5},
+  {cat:'motionfx',type:'range',key:'groundStreak',label:'Ground Streak (visual)',min:0,max:10,step:1},
+  {cat:'motionfx',type:'toggle',key:'lightGradient',label:'Light Gradient (visual)'},
+  {cat:'motionfx',type:'toggle',key:'weatherGrain',label:'Weather Grain (visual)'},
+  {cat:'motionfx',type:'toggle',key:'toastMetallic',label:'Toast Metallic (visual)'},
+  {cat:'motionfx2',type:'color',key:'jumpFrame',label:'Jump Frame (visual)'},
+  {cat:'motionfx2',type:'toggle',key:'badgeMatte',label:'Badge Matte (visual)'},
+  {cat:'motionfx2',type:'toggle',key:'lightLowlight',label:'Light Lowlight (visual)'},
+  {cat:'motionfx2',type:'select',key:'panelGradient',label:'Panel Gradient (visual)',options:['round','square','sharp','soft']},
+  {cat:'motionfx2',type:'color',key:'foregroundGradient',label:'Foreground Gradient (visual)'},
+  {cat:'motionfx2',type:'select',key:'meterFrost',label:'Meter Frost (visual)',options:['off','low','med','high']},
+  {cat:'motionfx2',type:'toggle',key:'pipeWave',label:'Pipe Wave (visual)'},
+  {cat:'motionfx2',type:'color',key:'avatarSheen',label:'Avatar Sheen (visual)'},
+  {cat:'motionfx2',type:'select',key:'cameraSway2',label:'Camera Sway (visual)',options:['off','low','med','high']},
+  {cat:'motionfx2',type:'toggle',key:'hudContour2',label:'Hud Contour (visual)'},
+  {cat:'motionfx2',type:'toggle',key:'lightFlare',label:'Light Flare (visual)'},
+  {cat:'motionfx2',type:'range',key:'sun2Pastel',label:'Sun Pastel (visual)',min:0,max:1,step:0.05},
+  {cat:'motionfx2',type:'range',key:'groundHue',label:'Ground Hue (visual)',min:1,max:5,step:1},
+  {cat:'motionfx2',type:'toggle',key:'grid2Fade2',label:'Grid Fade (visual)'},
+  {cat:'motionfx2',type:'toggle',key:'seasonGlare2',label:'Season Glare (visual)'},
+  {cat:'motionfx2',type:'range',key:'weatherDust2',label:'Weather Dust (visual)',min:0,max:10,step:1},
+  {cat:'motionfx2',type:'range',key:'star3Silhouette2',label:'Star Silhouette (visual)',min:0,max:1,step:0.05},
+  {cat:'motionfx2',type:'range',key:'weatherScanline2',label:'Weather Scanline (visual)',min:0,max:1,step:0.05},
+  {cat:'motionfx2',type:'toggle',key:'comboTwist',label:'Combo Twist (visual)'},
+  {cat:'motionfx2',type:'toggle',key:'foregroundShadow',label:'Foreground Shadow (visual)'},
+  {cat:'motionfx2',type:'select',key:'trail3Comet',label:'Trail Comet (visual)',options:['linear','ease','bounce','elastic']},
+  {cat:'motionfx2',type:'toggle',key:'flapHue2',label:'Flap Hue (visual)'},
+  {cat:'motionfx2',type:'toggle',key:'avatarConfetti',label:'Avatar Confetti (visual)'},
+  {cat:'motionfx2',type:'range',key:'particleRay',label:'Particle Ray (visual)',min:1,max:5,step:1},
+  {cat:'motionfx2',type:'range',key:'hudRainbow',label:'Hud Rainbow (visual)',min:0,max:1,step:0.05},
+  {cat:'social',type:'range',key:'menuOrbit',label:'Menu Orbit (visual)',min:1,max:5,step:1},
+  {cat:'social',type:'select',key:'flapVignette',label:'Flap Vignette (visual)',options:['classic','modern','retro','future']},
+  {cat:'social',type:'toggle',key:'groundAura',label:'Ground Aura (visual)'},
+  {cat:'social',type:'toggle',key:'hudShine',label:'Hud Shine (visual)'},
+  {cat:'social',type:'toggle',key:'iconSparkle2',label:'Icon Sparkle (visual)'},
+  {cat:'social',type:'toggle',key:'rain2Haze2',label:'Rain Haze (visual)'},
+  {cat:'social',type:'toggle',key:'star3Pulse2',label:'Star Pulse (visual)'},
+  {cat:'social',type:'toggle',key:'skyPulse2',label:'Sky Pulse (visual)'},
+  {cat:'social',type:'toggle',key:'avatarOverlay2',label:'Avatar Overlay (visual)'},
+  {cat:'social',type:'toggle',key:'badgeMetallic',label:'Badge Metallic (visual)'},
+  {cat:'social',type:'range',key:'moon2Shadowcast2',label:'Moon Shadowcast (visual)',min:-50,max:50,step:5},
+  {cat:'social',type:'toggle',key:'comboStreak',label:'Combo Streak (visual)'},
+  {cat:'social',type:'toggle',key:'buttonOrbit',label:'Button Orbit (visual)'},
+  {cat:'social',type:'toggle',key:'seasonFog',label:'Season Fog (visual)'},
+  {cat:'social',type:'range',key:'musicSilhouette',label:'Music Silhouette (visual)',min:-50,max:50,step:5},
+  {cat:'social',type:'toggle',key:'skyHalo',label:'Sky Halo (visual)'},
+  {cat:'social',type:'range',key:'backgroundEmber',label:'Background Ember (visual)',min:-50,max:50,step:5},
+  {cat:'social',type:'select',key:'fog3Tint2',label:'Fog Tint (visual)',options:['round','square','sharp','soft']},
+  {cat:'social',type:'select',key:'backgroundSpark',label:'Background Spark (visual)',options:['classic','modern','retro','future']},
+  {cat:'social',type:'select',key:'particleOrbit',label:'Particle Orbit (visual)',options:['classic','modern','retro','future']},
+  {cat:'social',type:'range',key:'bannerFrost',label:'Banner Frost (visual)',min:-50,max:50,step:5},
+  {cat:'social',type:'select',key:'iconBeam',label:'Icon Beam (visual)',options:['classic','modern','retro','future']},
+  {cat:'social',type:'toggle',key:'grid2Shimmer2',label:'Grid Shimmer (visual)'},
+  {cat:'social',type:'range',key:'seasonFlash3',label:'Season Flash (visual)',min:-50,max:50,step:5},
+  {cat:'social',type:'select',key:'lightPulse3',label:'Light Pulse (visual)',options:['linear','ease','bounce','elastic']},
+  {cat:'social2',type:'toggle',key:'jumpNoise',label:'Jump Noise (visual)'},
+  {cat:'social2',type:'toggle',key:'bannerFlare2',label:'Banner Flare (visual)'},
+  {cat:'social2',type:'toggle',key:'toastStar',label:'Toast Star (visual)'},
+  {cat:'social2',type:'select',key:'flapFlicker',label:'Flap Flicker (visual)',options:['off','low','med','high']},
+  {cat:'social2',type:'range',key:'musicShimmer',label:'Music Shimmer (visual)',min:0,max:100,step:5},
+  {cat:'social2',type:'range',key:'wind2Tint',label:'Wind Tint (visual)',min:0,max:10,step:1},
+  {cat:'social2',type:'select',key:'wind2Shadowcast',label:'Wind Shadowcast (visual)',options:['linear','ease','bounce','elastic']},
+  {cat:'social2',type:'range',key:'groundHaze',label:'Ground Haze (visual)',min:0,max:10,step:1},
+  {cat:'social2',type:'color',key:'badgeSpark',label:'Badge Spark (visual)'},
+  {cat:'social2',type:'range',key:'grid2Highlight',label:'Grid Highlight (visual)',min:0,max:100,step:5},
+  {cat:'social2',type:'range',key:'soundBend',label:'Sound Bend (visual)',min:0,max:100,step:5},
+  {cat:'social2',type:'color',key:'iconSmoke',label:'Icon Smoke (visual)'},
+  {cat:'social2',type:'toggle',key:'jumpFlare',label:'Jump Flare (visual)'},
+  {cat:'social2',type:'range',key:'flapMatte3',label:'Flap Matte (visual)',min:0,max:100,step:5},
+  {cat:'social2',type:'toggle',key:'deathPastel',label:'Death Pastel (visual)'},
+  {cat:'social2',type:'toggle',key:'cameraBeam',label:'Camera Beam (visual)'},
+  {cat:'social2',type:'range',key:'grid2Dust2',label:'Grid Dust (visual)',min:0,max:100,step:5},
+  {cat:'social2',type:'select',key:'trail3Streak',label:'Trail Streak (visual)',options:['round','square','sharp','soft']},
+  {cat:'social2',type:'toggle',key:'moon2Orbit',label:'Moon Orbit (visual)'},
+  {cat:'social2',type:'toggle',key:'foregroundNeon2',label:'Foreground Neon (visual)'},
+  {cat:'social2',type:'toggle',key:'trail3Wave',label:'Trail Wave (visual)'},
+  {cat:'social2',type:'range',key:'snow2Prism',label:'Snow Prism (visual)',min:0,max:10,step:1},
+  {cat:'social2',type:'toggle',key:'musicLowlight2',label:'Music Lowlight (visual)'},
+  {cat:'social2',type:'toggle',key:'badgeGloss',label:'Badge Gloss (visual)'},
+  {cat:'social2',type:'toggle',key:'buttonScanline',label:'Button Scanline (visual)'},
+  {cat:'extras',type:'toggle',key:'groundHighlight',label:'Ground Highlight (visual)'},
+  {cat:'extras',type:'toggle',key:'deathAura',label:'Death Aura (visual)'},
+  {cat:'extras',type:'range',key:'wind2Ember2',label:'Wind Ember (visual)',min:0,max:1,step:0.05},
+  {cat:'extras',type:'range',key:'backgroundGlow',label:'Background Glow (visual)',min:0,max:10,step:1},
+  {cat:'extras',type:'range',key:'wind2Shine',label:'Wind Shine (visual)',min:0,max:10,step:1},
+  {cat:'extras',type:'toggle',key:'trail3Spark',label:'Trail Spark (visual)'},
+  {cat:'extras',type:'color',key:'groundEcho2',label:'Ground Echo (visual)'},
+  {cat:'extras',type:'range',key:'avatarNoise',label:'Avatar Noise (visual)',min:0,max:1,step:0.05},
+  {cat:'extras',type:'toggle',key:'soundSway',label:'Sound Sway (visual)'},
+  {cat:'extras',type:'range',key:'skyOrbit',label:'Sky Orbit (visual)',min:0,max:10,step:1},
+  {cat:'extras',type:'toggle',key:'trail3Flicker',label:'Trail Flicker (visual)'},
+  {cat:'extras',type:'toggle',key:'lightGlint',label:'Light Glint (visual)'},
+  {cat:'extras',type:'color',key:'trail3Bend',label:'Trail Bend (visual)'},
+  {cat:'extras',type:'range',key:'iconHighlight2',label:'Icon Highlight (visual)',min:0,max:10,step:1},
+  {cat:'extras',type:'toggle',key:'panelFade',label:'Panel Fade (visual)'},
+  {cat:'extras',type:'toggle',key:'musicFlash',label:'Music Flash (visual)'},
+  {cat:'extras',type:'color',key:'particleBend2',label:'Particle Bend (visual)'},
+  {cat:'extras',type:'toggle',key:'jumpTexture',label:'Jump Texture (visual)'},
+  {cat:'extras',type:'select',key:'seasonNeon',label:'Season Neon (visual)',options:['none','subtle','bold','extreme']},
+  {cat:'extras',type:'range',key:'soundPulse2',label:'Sound Pulse (visual)',min:-50,max:50,step:5},
+  {cat:'extras',type:'range',key:'weatherEcho',label:'Weather Echo (visual)',min:0,max:1,step:0.05},
+  {cat:'extras',type:'range',key:'soundHaze',label:'Sound Haze (visual)',min:0,max:100,step:5},
+  {cat:'extras',type:'toggle',key:'flapGlow',label:'Flap Glow (visual)'},
+  {cat:'extras',type:'range',key:'moon2Scanline',label:'Moon Scanline (visual)',min:0,max:100,step:5},
+  {cat:'extras',type:'select',key:'seasonPastel',label:'Season Pastel (visual)',options:['round','square','sharp','soft']},
+  {cat:'extras2',type:'color',key:'birdSheen',label:'Bird Sheen (visual)'},
+  {cat:'extras2',type:'toggle',key:'star3Scanline2',label:'Star Scanline (visual)'},
+  {cat:'extras2',type:'toggle',key:'cursorFade',label:'Cursor Fade (visual)'},
+  {cat:'extras2',type:'color',key:'particlePulse2',label:'Particle Pulse (visual)'},
+  {cat:'extras2',type:'toggle',key:'panelRainbow',label:'Panel Rainbow (visual)'},
+  {cat:'extras2',type:'select',key:'trail3Cloud',label:'Trail Cloud (visual)',options:['none','subtle','bold','extreme']},
+  {cat:'extras2',type:'range',key:'deathHaze',label:'Death Haze (visual)',min:0,max:10,step:1},
+  {cat:'extras2',type:'range',key:'fog3Cloud',label:'Fog Cloud (visual)',min:-50,max:50,step:5},
+  {cat:'extras2',type:'color',key:'grid2Lowlight',label:'Grid Lowlight (visual)'},
+  {cat:'extras2',type:'color',key:'cameraChrome',label:'Camera Chrome (visual)'},
+  {cat:'extras2',type:'range',key:'tickerWave2',label:'Ticker Wave (visual)',min:1,max:5,step:1},
+  {cat:'extras2',type:'toggle',key:'toastFog2',label:'Toast Fog (visual)'},
+  {cat:'extras2',type:'toggle',key:'avatarFlash',label:'Avatar Flash (visual)'},
+  {cat:'extras2',type:'toggle',key:'badgeShadowcast',label:'Badge Shadowcast (visual)'},
+  {cat:'extras2',type:'toggle',key:'avatarLowlight',label:'Avatar Lowlight (visual)'},
+  {cat:'extras2',type:'range',key:'particleSpark',label:'Particle Spark (visual)',min:1,max:5,step:1},
+  {cat:'extras2',type:'select',key:'cursorBorder',label:'Cursor Border (visual)',options:['linear','ease','bounce','elastic']},
+  {cat:'extras2',type:'range',key:'menuSilhouette',label:'Menu Silhouette (visual)',min:0,max:1,step:0.05},
+  {cat:'extras2',type:'range',key:'fog3Mist',label:'Fog Mist (visual)',min:1,max:5,step:1},
+  {cat:'extras2',type:'range',key:'fog3Trail',label:'Fog Trail (visual)',min:1,max:5,step:1},
+  {cat:'extras2',type:'range',key:'lightShimmer',label:'Light Shimmer (visual)',min:0,max:100,step:5},
+  {cat:'extras2',type:'select',key:'birdVignette',label:'Bird Vignette (visual)',options:['off','low','med','high']},
+  {cat:'extras2',type:'toggle',key:'skyBounce',label:'Sky Bounce (visual)'},
+  {cat:'extras2',type:'toggle',key:'scoreContour',label:'Score Contour (visual)'},
+  {cat:'extras2',type:'toggle',key:'scoreShine2',label:'Score Shine (visual)'},
 ];
 
-var CATS = ['graphics','graphics2','effects','bird','pipes','pipes2','gameplay','cheats','bot','bot2','performance','audio','audio2','ui','ui2','mpsettings','debug','particles','physics','camera','accessibility','world','stats','misc2','challenges','presets'];
+var CATS = ['graphics','graphics2','effects','bird','pipes','pipes2','gameplay','cheats','bot','bot2','performance','audio','audio2','ui','ui2','mpsettings','debug','particles','physics','camera','accessibility','world','stats','misc2','challenges','decor', 'decor2', 'auras', 'auras2', 'retro', 'retro2', 'seasons2', 'seasons3', 'soundscape', 'soundscape2', 'skyfx', 'skyfx2', 'groundfx', 'groundfx2', 'birdfx', 'birdfx2', 'pipefx', 'pipefx2', 'hud2', 'hud3', 'network3', 'netfx', 'motionfx', 'motionfx2', 'social', 'social2', 'extras', 'extras2','presets'];
 var currentTab = 'graphics';
 
 function buildTab(cat){
@@ -1699,9 +2640,22 @@ function presetsHTML(){
     '<button class="actionBtn" data-preset="normal">Normal</button>' +
     '<button class="actionBtn" data-preset="hard">Hard</button>' +
     '<button class="actionBtn" data-preset="insane">Insane</button>' +
+    '<button class="actionBtn" data-preset="nightmare">Nightmare</button>' +
     '<button class="actionBtn" data-preset="troll">Troll</button>' +
     '<button class="actionBtn" data-preset="pro">Pro</button>' +
     '<button class="actionBtn" data-preset="botshow">Bot Showcase</button>' +
+    '<button class="actionBtn" data-preset="zen">Zen</button>' +
+    '<button class="actionBtn" data-preset="retroarcade">Retro Arcade</button>' +
+    '<button class="actionBtn" data-preset="neonnight">Neon Night</button>' +
+    '<button class="actionBtn" data-preset="blizzard">Blizzard</button>' +
+    '<button class="actionBtn" data-preset="storm">Storm</button>' +
+    '<button class="actionBtn" data-preset="spaceOdyssey">Space Odyssey</button>' +
+    '<button class="actionBtn" data-preset="cinematic">Cinematic</button>' +
+    '<button class="actionBtn" data-preset="chaos">Chaos</button>' +
+    '<button class="actionBtn" data-preset="lowEnd">Low-End Device</button>' +
+    '<button class="actionBtn" data-preset="accessible">Accessible</button>' +
+    '<button class="actionBtn" data-preset="moonGravity">Moon Gravity</button>' +
+    '<button class="actionBtn" data-preset="mirror">Mirror World</button>' +
     '<button class="actionBtn" data-preset="resetall">Reset Defaults</button>' +
     '</div>';
 }
@@ -1710,9 +2664,22 @@ function applyPreset(name){
   else if(name === 'normal'){ S.pipeGap=190; S.pipeSpeed=180; S.gravity=1000; S.jumpPower=360; S.pipeSpacing=1.6; }
   else if(name === 'hard'){ S.pipeGap=150; S.pipeSpeed=240; S.gravity=1150; S.jumpPower=380; S.pipeSpacing=1.3; }
   else if(name === 'insane'){ S.pipeGap=110; S.pipeSpeed=320; S.gravity=1300; S.jumpPower=400; S.pipeSpacing=1.1; }
+  else if(name === 'nightmare'){ S.pipeGap=95; S.pipeSpeed=380; S.gravity=1450; S.jumpPower=420; S.pipeSpacing=0.9; S.movingPipes=true; S.pipeMoveAmplitude=50; S.weather='rain'; S.skyTheme='night'; }
   else if(name === 'troll'){ S.reverseGravity=!S.reverseGravity; S.lagLevel=2; S.invertColors=true; }
   else if(name === 'pro'){ S.glowEnabled=true; S.trailEnabled=true; S.particlesEnabled=true; S.pipeTheme='neon'; }
   else if(name === 'botshow'){ S.botEnabled=true; S.botAccuracy=100; S.botAlignPipes=true; S.botHumanMimic=true; S.botReactionTimeMs=140; }
+  else if(name === 'zen'){ S.pipeGap=280; S.pipeSpeed=110; S.gravity=700; S.jumpPower=320; S.pipeSpacing=2.4; S.skyTheme='sunset'; S.musicEnabled=true; S.screenShakeEnabled=false; S.flashOnScore=false; }
+  else if(name === 'retroarcade'){ S.pipeTheme='classic'; S.groundTheme='grass'; S.scoreFont='monospace'; S.eightBitMode=true; S.scanlinesEnabled=true; S.scanlineOpacity=0.18; S.pixelation=3; S.vignetteEnabled=true; }
+  else if(name === 'neonnight'){ S.skyTheme='night'; S.pipeTheme='neon'; S.glowEnabled=true; S.bloomEnabled=true; S.bloomStrength=18; S.trailEnabled=true; S.trailColor='#39ff14'; S.pipeRainbow=false; }
+  else if(name === 'blizzard'){ S.weather='snow'; S.groundTheme='snow'; S.skyTheme='day'; S.skyTopColor='#cfe8f3'; S.skyBottomColor='#eef7fb'; S.fogEnabled=true; S.fogDensity=0.2; S.fogColor='#ffffff'; }
+  else if(name === 'storm'){ S.weather='rain'; S.skyTheme='night'; S.lightningEnabled=true; S.screenShakeEnabled=true; S.screenShakeIntensity=5; S.windForce=60; }
+  else if(name === 'spaceOdyssey'){ S.skyTheme='space'; S.starCount=220; S.moonVisible=true; S.auroraEnabled=true; S.particlesEnabled=true; S.trailEnabled=true; S.trailColor='#00e5ff'; }
+  else if(name === 'cinematic'){ S.letterboxBars=true; S.vignetteEnabled=true; S.vignetteStrength=0.45; S.bloomEnabled=true; S.cameraShakeOnDeath=true; S.slowMotionOnDeath=true; S.chromaticAberration=2; }
+  else if(name === 'chaos'){ S.movingPipes=true; S.pipeMovePattern='random'; S.pipeMoveAmplitude=90; S.windForce=80; S.randomGap=true; S.pipeWidthVariance=20; S.gravityRamp=0.3; S.screenShakeIntensity=14; }
+  else if(name === 'lowEnd'){ S.particlesEnabled=false; S.backgroundParallax=false; S.glowEnabled=false; S.bloomEnabled=false; S.renderQuality=0.5; S.targetFPSCap=30; S.shadowQuality='off'; S.antiAliasing=false; }
+  else if(name === 'accessible'){ S.reduceMotion=true; S.highContrastMode=true; S.largeText=true; S.screenShakeEnabled=false; S.flashOnScore=false; S.uiScale=1.3; S.oneTapMode=true; }
+  else if(name === 'moonGravity'){ S.gravity=380; S.jumpPower=200; S.maxFallSpeed=500; S.pipeSpeed=160; }
+  else if(name === 'mirror'){ S.mirrorScreen=true; S.invertColors=false; S.reverseGravity=false; S.cameraRotation=0; }
   else if(name === 'resetall'){ for(var k in DEFAULTS) S[k]=DEFAULTS[k]; }
   persistSettings();
   updateCanvasFilter();
@@ -1795,14 +2762,20 @@ function wireCheatButtons(){
 }
 
 var adminTabsDiv = document.getElementById('adminTabs');
-CATS.forEach(function(cat){
-  var b = document.createElement('button');
-  b.className = 'tabBtn';
-  b.dataset.tab = cat;
-  b.textContent = cat.charAt(0).toUpperCase()+cat.slice(1);
-  b.onclick = function(){ renderTab(cat); };
-  adminTabsDiv.appendChild(b);
-});
+var adminAllowedCats = null; // null = all tabs; array = restricted subset
+function buildAdminTabs(){
+  adminTabsDiv.innerHTML = '';
+  var list = adminAllowedCats || CATS;
+  list.forEach(function(cat){
+    var b = document.createElement('button');
+    b.className = 'tabBtn';
+    b.dataset.tab = cat;
+    b.textContent = cat.charAt(0).toUpperCase()+cat.slice(1);
+    b.onclick = function(){ renderTab(cat); };
+    adminTabsDiv.appendChild(b);
+  });
+}
+buildAdminTabs();
 
 var adminUnlocked = false;
 document.getElementById('gearBtn').onclick = function(){
@@ -1818,6 +2791,15 @@ function submitPin(){
   var v = document.getElementById('pinInput').value;
   if(v === '1677'){
     adminUnlocked = true;
+    adminAllowedCats = null;
+    buildAdminTabs();
+    document.getElementById('pinModal').classList.add('hidden');
+    openAdmin();
+  } else if(v === '6767'){
+    adminUnlocked = true;
+    adminAllowedCats = ['ui','ui2'];
+    buildAdminTabs();
+    currentTab = 'ui';
     document.getElementById('pinModal').classList.add('hidden');
     openAdmin();
   } else {
@@ -1825,6 +2807,7 @@ function submitPin(){
   }
 }
 function openAdmin(){
+  if(adminAllowedCats && adminAllowedCats.indexOf(currentTab) === -1){ currentTab = adminAllowedCats[0]; }
   document.getElementById('adminPanel').classList.add('open');
   renderTab(currentTab);
 }
